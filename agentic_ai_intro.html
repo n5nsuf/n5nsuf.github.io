@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic AI — From Single LLM to Agent Teams</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --purple:#534AB7;--purple-l:#EEEDFE;--purple-d:#3C3489;
+    --teal:#0F6E56;--teal-l:#E1F5EE;
+    --amber:#BA7517;--amber-l:#FAEEDA;
+    --blue:#185FA5;--blue-l:#E6F1FB;
+    --coral:#993C1D;--coral-l:#FAECE7;
+    --red:#A32D2D;--red-l:#FCEBEB;
+    --gray:#444441;--gray-l:#F1EFE8;
+    --border:#D3D1C7;--text:#2C2C2A;--muted:#5F5E5A;--bg:#FAFAF8;
+    --slate:#64748B;--slate-l:#F1F5F9;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.8;color:var(--text);background:var(--bg)}
+  .page{max-width:860px;margin:0 auto;padding:48px 56px;background:white}
+  .doc-header{border-bottom:2px solid var(--purple);padding-bottom:24px;margin-bottom:36px}
+  .doc-header h1{font-size:28px;font-weight:700;color:var(--purple);line-height:1.3}
+  .doc-header .subtitle{font-size:15px;color:var(--muted);margin-top:6px}
+  .doc-header .meta{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:12px;flex-wrap:wrap}
+  .meta-tag{background:var(--purple-l);color:var(--purple-d);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500}
+  h2{font-size:17px;font-weight:700;color:var(--purple);padding:6px 0 6px 12px;border-left:3px solid var(--purple);margin-bottom:16px;margin-top:42px}
+  h3{font-size:14px;font-weight:700;color:var(--gray);margin:20px 0 10px}
+  p{margin-bottom:12px;color:var(--text);font-size:13.5px}
+  table{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px}
+  thead tr{background:var(--purple)}
+  thead th{color:white;font-weight:600;padding:8px 12px;text-align:left;font-size:12px}
+  tbody tr:nth-child(even){background:var(--gray-l)}
+  tbody tr:hover{background:var(--purple-l)}
+  tbody td{padding:7px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  td code{background:var(--gray-l);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--purple-d)}
+  .callout{display:flex;gap:10px;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px}
+  .callout.warn{background:var(--amber-l);border-left:3px solid var(--amber)}
+  .callout.info{background:var(--blue-l);border-left:3px solid var(--blue)}
+  .callout.ok{background:var(--teal-l);border-left:3px solid var(--teal)}
+  .callout .icon{font-size:16px;flex-shrink:0;margin-top:1px}
+  .callout p{margin:0;color:var(--gray)}
+  .diagram-wrap{margin:18px 0 24px;border:1px solid var(--border);border-radius:10px;padding:24px 16px 16px;background:white;overflow:hidden}
+  .diagram-caption{font-size:11.5px;color:var(--muted);text-align:center;margin-top:12px;font-style:italic}
+  svg text{font-family:'Noto Sans KR',sans-serif !important}
+  .badge{display:inline-block;padding:1px 8px;border-radius:20px;font-size:11px;font-weight:600}
+  .badge.local{background:var(--gray-l);color:var(--gray)}
+  .badge.cloud{background:var(--purple-l);color:var(--purple-d)}
+  .badge.ok{background:var(--teal-l);color:var(--teal)}
+
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+  .compare-card{border-radius:10px;padding:18px 16px;border:1px solid var(--border)}
+  .compare-card h4{font-size:14px;font-weight:700;margin-bottom:10px}
+  .compare-card ul{list-style:none;padding:0}
+  .compare-card li{font-size:12.5px;padding:4px 0;border-bottom:1px solid var(--border);color:var(--gray)}
+  .compare-card li:last-child{border-bottom:none}
+  .compare-card.old{background:var(--gray-l)}
+  .compare-card.new{background:var(--purple-l)}
+
+  /* evolution timeline */
+  .evo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+  .evo-card{border-radius:10px;padding:14px 10px;text-align:center;border:1px solid var(--border)}
+  .evo-card .evo-era{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .evo-card .evo-title{font-size:13px;font-weight:700;margin-bottom:4px}
+  .evo-card .evo-desc{font-size:11px;color:var(--muted);line-height:1.5}
+  .evo-card.e1{background:var(--gray-l)}.evo-card.e1 .evo-era{color:var(--gray)}
+  .evo-card.e2{background:var(--blue-l)}.evo-card.e2 .evo-era{color:var(--blue)}
+  .evo-card.e3{background:var(--amber-l)}.evo-card.e3 .evo-era{color:var(--amber)}
+  .evo-card.e4{background:var(--purple-l)}.evo-card.e4 .evo-era{color:var(--purple)}
+
+  /* principle cards */
+  .prin-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+  .prin-card{border-radius:10px;padding:16px;border:1px solid var(--border);background:white}
+  .prin-card .prin-icon{font-size:22px;margin-bottom:6px}
+  .prin-card .prin-title{font-size:13px;font-weight:700;margin-bottom:4px}
+  .prin-card .prin-desc{font-size:12px;color:var(--muted);line-height:1.6}
+
+  .flow-steps{display:flex;gap:0;margin-bottom:20px;align-items:stretch}
+  .flow-step{flex:1;padding:14px 10px;text-align:center;position:relative;border-radius:8px}
+  .flow-step::after{content:'\2192';position:absolute;right:-8px;top:50%;transform:translateY(-50%);color:var(--border);font-size:18px;z-index:1}
+  .flow-step:last-child::after{display:none}
+  .flow-step .step-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .flow-step .step-title{font-size:13px;font-weight:700}
+  .flow-step .step-desc{font-size:11px;color:var(--muted);margin-top:3px}
+  .flow-step.plan{background:var(--blue-l);border:1px solid #85B7EB}.flow-step.plan .step-label{color:var(--blue)}
+  .flow-step.exec{background:var(--purple-l);border:1px solid #AFA9EC}.flow-step.exec .step-label{color:var(--purple)}
+  .flow-step.review{background:var(--teal-l);border:1px solid #5DCAA5}.flow-step.review .step-label{color:var(--teal)}
+  .flow-step.observe{background:var(--amber-l);border:1px solid #EF9F27}.flow-step.observe .step-label{color:var(--amber)}
+
+  .metric-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .metric-label{font-size:12px;font-weight:600;min-width:140px;color:var(--gray)}
+  .metric-bar-bg{flex:1;height:22px;background:var(--gray-l);border-radius:11px;overflow:hidden}
+  .metric-bar-fill{height:100%;border-radius:11px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:10px;font-weight:700;color:white;min-width:28px}
+  .metric-bar-fill.high{background:var(--coral)}
+  .metric-bar-fill.low{background:var(--teal)}
+
+  .doc-nav{display:flex;gap:16px;margin-bottom:28px;font-size:12.5px;flex-wrap:wrap}
+  .doc-nav a{color:var(--purple);text-decoration:none;padding:4px 12px;border-radius:20px;border:1px solid var(--border);transition:all .15s}
+  .doc-nav a:hover{background:var(--purple-l);border-color:var(--purple)}
+  .doc-nav a.current{background:var(--purple);color:white;border-color:var(--purple);pointer-events:none}
+  .doc-footer{border-top:1px solid var(--border);margin-top:48px;padding-top:16px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+  .doc-footer a{color:var(--purple);text-decoration:none}
+  .doc-footer a:hover{text-decoration:underline}
+  .lang-bar{position:sticky;top:0;z-index:100;background:rgba(250,250,248,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;justify-content:flex-end;align-items:center;gap:6px}
+  .lang-btn{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 14px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--muted);cursor:pointer;transition:all .15s}
+  .lang-btn.active{background:var(--purple);color:white;border-color:var(--purple)}
+  [lang-ko],[lang-en]{display:none}
+  body.lang-ko [lang-ko]{display:revert}
+  body.lang-en [lang-en]{display:revert}
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  @media(max-width:640px){
+    .page{padding:20px 16px 48px}.doc-header h1{font-size:21px}h2{font-size:15px;margin-top:32px}
+    .compare,.prin-grid{grid-template-columns:1fr}.evo-grid{grid-template-columns:1fr 1fr}
+    .flow-steps{flex-direction:column}.flow-step::after{display:none}
+    .diagram-wrap{overflow-x:auto}.diagram-wrap svg{min-width:600px}
+    .doc-footer{flex-direction:column;gap:6px}.doc-nav{gap:8px}
+  }
+  @media print{
+    body{background:white}.page{padding:20px 28px;max-width:100%}.lang-bar{display:none}
+    h2{page-break-after:avoid}table,.diagram-wrap,.compare{page-break-inside:avoid}
+    [lang-ko],[lang-en]{display:revert !important}
+  }
+</style>
+</head>
+<body class="lang-ko">
+
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('ko')" id="btn-ko">한국어</button>
+  <button class="lang-btn" onclick="setLang('en')" id="btn-en">English</button>
+</div>
+
+<div class="page">
+
+<div class="doc-header">
+  <h1 lang-ko>Agentic AI: 단일 LLM에서 에이전트 팀으로</h1>
+  <h1 lang-en>Agentic AI: From Single LLM to Agent Teams</h1>
+  <div class="subtitle" lang-ko>AI의 진화, Agentic AI의 핵심 원리, 그리고 실무 적용</div>
+  <div class="subtitle" lang-en>The Evolution of AI, Core Principles of Agentic AI, and Practical Applications</div>
+  <div class="meta">
+    <span class="meta-tag">2026-04-16</span>
+    <span class="meta-tag" lang-ko>개념 가이드</span>
+    <span class="meta-tag" lang-en>Conceptual Guide</span>
+  </div>
+</div>
+
+<div class="doc-nav">
+  <a href="agentic_ai_intro.html" class="current" lang-ko>Agentic AI 개념 (현재)</a>
+  <a href="agentic_ai_intro.html" class="current" lang-en>Agentic AI Concepts (current)</a>
+  <a href="mcp_ecosystem.html" lang-ko>MCP 생태계</a>
+  <a href="mcp_ecosystem.html" lang-en>MCP Ecosystem</a>
+  <a href="light_harness_guide.html" lang-ko>AI 개발 시스템</a>
+  <a href="light_harness_guide.html" lang-en>AI Dev System</a>
+</div>
+
+<!-- ══ 1. AI의 진화 ══════════════════════════════════════ -->
+<h2 lang-ko>1. AI의 진화: 규칙에서 자율로</h2>
+<h2 lang-en>1. The Evolution of AI: From Rules to Autonomy</h2>
+
+<p lang-ko>AI는 네 단계를 거쳐 진화했다. 각 단계는 이전 단계의 한계를 극복하며, 점점 더 높은 수준의 <strong>자율성</strong>을 갖추었다.</p>
+<p lang-en>AI has evolved through four stages. Each stage overcomes the limitations of the previous one, achieving progressively higher levels of <strong>autonomy</strong>.</p>
+
+<div class="evo-grid">
+  <div class="evo-card e1">
+    <div class="evo-era">1950s–</div>
+    <div class="evo-title" lang-ko>규칙 기반</div>
+    <div class="evo-title" lang-en>Rule-Based</div>
+    <div class="evo-desc" lang-ko>사람이 모든 규칙을 직접 작성. if-else 분기로 동작</div>
+    <div class="evo-desc" lang-en>Humans write all rules. Operates via if-else branches</div>
+  </div>
+  <div class="evo-card e2">
+    <div class="evo-era">2010s–</div>
+    <div class="evo-title" lang-ko>머신러닝</div>
+    <div class="evo-title" lang-en>Machine Learning</div>
+    <div class="evo-desc" lang-ko>데이터에서 패턴을 학습. 규칙을 직접 쓰지 않아도 됨</div>
+    <div class="evo-desc" lang-en>Learns patterns from data. No manual rules needed</div>
+  </div>
+  <div class="evo-card e3">
+    <div class="evo-era">2022–</div>
+    <div class="evo-title">LLM</div>
+    <div class="evo-desc" lang-ko>자연어를 이해하고 생성. 범용적이지만 수동적</div>
+    <div class="evo-desc" lang-en>Understands and generates language. Versatile but passive</div>
+  </div>
+  <div class="evo-card e4">
+    <div class="evo-era">2024–</div>
+    <div class="evo-title">Agentic AI</div>
+    <div class="evo-desc" lang-ko>스스로 계획하고 도구를 쓰고 결과를 검증하는 <strong>자율 루프</strong></div>
+    <div class="evo-desc" lang-en><strong>Autonomous loops</strong> that plan, use tools, and verify results</div>
+  </div>
+</div>
+
+<div class="callout info">
+  <span class="icon">&#128161;</span>
+  <p lang-ko><strong>핵심 차이:</strong> LLM은 "질문하면 답한다." Agentic AI는 "목표를 주면 스스로 해결한다." 수동적 응답에서 능동적 행동으로의 전환이 핵심이다.</p>
+  <p lang-en><strong>Key difference:</strong> LLMs "answer when asked." Agentic AI "solves when given a goal." The shift from passive response to proactive action is the core change.</p>
+</div>
+
+<!-- ══ 2. Agentic AI란? ══════════════════════════════════ -->
+<h2 lang-ko>2. Agentic AI란?</h2>
+<h2 lang-en>2. What is Agentic AI?</h2>
+
+<p lang-ko>Agentic AI는 LLM에 <strong>자율성(autonomy)</strong>을 부여한 시스템이다. 단순한 질의응답이 아니라, 목표를 받으면 스스로 계획을 세우고, 도구를 사용하고, 결과를 평가하고, 필요하면 수정하는 <strong>완전한 루프</strong>를 수행한다.</p>
+<p lang-en>Agentic AI adds <strong>autonomy</strong> to LLMs. Instead of simple Q&A, it receives a goal and autonomously plans, uses tools, evaluates results, and iterates &mdash; a <strong>complete loop</strong>.</p>
+
+<div class="compare">
+  <div class="compare-card old">
+    <h4 lang-ko>기존 LLM</h4>
+    <h4 lang-en>Traditional LLM</h4>
+    <ul>
+      <li lang-ko>사람이 프롬프트를 작성</li>
+      <li lang-en>Human writes the prompt</li>
+      <li lang-ko>LLM이 한 번에 응답</li>
+      <li lang-en>LLM responds in one shot</li>
+      <li lang-ko>결과 검증은 사람 몫</li>
+      <li lang-en>Human verifies the result</li>
+      <li lang-ko>틀리면 다시 프롬프트 수정</li>
+      <li lang-en>If wrong, revise and re-prompt</li>
+      <li lang-ko>외부 도구 사용 불가</li>
+      <li lang-en>Cannot use external tools</li>
+    </ul>
+  </div>
+  <div class="compare-card new">
+    <h4 lang-ko>Agentic AI</h4>
+    <h4 lang-en>Agentic AI</h4>
+    <ul>
+      <li lang-ko>사람은 <strong>목표</strong>만 제시</li>
+      <li lang-en>Human provides the <strong>goal</strong> only</li>
+      <li lang-ko>에이전트가 계획 &rarr; 실행 &rarr; 검증</li>
+      <li lang-en>Agent plans &rarr; executes &rarr; verifies</li>
+      <li lang-ko>자동으로 결과 평가 후 수정</li>
+      <li lang-en>Auto-evaluates and corrects</li>
+      <li lang-ko>실패 시 다른 접근법 시도</li>
+      <li lang-en>Tries alternative approaches on failure</li>
+      <li lang-ko>파일, DB, API, 브라우저 등 도구 활용</li>
+      <li lang-en>Uses files, DB, APIs, browsers as tools</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══ 3. 네 가지 핵심 원리 ══════════════════════════════ -->
+<h2 lang-ko>3. Agentic AI의 네 가지 원리</h2>
+<h2 lang-en>3. Four Principles of Agentic AI</h2>
+
+<p lang-ko>Agentic AI를 구성하는 네 가지 핵심 능력이 있다. 이 중 하나라도 빠지면 진정한 "에이전트"라 부르기 어렵다.</p>
+<p lang-en>Four core capabilities define Agentic AI. Missing any one of them means it's not a true "agent."</p>
+
+<div class="prin-grid">
+  <div class="prin-card" style="border-color: var(--purple);">
+    <div class="prin-icon">&#127919;</div>
+    <div class="prin-title" lang-ko>계획 (Planning)</div>
+    <div class="prin-title" lang-en>Planning</div>
+    <div class="prin-desc" lang-ko>목표를 하위 작업으로 분해하고 실행 순서를 결정한다. "암호화 구현" &rarr; "라이브러리 선택 &rarr; 키 관리 설계 &rarr; 코드 작성 &rarr; 테스트"</div>
+    <div class="prin-desc" lang-en>Decomposes goals into subtasks and determines execution order. "Implement encryption" &rarr; "Choose library &rarr; Design key management &rarr; Write code &rarr; Test"</div>
+  </div>
+  <div class="prin-card" style="border-color: var(--teal);">
+    <div class="prin-icon">&#128295;</div>
+    <div class="prin-title" lang-ko>도구 사용 (Tool Use)</div>
+    <div class="prin-title" lang-en>Tool Use</div>
+    <div class="prin-desc" lang-ko>파일 읽기/쓰기, 코드 실행, API 호출, 웹 검색 등 외부 도구를 직접 사용한다. MCP 프로토콜로 500개 이상의 도구에 연결 가능.</div>
+    <div class="prin-desc" lang-en>Directly uses external tools: file I/O, code execution, API calls, web search. MCP protocol enables connection to 500+ tools.</div>
+  </div>
+  <div class="prin-card" style="border-color: var(--amber);">
+    <div class="prin-icon">&#128260;</div>
+    <div class="prin-title" lang-ko>자기 검증 (Self-Verification)</div>
+    <div class="prin-title" lang-en>Self-Verification</div>
+    <div class="prin-desc" lang-ko>자신의 출력을 스스로 평가하고, 문제가 있으면 수정한다. 테스트 실행, 코드 린트, 결과 비교 등을 자동으로 수행.</div>
+    <div class="prin-desc" lang-en>Evaluates its own output and corrects issues. Automatically runs tests, linting, and result comparison.</div>
+  </div>
+  <div class="prin-card" style="border-color: var(--blue);">
+    <div class="prin-icon">&#129504;</div>
+    <div class="prin-title" lang-ko>기억 (Memory)</div>
+    <div class="prin-title" lang-en>Memory</div>
+    <div class="prin-desc" lang-ko>세션 간 맥락을 유지한다. 이전에 무엇을 했고, 무엇이 실패했는지 기억해 같은 실수를 반복하지 않는다.</div>
+    <div class="prin-desc" lang-en>Maintains context across sessions. Remembers what was done, what failed, and avoids repeating the same mistakes.</div>
+  </div>
+</div>
+
+<!-- ══ 4. 에이전트 동작 루프 ═════════════════════════════ -->
+<h2 lang-ko>4. 에이전트는 어떻게 동작하는가?</h2>
+<h2 lang-en>4. How Does an Agent Work?</h2>
+
+<p lang-ko>대부분의 에이전트는 <strong>Observe &rarr; Plan &rarr; Act &rarr; Reflect</strong> 루프를 반복한다. 이 루프가 한 번 돌 때마다 목표에 한 걸음씩 가까워진다.</p>
+<p lang-en>Most agents repeat an <strong>Observe &rarr; Plan &rarr; Act &rarr; Reflect</strong> loop. Each iteration moves one step closer to the goal.</p>
+
+<div class="flow-steps">
+  <div class="flow-step observe">
+    <div class="step-label" lang-ko>관찰</div>
+    <div class="step-label" lang-en>Observe</div>
+    <div class="step-title">Observe</div>
+    <div class="step-desc" lang-ko>현재 상태 파악<br>파일, 에러, 환경 확인</div>
+    <div class="step-desc" lang-en>Assess current state<br>Check files, errors, env</div>
+  </div>
+  <div class="flow-step plan">
+    <div class="step-label" lang-ko>계획</div>
+    <div class="step-label" lang-en>Plan</div>
+    <div class="step-title">Plan</div>
+    <div class="step-desc" lang-ko>다음 행동 결정<br>하위 작업 분해</div>
+    <div class="step-desc" lang-en>Decide next action<br>Decompose subtasks</div>
+  </div>
+  <div class="flow-step exec">
+    <div class="step-label" lang-ko>실행</div>
+    <div class="step-label" lang-en>Act</div>
+    <div class="step-title">Act</div>
+    <div class="step-desc" lang-ko>도구 호출, 코드 실행<br>파일 수정, API 호출</div>
+    <div class="step-desc" lang-en>Call tools, execute code<br>Modify files, call APIs</div>
+  </div>
+  <div class="flow-step review">
+    <div class="step-label" lang-ko>성찰</div>
+    <div class="step-label" lang-en>Reflect</div>
+    <div class="step-title">Reflect</div>
+    <div class="step-desc" lang-ko>결과 평가<br>성공? 다음 단계 / 실패? 수정</div>
+    <div class="step-desc" lang-en>Evaluate result<br>Success? Next step / Fail? Revise</div>
+  </div>
+</div>
+
+<div class="callout warn">
+  <span class="icon">&#9888;&#65039;</span>
+  <p lang-ko><strong>무한 루프 방지:</strong> 에이전트에는 항상 최대 반복 횟수, 타임아웃, 비용 한도 같은 <strong>안전장치</strong>가 필요하다. 제한 없는 자율성은 리소스 낭비와 예측 불가능한 행동으로 이어진다.</p>
+  <p lang-en><strong>Preventing infinite loops:</strong> Agents always need <strong>safety guardrails</strong> &mdash; max iterations, timeouts, cost limits. Unconstrained autonomy leads to resource waste and unpredictable behavior.</p>
+</div>
+
+<!-- ══ 5. 멀티 에이전트 ══════════════════════════════════ -->
+<h2 lang-ko>5. 왜 하나가 아닌 여럿인가: 멀티 에이전트</h2>
+<h2 lang-en>5. Why Multiple, Not One: Multi-Agent Systems</h2>
+
+<p lang-ko>하나의 에이전트가 모든 것을 하는 것보다, <strong>역할을 나눈 여러 에이전트가 협력</strong>하는 것이 더 효과적이다. 이유는 세 가지다.</p>
+<p lang-en>Instead of one agent doing everything, <strong>multiple agents with divided roles collaborating</strong> is more effective. Three reasons:</p>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th lang-ko>이유</th><th lang-en>Reason</th>
+    <th lang-ko>단일 에이전트</th><th lang-en>Single Agent</th>
+    <th lang-ko>멀티 에이전트</th><th lang-en>Multi-Agent</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td lang-ko><strong>편향 검증</strong></td><td lang-en><strong>Bias Check</strong></td>
+      <td lang-ko>자기가 쓴 코드를 자기가 리뷰 &mdash; 결함 발견율 낮음</td>
+      <td lang-en>Reviews its own code &mdash; low defect detection</td>
+      <td lang-ko>다른 에이전트가 리뷰 &mdash; 독립적 검증</td>
+      <td lang-en>Different agent reviews &mdash; independent verification</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>비용 효율</strong></td><td lang-en><strong>Cost Efficiency</strong></td>
+      <td lang-ko>모든 작업에 최고급 모델 사용</td>
+      <td lang-en>Uses premium model for all tasks</td>
+      <td lang-ko>단순 작업은 저비용 모델에 위임</td>
+      <td lang-en>Delegates simple tasks to cheaper models</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>전문화</strong></td><td lang-en><strong>Specialization</strong></td>
+      <td lang-ko>하나의 프롬프트로 모든 역할 수행</td>
+      <td lang-en>One prompt for all roles</td>
+      <td lang-ko>각 에이전트가 특화된 프롬프트와 도구 사용</td>
+      <td lang-en>Each agent uses specialized prompts and tools</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<h3 lang-ko>대표 패턴</h3>
+<h3 lang-en>Common Patterns</h3>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th lang-ko>패턴</th><th lang-en>Pattern</th>
+    <th lang-ko>흐름</th><th lang-en>Flow</th>
+    <th lang-ko>적합한 상황</th><th lang-en>Best For</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Plan-Do-Review</strong></td>
+      <td>Planner &rarr; Worker &rarr; Reviewer</td>
+      <td lang-ko>분해 가능한 작업, 코드 작성</td>
+      <td lang-en>Decomposable tasks, code writing</td>
+    </tr>
+    <tr>
+      <td><strong>ReAct</strong></td>
+      <td>Reason &rarr; Act &rarr; Observe &rarr; repeat</td>
+      <td lang-ko>탐색적 작업, 디버깅</td>
+      <td lang-en>Exploratory tasks, debugging</td>
+    </tr>
+    <tr>
+      <td><strong>Supervisor</strong></td>
+      <td lang-ko>감독자가 하위 에이전트에 작업 분배</td>
+      <td lang-en>Supervisor distributes tasks to sub-agents</td>
+      <td lang-ko>대규모 병렬 작업</td>
+      <td lang-en>Large-scale parallel tasks</td>
+    </tr>
+    <tr>
+      <td><strong>Debate</strong></td>
+      <td lang-ko>두 에이전트가 서로 반박하며 결론 도출</td>
+      <td lang-en>Two agents debate and reach conclusion</td>
+      <td lang-ko>의사결정, 분석</td>
+      <td lang-en>Decision-making, analysis</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<!-- ══ 6. 에이전트의 기억 ════════════════════════════════ -->
+<h2 lang-ko>6. 에이전트의 기억 문제</h2>
+<h2 lang-en>6. The Agent Memory Problem</h2>
+
+<p lang-ko>LLM 에이전트의 가장 큰 약점 중 하나는 <strong>세션 간 맥락 소실</strong>이다. 대화가 끝나면 모든 것을 잊는다. 이를 해결하는 구조적 접근이 필요하다.</p>
+<p lang-en>One of the biggest weaknesses of LLM agents is <strong>context loss between sessions</strong>. Everything is forgotten when the conversation ends. Structural approaches are needed.</p>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th lang-ko>기억 유형</th><th lang-en>Memory Type</th>
+    <th lang-ko>범위</th><th lang-en>Scope</th>
+    <th lang-ko>해결 방법</th><th lang-en>Solution</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td lang-ko><strong>단기 기억</strong></td><td lang-en><strong>Short-term</strong></td>
+      <td lang-ko>현재 대화 안</td><td lang-en>Within current conversation</td>
+      <td lang-ko>컨텍스트 윈도우 (자동)</td><td lang-en>Context window (automatic)</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>작업 기억</strong></td><td lang-en><strong>Working</strong></td>
+      <td lang-ko>현재 작업 진행 상태</td><td lang-en>Current task progress</td>
+      <td lang-ko>TODO 리스트, 체크포인트 파일</td><td lang-en>TODO lists, checkpoint files</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>장기 기억</strong></td><td lang-en><strong>Long-term</strong></td>
+      <td lang-ko>세션 간 지속</td><td lang-en>Persists across sessions</td>
+      <td lang-ko>핸드오프 파일, 지식 베이스, 벡터 DB</td><td lang-en>Handoff files, knowledge base, vector DB</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>실패 기억</strong></td><td lang-en><strong>Failure</strong></td>
+      <td lang-ko>같은 실수 반복 방지</td><td lang-en>Prevent repeating mistakes</td>
+      <td lang-ko>"하지 말 것" 목록, lessons learned</td>
+      <td lang-en>"Do NOT retry" lists, lessons learned</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<div class="callout info">
+  <span class="icon">&#128161;</span>
+  <p lang-ko><strong>실패 기억</strong>이 가장 중요하다. 에이전트는 같은 실수를 반복하는 경향이 있다. "이 방법은 실패했고, 이유는 X" 같은 기록이 없으면 매 세션마다 같은 삽질을 반복한다.</p>
+  <p lang-en><strong>Failure memory</strong> is the most important. Agents tend to repeat the same mistakes. Without records like "this approach failed because X," they waste each session retrying the same dead ends.</p>
+</div>
+
+<!-- ══ 7. 실제 적용 분야 ═════════════════════════════════ -->
+<h2 lang-ko>7. 실제 적용 분야</h2>
+<h2 lang-en>7. Real-World Applications</h2>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th lang-ko>분야</th><th lang-en>Domain</th>
+    <th lang-ko>에이전트가 하는 일</th><th lang-en>What the Agent Does</th>
+    <th lang-ko>예시 도구</th><th lang-en>Example Tools</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td lang-ko><strong>소프트웨어 개발</strong></td><td lang-en><strong>Software Development</strong></td>
+      <td lang-ko>코드 작성, 테스트, 디버깅, PR 리뷰를 자율적으로 수행</td>
+      <td lang-en>Autonomously writes code, tests, debugs, reviews PRs</td>
+      <td>Claude Code, Cursor, Copilot</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>자율 디버깅</strong></td><td lang-en><strong>Autonomous Debugging</strong></td>
+      <td lang-ko>에러 감지 &rarr; 원인 분석 &rarr; 코드 수정 &rarr; 배포 &rarr; 검증을 성공까지 반복</td>
+      <td lang-en>Detect error &rarr; analyze root cause &rarr; patch &rarr; deploy &rarr; verify, loops until success</td>
+      <td><code>/autodebug</code>, <code>/inspect</code></td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>지속적 개선</strong></td><td lang-en><strong>Continuous Improvement</strong></td>
+      <td lang-ko>프로젝트를 스캔해 불필요 코드·중복·성능 병목을 찾고, 개선 Blueprint를 자동 생성</td>
+      <td lang-en>Scans projects for dead weight, redundancy, and perf bottlenecks; auto-generates improvement Blueprints</td>
+      <td><code>/ci</code>, <code>/harness</code></td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>데이터 분석</strong></td><td lang-en><strong>Data Analysis</strong></td>
+      <td lang-ko>데이터 탐색 &rarr; 시각화 &rarr; 인사이트 도출을 반복</td>
+      <td lang-en>Iterates: data exploration &rarr; visualization &rarr; insight extraction</td>
+      <td>MATLAB, Jupyter, Python</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>DevOps</strong></td><td lang-en><strong>DevOps</strong></td>
+      <td lang-ko>배포, 모니터링, 인시던트 대응을 자동화</td>
+      <td lang-en>Automates deployment, monitoring, incident response</td>
+      <td>Docker, AWS, Vercel</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>연구</strong></td><td lang-en><strong>Research</strong></td>
+      <td lang-ko>논문 검색, 요약, 가설 검증 실험을 자율적으로 실행</td>
+      <td lang-en>Autonomously searches papers, summarizes, runs hypothesis tests</td>
+      <td>Web Search, arXiv, Python</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>업무 자동화</strong></td><td lang-en><strong>Business Automation</strong></td>
+      <td lang-ko>이메일 분류, 일정 관리, CRM 업데이트를 에이전트가 처리</td>
+      <td lang-en>Agent handles email triage, scheduling, CRM updates</td>
+      <td>Gmail, Calendar, Notion, Slack</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<h3 lang-ko>실전 에이전트 루프 예시: /autodebug</h3>
+<h3 lang-en>Real Agent Loop Example: /autodebug</h3>
+
+<div class="flow-steps">
+  <div class="flow-step observe">
+    <div class="step-label">Step 1</div>
+    <div class="step-title">Audit</div>
+    <div class="step-desc" lang-ko>13카테고리로 버그 탐지<br><span class="badge local">Tier 2/3</span></div>
+    <div class="step-desc" lang-en>Detect bugs via 13 categories<br><span class="badge local">Tier 2/3</span></div>
+  </div>
+  <div class="flow-step exec">
+    <div class="step-label">Step 2</div>
+    <div class="step-title">Fix</div>
+    <div class="step-desc" lang-ko>CRITICAL 코드 수정<br><span class="badge cloud">Claude</span></div>
+    <div class="step-desc" lang-en>Patch CRITICAL code<br><span class="badge cloud">Claude</span></div>
+  </div>
+  <div class="flow-step plan">
+    <div class="step-label">Step 3</div>
+    <div class="step-title">Deploy</div>
+    <div class="step-desc" lang-ko>변경 배포 + 빌드 확인</div>
+    <div class="step-desc" lang-en>Push changes + verify build</div>
+  </div>
+  <div class="flow-step review">
+    <div class="step-label">Step 4</div>
+    <div class="step-title">Verify</div>
+    <div class="step-desc" lang-ko>CRITICAL=0? 완료 : Step 1<br><span lang-ko>최대 5라운드</span></div>
+    <div class="step-desc" lang-en>CRITICAL=0? Done : Step 1<br>Max 5 rounds</div>
+  </div>
+</div>
+
+<h3 lang-ko>실전 에이전트 루프 예시: /ci (Continuous Improvement)</h3>
+<h3 lang-en>Real Agent Loop Example: /ci (Continuous Improvement)</h3>
+
+<div class="flow-steps">
+  <div class="flow-step observe">
+    <div class="step-label">Step 1</div>
+    <div class="step-title">Scan</div>
+    <div class="step-desc" lang-ko>프로젝트 구조·의존성 분석<br><span class="badge local">Tier 3</span></div>
+    <div class="step-desc" lang-en>Analyze structure + deps<br><span class="badge local">Tier 3</span></div>
+  </div>
+  <div class="flow-step plan">
+    <div class="step-label">Step 2</div>
+    <div class="step-title">Assess</div>
+    <div class="step-desc" lang-ko>7가지 기준으로 개선점 평가<br><span class="badge local">Tier 2</span></div>
+    <div class="step-desc" lang-en>Evaluate against 7 criteria<br><span class="badge local">Tier 2</span></div>
+  </div>
+  <div class="flow-step exec">
+    <div class="step-label">Step 3</div>
+    <div class="step-title">Report</div>
+    <div class="step-desc" lang-ko>영향도 순 랭킹 + 요약<br><span class="badge cloud">Claude</span></div>
+    <div class="step-desc" lang-en>Rank by impact + summarize<br><span class="badge cloud">Claude</span></div>
+  </div>
+  <div class="flow-step review">
+    <div class="step-label">Step 4</div>
+    <div class="step-title">Blueprint</div>
+    <div class="step-desc" lang-ko>/harness로 실행 계획 생성<br><span lang-ko>나중에 적용</span></div>
+    <div class="step-desc" lang-en>Generate plan via /harness<br>Apply later</div>
+  </div>
+</div>
+
+<div class="callout ok">
+  <span class="icon">&#9989;</span>
+  <p lang-ko><strong>핵심:</strong> 두 에이전트 모두 <strong>3-Tier 라우팅</strong>으로 비용을 최소화한다. 무거운 분석은 Gemini/Groq에 위임, Claude는 판단과 코드 수정만 담당. <a href="light_harness_guide.html">AI 개발 시스템 가이드</a>에서 상세 구조 확인.</p>
+  <p lang-en><strong>Key:</strong> Both agents minimize cost via <strong>3-Tier routing</strong>. Heavy analysis delegated to Gemini/Groq; Claude handles judgment and code changes only. See <a href="light_harness_guide.html">AI Dev System Guide</a> for details.</p>
+</div>
+
+<!-- ══ 8. 다음 단계 ══════════════════════════════════════ -->
+<h2 lang-ko>8. 다음 단계</h2>
+<h2 lang-en>8. Next Steps</h2>
+
+<p lang-ko>Agentic AI를 실제로 구축하려면 두 가지를 더 이해해야 한다:</p>
+<p lang-en>To actually build Agentic AI, you need to understand two more things:</p>
+
+<div class="compare">
+  <div class="compare-card" style="background: var(--teal-l);">
+    <h4 lang-ko>MCP: 도구 연결</h4>
+    <h4 lang-en>MCP: Tool Connectivity</h4>
+    <ul>
+      <li lang-ko>에이전트가 외부 시스템을 호출하는 표준 프로토콜</li>
+      <li lang-en>Standard protocol for agents to call external systems</li>
+      <li lang-ko>하나의 인터페이스로 500+ 도구 연결</li>
+      <li lang-en>One interface to connect 500+ tools</li>
+      <li lang-ko>Claude Code에서 로컬 도구 바로 사용</li>
+      <li lang-en>Use local tools directly from Claude Code</li>
+      <li style="border-bottom:none"><a href="mcp_ecosystem.html" style="color:var(--teal);font-weight:700" lang-ko>MCP 생태계 가이드 &rarr;</a><a href="mcp_ecosystem.html" style="color:var(--teal);font-weight:700" lang-en>MCP Ecosystem Guide &rarr;</a></li>
+    </ul>
+  </div>
+  <div class="compare-card" style="background: var(--purple-l);">
+    <h4 lang-ko>LightHarness: 실전 구현</h4>
+    <h4 lang-en>LightHarness: Working Implementation</h4>
+    <ul>
+      <li lang-ko>이 가이드의 개념을 실제로 구현한 오케스트레이터</li>
+      <li lang-en>Orchestrator implementing concepts from this guide</li>
+      <li lang-ko>4-Tier 라우팅, Blueprint 설계, 품질 게이트</li>
+      <li lang-en>4-Tier routing, Blueprint design, quality gates</li>
+      <li lang-ko>Claude Pro 하나로 동작하는 에이전트 팀</li>
+      <li lang-en>Agent team running on a single Claude Pro</li>
+      <li style="border-bottom:none"><a href="light_harness_guide.html" style="color:var(--purple);font-weight:700" lang-ko>AI 개발 시스템 가이드 &rarr;</a><a href="light_harness_guide.html" style="color:var(--purple);font-weight:700" lang-en>AI Dev System Guide &rarr;</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="doc-footer">
+  <span><a href="mcp_ecosystem.html" lang-ko>MCP 생태계 &rarr;</a><a href="mcp_ecosystem.html" lang-en>MCP Ecosystem &rarr;</a> &middot; <a href="light_harness_guide.html" lang-ko>AI 개발 시스템 &rarr;</a><a href="light_harness_guide.html" lang-en>AI Dev System &rarr;</a></span>
+  <span>Agentic AI Guide &middot; 2026-04-16</span>
+</div>
+
+</div>
+
+<script>
+function setLang(lang) {
+  document.body.className = 'lang-' + lang;
+  document.getElementById('btn-ko').classList.toggle('active', lang === 'ko');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  try { localStorage.setItem('guide-lang', lang); } catch {}
+}
+(function() {
+  try { var s = localStorage.getItem('guide-lang'); if (s) setLang(s); } catch {}
+})();
+window.addEventListener('beforeprint', () => { document.fonts.ready; });
+</script>
+</body>
+</html>

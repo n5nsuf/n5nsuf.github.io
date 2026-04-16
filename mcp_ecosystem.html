@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP Ecosystem — Connecting AI Agents to Everything</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --purple:   #534AB7; --purple-l: #EEEDFE; --purple-d: #3C3489;
+    --teal:     #0F6E56; --teal-l:   #E1F5EE;
+    --amber:    #BA7517; --amber-l:  #FAEEDA;
+    --blue:     #185FA5; --blue-l:   #E6F1FB;
+    --coral:    #993C1D; --coral-l:  #FAECE7;
+    --red:      #A32D2D; --red-l:    #FCEBEB;
+    --gray:     #444441; --gray-l:   #F1EFE8;
+    --border:   #D3D1C7;
+    --text:     #2C2C2A;
+    --muted:    #5F5E5A;
+    --bg:       #FAFAF8;
+    --slate:    #64748B; --slate-l:  #F1F5F9;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text);
+    background: var(--bg);
+  }
+
+  .page { max-width: 860px; margin: 0 auto; padding: 48px 56px; background: white; }
+
+  .doc-header { border-bottom: 2px solid var(--purple); padding-bottom: 24px; margin-bottom: 36px; }
+  .doc-header h1 { font-size: 28px; font-weight: 700; color: var(--purple); letter-spacing: -0.3px; line-height: 1.3; }
+  .doc-header .subtitle { font-size: 15px; color: var(--muted); margin-top: 6px; }
+  .doc-header .meta { font-size: 12px; color: var(--muted); margin-top: 10px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .meta-tag { background: var(--purple-l); color: var(--purple-d); padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+
+  h2 { font-size: 17px; font-weight: 700; color: var(--purple); padding: 6px 0 6px 12px; border-left: 3px solid var(--purple); margin-bottom: 16px; margin-top: 42px; }
+  h3 { font-size: 14px; font-weight: 700; color: var(--gray); margin: 20px 0 10px; }
+  p { margin-bottom: 12px; color: var(--text); font-size: 13.5px; }
+
+  table { width: 100%; border-collapse: collapse; margin-bottom: 18px; font-size: 13px; }
+  thead tr { background: var(--purple); }
+  thead th { color: white; font-weight: 600; padding: 8px 12px; text-align: left; font-size: 12px; }
+  tbody tr:nth-child(even) { background: var(--gray-l); }
+  tbody tr:hover { background: var(--purple-l); }
+  tbody td { padding: 7px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  td code { background: var(--gray-l); padding: 1px 5px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--purple-d); }
+
+  pre { background: #1E1E2E; color: #CDD6F4; border-radius: 8px; padding: 16px 18px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.65; overflow-x: auto; margin-bottom: 16px; }
+  pre .cm { color: #6C7086; }
+  pre .kw { color: #CBA6F7; }
+  pre .st { color: #A6E3A1; }
+
+  .callout { display: flex; gap: 10px; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; }
+  .callout.warn { background: var(--amber-l); border-left: 3px solid var(--amber); }
+  .callout.info { background: var(--blue-l); border-left: 3px solid var(--blue); }
+  .callout.ok { background: var(--teal-l); border-left: 3px solid var(--teal); }
+  .callout .icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .callout p { margin: 0; color: var(--gray); }
+
+  .diagram-wrap { margin: 18px 0 24px; border: 1px solid var(--border); border-radius: 10px; padding: 24px 16px 16px; background: white; overflow: hidden; }
+  .diagram-caption { font-size: 11.5px; color: var(--muted); text-align: center; margin-top: 12px; font-style: italic; }
+  svg text { font-family: 'Noto Sans KR', sans-serif !important; }
+
+  .badge { display: inline-block; padding: 1px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge.local { background: var(--gray-l); color: var(--gray); }
+  .badge.cloud { background: var(--purple-l); color: var(--purple-d); }
+  .badge.ok { background: var(--teal-l); color: var(--teal); }
+
+  /* ── Ecosystem cards ── */
+  .eco-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .eco-card { border-radius: 8px; padding: 14px 12px; border: 1px solid var(--border); text-align: center; }
+  .eco-card .eco-icon { font-size: 24px; margin-bottom: 4px; }
+  .eco-card .eco-title { font-size: 12.5px; font-weight: 700; margin-bottom: 3px; }
+  .eco-card .eco-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
+  .eco-card.design { background: var(--purple-l); }
+  .eco-card.data { background: var(--blue-l); }
+  .eco-card.dev { background: var(--teal-l); }
+  .eco-card.infra { background: var(--amber-l); }
+  .eco-card.compute { background: var(--coral-l); }
+  .eco-card.prod { background: var(--slate-l); }
+
+  /* ── Tool list ── */
+  .tool-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+  .tool-item { display: flex; gap: 8px; align-items: flex-start; background: var(--gray-l); border-radius: 7px; padding: 8px 12px; }
+  .tool-num { font-size: 11px; font-weight: 700; color: var(--purple); min-width: 18px; }
+  .tool-content .tool-name { font-size: 12.5px; font-weight: 700; }
+  .tool-content .tool-ex { font-size: 11px; color: var(--muted); }
+
+  /* ── Nav & Footer ── */
+  .doc-nav { display: flex; gap: 16px; margin-bottom: 28px; font-size: 12.5px; flex-wrap: wrap; }
+  .doc-nav a { color: var(--purple); text-decoration: none; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); transition: all 0.15s; }
+  .doc-nav a:hover { background: var(--purple-l); border-color: var(--purple); }
+  .doc-nav a.current { background: var(--purple); color: white; border-color: var(--purple); pointer-events: none; }
+
+  .doc-footer { border-top: 1px solid var(--border); margin-top: 48px; padding-top: 16px; font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; }
+  .doc-footer a { color: var(--purple); text-decoration: none; }
+  .doc-footer a:hover { text-decoration: underline; }
+
+  /* ── Language ── */
+  .lang-bar { position: sticky; top: 0; z-index: 100; background: rgba(250,250,248,0.96); backdrop-filter: blur(6px); border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; justify-content: flex-end; align-items: center; gap: 6px; }
+  .lang-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 14px; border-radius: 20px; border: 1px solid var(--border); background: white; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+  .lang-btn.active { background: var(--purple); color: white; border-color: var(--purple); }
+  [lang-ko], [lang-en] { display: none; }
+  body.lang-ko [lang-ko] { display: revert; }
+  body.lang-en [lang-en] { display: revert; }
+
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  @media (max-width: 640px) {
+    .page { padding: 20px 16px 48px; }
+    .doc-header h1 { font-size: 21px; }
+    h2 { font-size: 15px; margin-top: 32px; }
+    .eco-grid { grid-template-columns: 1fr 1fr; }
+    .tool-list { grid-template-columns: 1fr; }
+    .diagram-wrap { overflow-x: auto; }
+    .diagram-wrap svg { min-width: 600px; }
+    .doc-footer { flex-direction: column; gap: 6px; }
+    .doc-nav { gap: 8px; }
+    pre { font-size: 11px; padding: 12px; }
+  }
+
+  @media print {
+    body { background: white; }
+    .page { padding: 20px 28px; max-width: 100%; }
+    .lang-bar { display: none; }
+    h2 { page-break-after: avoid; }
+    table, .diagram-wrap, .eco-grid { page-break-inside: avoid; }
+    [lang-ko], [lang-en] { display: revert !important; }
+  }
+</style>
+</head>
+<body class="lang-ko">
+
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('ko')" id="btn-ko">한국어</button>
+  <button class="lang-btn" onclick="setLang('en')" id="btn-en">English</button>
+</div>
+
+<div class="page">
+
+<!-- ══ Header ══════════════════════════════════════════════ -->
+<div class="doc-header">
+  <h1 lang-ko>MCP: AI 에이전트를 모든 것에 연결하기</h1>
+  <h1 lang-en>MCP: Connecting AI Agents to Everything</h1>
+  <div class="subtitle" lang-ko>Model Context Protocol 개념 &middot; 생태계 &middot; Claude Code 로컬 연결 &middot; MATLAB 사례</div>
+  <div class="subtitle" lang-en>Model Context Protocol Concepts &middot; Ecosystem &middot; Claude Code Local Integration &middot; MATLAB Case Study</div>
+  <div class="meta">
+    <span class="meta-tag">2026-04-15</span>
+    <span class="meta-tag">MCP</span>
+    <span class="meta-tag" lang-ko>MATLAB 사례 포함</span>
+    <span class="meta-tag" lang-en>With MATLAB Case Study</span>
+  </div>
+</div>
+
+<div class="doc-nav">
+  <a href="agentic_ai_intro.html" lang-ko>Agentic AI 개념</a>
+  <a href="agentic_ai_intro.html" lang-en>Agentic AI Concepts</a>
+  <a href="mcp_ecosystem.html" class="current" lang-ko>MCP 생태계 (현재)</a>
+  <a href="mcp_ecosystem.html" class="current" lang-en>MCP Ecosystem (current)</a>
+  <a href="light_harness_guide.html" lang-ko>AI 개발 시스템</a>
+  <a href="light_harness_guide.html" lang-en>AI Dev System</a>
+</div>
+
+<!-- ══ 1. What is MCP? ═══════════════════════════════════ -->
+<h2 lang-ko>1. MCP란?</h2>
+<h2 lang-en>1. What is MCP?</h2>
+
+<p lang-ko>Model Context Protocol(MCP)은 AI 에이전트와 외부 시스템을 연결하는 <strong>표준 인터페이스</strong>다. USB-C가 다양한 기기를 하나의 포트로 연결하듯, MCP는 AI 에이전트가 파일시스템, 데이터베이스, API, 외부 도구를 <strong>동일한 방식으로</strong> 호출할 수 있게 한다.</p>
+<p lang-en>Model Context Protocol (MCP) is a <strong>standard interface</strong> connecting AI agents to external systems. Like USB-C connects diverse devices through one port, MCP lets AI agents call file systems, databases, APIs, and external tools <strong>in a uniform way</strong>.</p>
+
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 780 220" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <!-- AI Agent (Client) -->
+  <rect x="30" y="50" width="200" height="120" rx="12" fill="#EEEDFE" stroke="#AFA9EC" stroke-width="1"/>
+  <text x="130" y="78" text-anchor="middle" font-size="12" fill="#534AB7" font-weight="700">AI Agent (MCP Client)</text>
+  <text x="130" y="100" text-anchor="middle" font-size="10" fill="#3C3489">Claude Code</text>
+  <text x="130" y="116" text-anchor="middle" font-size="10" fill="#3C3489">VS Code Copilot</text>
+  <text x="130" y="132" text-anchor="middle" font-size="10" fill="#3C3489">Gemini CLI</text>
+  <text x="130" y="148" text-anchor="middle" font-size="10" fill="#3C3489">Cursor / Windsurf</text>
+
+  <!-- MCP Protocol -->
+  <line x1="230" y1="110" x2="320" y2="110" stroke="#534AB7" stroke-width="2" marker-end="url(#arr)"/>
+  <rect x="250" y="85" width="60" height="22" rx="11" fill="#534AB7"/>
+  <text x="280" y="100" text-anchor="middle" font-size="9" fill="white" font-weight="600">MCP</text>
+  <text x="280" y="135" text-anchor="middle" font-size="9" fill="#888780">JSON-RPC</text>
+  <text x="280" y="148" text-anchor="middle" font-size="9" fill="#888780">stdio / SSE</text>
+
+  <!-- MCP Servers -->
+  <rect x="322" y="15" width="440" height="190" rx="12" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1"/>
+  <text x="542" y="38" text-anchor="middle" font-size="11" fill="#444441" font-weight="700" lang-ko>MCP Servers (도구 제공자)</text>
+  <text x="542" y="38" text-anchor="middle" font-size="11" fill="#444441" font-weight="700" lang-en>MCP Servers (Tool Providers)</text>
+
+  <rect x="340" y="50" width="130" height="32" rx="6" fill="#E6F1FB" stroke="#85B7EB" stroke-width="1"/>
+  <text x="405" y="70" text-anchor="middle" font-size="10" fill="#185FA5" font-weight="600">Filesystem</text>
+
+  <rect x="340" y="90" width="130" height="32" rx="6" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+  <text x="405" y="110" text-anchor="middle" font-size="10" fill="#0F6E56" font-weight="600">Database</text>
+
+  <rect x="340" y="130" width="130" height="32" rx="6" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
+  <text x="405" y="150" text-anchor="middle" font-size="10" fill="#BA7517" font-weight="600">MATLAB</text>
+
+  <rect x="340" y="170" width="130" height="32" rx="6" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
+  <text x="405" y="190" text-anchor="middle" font-size="10" fill="#993C1D" font-weight="600">Git / GitHub</text>
+
+  <rect x="490" y="50" width="130" height="32" rx="6" fill="#EEEDFE" stroke="#AFA9EC" stroke-width="1"/>
+  <text x="555" y="70" text-anchor="middle" font-size="10" fill="#534AB7" font-weight="600">Figma</text>
+
+  <rect x="490" y="90" width="130" height="32" rx="6" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1"/>
+  <text x="555" y="110" text-anchor="middle" font-size="10" fill="#64748B" font-weight="600">Notion / Slack</text>
+
+  <rect x="490" y="130" width="130" height="32" rx="6" fill="#FCEBEB" stroke="#D97D7D" stroke-width="1"/>
+  <text x="555" y="150" text-anchor="middle" font-size="10" fill="#A32D2D" font-weight="600">Docker</text>
+
+  <rect x="490" y="170" width="130" height="32" rx="6" fill="#E6F1FB" stroke="#85B7EB" stroke-width="1"/>
+  <text x="555" y="190" text-anchor="middle" font-size="10" fill="#185FA5" font-weight="600">Web Search</text>
+
+  <rect x="640" y="50" width="110" height="152" rx="6" fill="white" stroke="#D3D1C7" stroke-width="1" stroke-dasharray="4 2"/>
+  <text x="695" y="75" text-anchor="middle" font-size="10" fill="#888780" font-weight="600">+ 500+</text>
+  <text x="695" y="95" text-anchor="middle" font-size="9" fill="#888780">Gmail</text>
+  <text x="695" y="111" text-anchor="middle" font-size="9" fill="#888780">Calendar</text>
+  <text x="695" y="127" text-anchor="middle" font-size="9" fill="#888780">Salesforce</text>
+  <text x="695" y="143" text-anchor="middle" font-size="9" fill="#888780">Amplitude</text>
+  <text x="695" y="159" text-anchor="middle" font-size="9" fill="#888780">Stripe</text>
+  <text x="695" y="175" text-anchor="middle" font-size="9" fill="#888780">Home Assistant</text>
+  <text x="695" y="191" text-anchor="middle" font-size="9" fill="#888780">...</text>
+</svg>
+  <div class="diagram-caption" lang-ko>MCP: 하나의 프로토콜로 모든 외부 도구에 연결</div>
+  <div class="diagram-caption" lang-en>MCP: One protocol to connect all external tools</div>
+</div>
+
+<h3 lang-ko>MCP의 세 가지 기능</h3>
+<h3 lang-en>Three MCP Capabilities</h3>
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th lang-ko>기능</th><th lang-en>Capability</th>
+    <th lang-ko>역할</th><th lang-en>Role</th>
+    <th lang-ko>예시</th><th lang-en>Example</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Tools</strong></td>
+      <td lang-ko>에이전트가 <strong>동작을 실행</strong>. 부수 효과 가능</td>
+      <td lang-en>Agent <strong>performs actions</strong>. May have side effects</td>
+      <td lang-ko>코드 실행, 파일 쓰기, API 호출</td>
+      <td lang-en>Execute code, write files, call APIs</td>
+    </tr>
+    <tr>
+      <td><strong>Resources</strong></td>
+      <td lang-ko>에이전트가 <strong>데이터를 읽기</strong>. 읽기 전용</td>
+      <td lang-en>Agent <strong>reads data</strong>. Read-only</td>
+      <td lang-ko>코딩 가이드라인, DB 스키마, 설정 파일</td>
+      <td lang-en>Coding guidelines, DB schema, config files</td>
+    </tr>
+    <tr>
+      <td><strong>Prompts</strong></td>
+      <td lang-ko>서버가 제공하는 <strong>재사용 가능한 템플릿</strong></td>
+      <td lang-en>Server-provided <strong>reusable templates</strong></td>
+      <td lang-ko>코드 리뷰 템플릿, 분석 워크플로우</td>
+      <td lang-en>Code review template, analysis workflow</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<div class="callout info">
+  <span class="icon">&#128161;</span>
+  <p lang-ko>MCP 이전: 각 도구마다 별도 API 클라이언트를 구현해야 했다. MCP 이후: 하나의 프로토콜을 구현하면 500개 이상의 도구에 즉시 연결. 에이전트 개발자는 도구 연동이 아닌 <strong>로직에 집중</strong>할 수 있다.</p>
+  <p lang-en>Before MCP: each tool required a separate API client. After MCP: implement one protocol, instantly connect to 500+ tools. Agent developers focus on <strong>logic, not integrations</strong>.</p>
+</div>
+
+<!-- ══ 2. MCP Architecture ═══════════════════════════════ -->
+<h2 lang-ko>2. 아키텍처: Client &harr; Server</h2>
+<h2 lang-en>2. Architecture: Client &harr; Server</h2>
+
+<p lang-ko>MCP는 <strong>Client-Server</strong> 모델이다. AI 에이전트(Client)가 MCP 서버에 JSON-RPC로 요청하고, 서버가 도구를 실행한 뒤 결과를 반환한다.</p>
+<p lang-en>MCP uses a <strong>Client-Server</strong> model. The AI agent (Client) sends JSON-RPC requests to MCP servers, which execute tools and return results.</p>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th lang-ko>구성 요소</th><th lang-en>Component</th>
+    <th lang-ko>역할</th><th lang-en>Role</th>
+    <th lang-ko>예시</th><th lang-en>Examples</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>MCP Client</strong></td>
+      <td lang-ko>사용자가 쓰는 AI 앱. 서버에 요청을 보낸다</td>
+      <td lang-en>AI app the user interacts with. Sends requests to servers</td>
+      <td>Claude Code, VS Code, Cursor, Gemini CLI</td>
+    </tr>
+    <tr>
+      <td><strong>MCP Server</strong></td>
+      <td lang-ko>외부 시스템을 MCP 프로토콜로 감싸는 래퍼</td>
+      <td lang-en>Wrapper exposing external systems via MCP protocol</td>
+      <td>Filesystem, MATLAB, Figma, Notion, Git</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>전송</strong></td>
+      <td lang-en><strong>Transport</strong></td>
+      <td lang-ko>Client와 Server 간 통신 방식</td>
+      <td lang-en>Communication method between Client and Server</td>
+      <td lang-ko><code>stdio</code> (로컬), <code>SSE</code> (원격)</td>
+      <td lang-en><code>stdio</code> (local), <code>SSE</code> (remote)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<div class="callout warn">
+  <span class="icon">&#9888;&#65039;</span>
+  <p lang-ko><strong>stdio vs SSE:</strong> 로컬 MCP 서버는 <code>stdio</code>(표준 입출력)로 연결한다. 프로세스가 로컬에서 직접 실행되므로 빠르고 보안이 높다. 원격 서버는 <code>SSE</code>(Server-Sent Events)를 사용한다.</p>
+  <p lang-en><strong>stdio vs SSE:</strong> Local MCP servers connect via <code>stdio</code> (standard I/O). The process runs locally &mdash; fast and secure. Remote servers use <code>SSE</code> (Server-Sent Events).</p>
+</div>
+
+<!-- ══ 3. 생태계 ═════════════════════════════════════════ -->
+<!-- ══ 3. MCP 생태계 ═════════════════════════════════════ -->
+<h2 lang-ko>3. MCP 생태계</h2>
+<h2 lang-en>3. MCP Ecosystem</h2>
+
+<p lang-ko>2026년 현재 500개 이상의 MCP 서버가 존재한다. 주요 영역별 대표 서버를 정리한다.</p>
+<p lang-en>As of 2026, 500+ MCP servers exist. Here are representative servers by category.</p>
+
+<div class="eco-grid">
+  <div class="eco-card dev">
+    <div class="eco-icon">&#128187;</div>
+    <div class="eco-title" lang-ko>개발 도구</div>
+    <div class="eco-title" lang-en>Development</div>
+    <div class="eco-desc">Git &middot; GitHub &middot; Docker<br>Filesystem &middot; SQLite</div>
+  </div>
+  <div class="eco-card compute">
+    <div class="eco-icon">&#9881;&#65039;</div>
+    <div class="eco-title" lang-ko>컴퓨팅</div>
+    <div class="eco-title" lang-en>Compute</div>
+    <div class="eco-desc">MATLAB &middot; Python<br>Jupyter &middot; Wolfram</div>
+  </div>
+  <div class="eco-card design">
+    <div class="eco-icon">&#127912;</div>
+    <div class="eco-title" lang-ko>디자인</div>
+    <div class="eco-title" lang-en>Design</div>
+    <div class="eco-desc">Figma &middot; Canva<br>Excalidraw</div>
+  </div>
+  <div class="eco-card prod">
+    <div class="eco-icon">&#128203;</div>
+    <div class="eco-title" lang-ko>생산성</div>
+    <div class="eco-title" lang-en>Productivity</div>
+    <div class="eco-desc">Notion &middot; Slack<br>Gmail &middot; Calendar</div>
+  </div>
+  <div class="eco-card data">
+    <div class="eco-icon">&#128202;</div>
+    <div class="eco-title" lang-ko>데이터</div>
+    <div class="eco-title" lang-en>Data</div>
+    <div class="eco-desc">PostgreSQL &middot; Neon<br>Snowflake &middot; BigQuery</div>
+  </div>
+  <div class="eco-card infra">
+    <div class="eco-icon">&#9729;&#65039;</div>
+    <div class="eco-title" lang-ko>인프라</div>
+    <div class="eco-title" lang-en>Infrastructure</div>
+    <div class="eco-desc">AWS &middot; Vercel<br>Cloudflare &middot; Stripe</div>
+  </div>
+</div>
+
+<div class="callout info">
+  <span class="icon">&#128218;</span>
+  <p lang-ko>전체 MCP 서버 목록: <a href="https://github.com/modelcontextprotocol/servers" style="color: var(--blue); text-decoration: underline;">github.com/modelcontextprotocol/servers</a> &middot; 커뮤니티 큐레이션: <a href="https://mcpservers.org" style="color: var(--blue); text-decoration: underline;">mcpservers.org</a></p>
+  <p lang-en>Full MCP server list: <a href="https://github.com/modelcontextprotocol/servers" style="color: var(--blue); text-decoration: underline;">github.com/modelcontextprotocol/servers</a> &middot; Community curated: <a href="https://mcpservers.org" style="color: var(--blue); text-decoration: underline;">mcpservers.org</a></p>
+</div>
+
+<h3 lang-ko>MATLAB MCP Core Server</h3>
+<h3 lang-en>MATLAB MCP Core Server</h3>
+
+<p lang-ko>현재 관심있게 보고 있는 MCP 서버 중 하나로, MathWorks가 공식 제공하는 오픈소스 MCP 서버다. 로컬 MATLAB을 AI 에이전트가 직접 제어할 수 있다.</p>
+<p lang-en>One of the MCP servers we're currently exploring &mdash; an official open-source server from MathWorks that lets AI agents directly control your local MATLAB installation.</p>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th lang-ko>도구</th><th lang-en>Tool</th>
+    <th lang-ko>기능</th><th lang-en>Function</th>
+  </tr></thead>
+  <tbody>
+    <tr><td><code>detect_matlab_toolboxes</code></td><td lang-ko>MATLAB 버전 + 설치된 Toolbox 목록</td><td lang-en>MATLAB version + installed toolbox list</td></tr>
+    <tr><td><code>check_matlab_code</code></td><td lang-ko>.m 파일 정적 분석 (스타일, 성능, 보안)</td><td lang-en>Static analysis of .m files</td></tr>
+    <tr><td><code>evaluate_matlab_code</code></td><td lang-ko>MATLAB 코드 문자열 실행 + 결과 반환</td><td lang-en>Execute code string + return results</td></tr>
+    <tr><td><code>run_matlab_file</code></td><td lang-ko>.m 스크립트 파일 실행</td><td lang-en>Run .m script files</td></tr>
+    <tr><td><code>run_matlab_test_file</code></td><td lang-ko>단위 테스트 실행 + 리포트</td><td lang-en>Run unit tests + report</td></tr>
+  </tbody>
+</table></div>
+
+<!-- ══ 4. Claude Code 연결 ════════════════════════════════ -->
+<h2 lang-ko>4. Claude Code &times; MCP</h2>
+<h2 lang-en>4. Claude Code &times; MCP</h2>
+
+<h3 lang-ko>일반 MCP 서버 연결</h3>
+<h3 lang-en>Connecting Any MCP Server</h3>
+
+<p lang-ko>Claude Code는 MCP Client가 내장되어 있다. 명령 한 줄이면 어떤 MCP 서버든 등록할 수 있고, 세션에서 자연어로 도구를 호출한다.</p>
+<p lang-en>Claude Code has a built-in MCP Client. One command registers any MCP server, and you call tools via natural language in your session.</p>
+
+<pre><span class="cm"># MCP 서버 추가 (stdio transport)</span>
+<span class="kw">claude mcp add</span> --transport stdio <span class="st">[name]</span> -- /path/to/server-binary [args...]
+
+<span class="cm"># 등록된 서버 확인</span>
+<span class="kw">claude mcp list</span></pre>
+
+<p lang-ko><code>~/.claude/settings.json</code> 또는 프로젝트 <code>.claude/settings.local.json</code>에서 관리한다.</p>
+<p lang-en>Managed in <code>~/.claude/settings.json</code> or project-level <code>.claude/settings.local.json</code>.</p>
+
+<pre><span class="cm">// settings.json 예시 — Filesystem 서버</span>
+{
+  <span class="st">"mcpServers"</span>: {
+    <span class="st">"filesystem"</span>: {
+      <span class="st">"command"</span>: <span class="st">"npx"</span>,
+      <span class="st">"args"</span>: [<span class="st">"-y"</span>, <span class="st">"@anthropic/mcp-filesystem"</span>, <span class="st">"/allowed/path"</span>],
+      <span class="st">"transport"</span>: <span class="st">"stdio"</span>
+    }
+  }
+}</pre>
+
+<h3 lang-ko>MATLAB MCP 서버 연결</h3>
+<h3 lang-en>Connecting MATLAB MCP Server</h3>
+
+<p lang-ko>일반 MCP 연결과 동일한 방식으로 MATLAB을 등록한다. 이후 Claude Code 세션에서 자연어로 MATLAB 코드 실행, 분석, 테스트를 요청할 수 있다.</p>
+<p lang-en>Register MATLAB the same way as any MCP server. Then request MATLAB code execution, analysis, and testing via natural language in your Claude Code session.</p>
+
+<pre><span class="cm"># MATLAB MCP 서버 등록</span>
+<span class="kw">claude mcp add</span> --transport stdio <span class="st">matlab</span> -- /path/to/matlab-mcp-core-server \
+  --initialize-matlab-on-startup true
+
+<span class="cm"># 이후 세션에서:</span>
+<span class="cm"># "이 .m 파일 코드 리뷰해줘" → check_matlab_code 자동 호출</span>
+<span class="cm"># "FFT 결과 플롯해줘" → evaluate_matlab_code 자동 호출</span></pre>
+
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 780 180" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round"/>
+    </marker>
+  </defs>
+  <rect x="30" y="30" width="180" height="120" rx="10" fill="#1E1E2E" stroke="#444441" stroke-width="1"/>
+  <text x="120" y="55" text-anchor="middle" font-size="11" fill="#CDD6F4" font-weight="700">Claude Code (CLI)</text>
+  <text x="120" y="78" text-anchor="middle" font-size="10" fill="#A6E3A1">&gt; claude</text>
+  <text x="120" y="98" text-anchor="middle" font-size="9" fill="#6C7086" lang-ko>MCP Client 내장</text>
+  <text x="120" y="98" text-anchor="middle" font-size="9" fill="#6C7086" lang-en>Built-in MCP Client</text>
+  <text x="120" y="118" text-anchor="middle" font-size="9" fill="#6C7086">settings.json</text>
+  <text x="120" y="138" text-anchor="middle" font-size="9" fill="#89DCEB">stdio</text>
+  <line x1="210" y1="70" x2="280" y2="50" stroke="#D3D1C7" stroke-width="1" marker-end="url(#arr2)"/>
+  <line x1="210" y1="90" x2="280" y2="90" stroke="#D3D1C7" stroke-width="1" marker-end="url(#arr2)"/>
+  <line x1="210" y1="110" x2="280" y2="130" stroke="#D3D1C7" stroke-width="1" marker-end="url(#arr2)"/>
+  <rect x="282" y="25" width="220" height="42" rx="8" fill="#E6F1FB" stroke="#85B7EB" stroke-width="1"/>
+  <text x="392" y="44" text-anchor="middle" font-size="10" fill="#185FA5" font-weight="600">Filesystem &middot; Git &middot; DB</text>
+  <text x="392" y="60" text-anchor="middle" font-size="9" fill="#185FA5" lang-ko>일반 MCP 서버</text>
+  <text x="392" y="60" text-anchor="middle" font-size="9" fill="#185FA5" lang-en>General MCP Servers</text>
+  <rect x="282" y="75" width="220" height="32" rx="8" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
+  <text x="392" y="96" text-anchor="middle" font-size="10" fill="#BA7517" font-weight="700">MATLAB MCP Server</text>
+  <rect x="282" y="115" width="220" height="32" rx="8" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1"/>
+  <text x="392" y="136" text-anchor="middle" font-size="10" fill="#64748B" font-weight="600" lang-ko>커스텀 MCP (Python/TS)</text>
+  <text x="392" y="136" text-anchor="middle" font-size="10" fill="#64748B" font-weight="600" lang-en>Custom MCP (Python/TS)</text>
+  <rect x="20" y="10" width="500" height="155" rx="14" fill="none" stroke="#D3D1C7" stroke-width="1" stroke-dasharray="6 3"/>
+  <text x="270" y="175" text-anchor="middle" font-size="10" fill="#888780" lang-ko>&#128187; 로컬 머신 (stdio)</text>
+  <text x="270" y="175" text-anchor="middle" font-size="10" fill="#888780" lang-en>&#128187; Local machine (stdio)</text>
+  <rect x="560" y="40" width="190" height="80" rx="10" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1"/>
+  <text x="655" y="65" text-anchor="middle" font-size="10" fill="#64748B" font-weight="700">Remote (SSE)</text>
+  <text x="655" y="85" text-anchor="middle" font-size="9" fill="#64748B">Notion &middot; Slack &middot; Gmail</text>
+  <text x="655" y="100" text-anchor="middle" font-size="9" fill="#64748B">Figma &middot; Canva</text>
+  <line x1="502" y1="80" x2="558" y2="80" stroke="#94A3B8" stroke-width="1" stroke-dasharray="4 2" marker-end="url(#arr2)"/>
+</svg>
+  <div class="diagram-caption" lang-ko>Claude Code에서 일반 MCP + MATLAB MCP + 원격 서버 동시 연결</div>
+  <div class="diagram-caption" lang-en>Claude Code: general MCP + MATLAB MCP + remote servers simultaneously</div>
+</div>
+
+<div class="callout ok">
+  <span class="icon">&#9989;</span>
+  <p lang-ko><strong>Agentic 워크플로우:</strong> Claude Code가 MATLAB MCP를 통해 코드 작성 &rarr; 실행 &rarr; 결과 확인 &rarr; 수정을 자율적으로 반복한다. 일반 MCP 서버(파일, Git)와 MATLAB MCP를 동시에 사용해 완전한 개발 루프를 구성할 수 있다.</p>
+  <p lang-en><strong>Agentic workflow:</strong> Claude Code autonomously writes &rarr; executes &rarr; checks &rarr; iterates via MATLAB MCP. Combining general MCP servers (files, Git) with MATLAB MCP enables a complete development loop.</p>
+</div>
+
+<!-- ══ 5. MATLAB MCP 상세 ════════════════════════════════ -->
+<h2 lang-ko>5. MATLAB MCP Core Server 상세</h2>
+<h2 lang-en>5. MATLAB MCP Core Server Details</h2>
+
+<p lang-ko>MathWorks가 공식 제공하는 오픈소스 MCP 서버의 상세 사양이다. MATLAB R2020b 이상이 필요하며, Go 바이너리 또는 소스 빌드로 설치한다.</p>
+<p lang-en>Detailed specifications of MathWorks' official open-source MCP server. Requires MATLAB R2020b+, installed via Go binary or source build.</p>
+
+<h3 lang-ko>Resources (코딩 가이드)</h3>
+<h3 lang-en>Resources (Coding Guides)</h3>
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th>Resource</th>
+    <th>URI</th>
+    <th lang-ko>내용</th><th lang-en>Content</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td>Coding Guidelines</td>
+      <td><code>guidelines://coding</code></td>
+      <td lang-ko>MATLAB 네이밍, 포맷, 성능 모범사례</td>
+      <td lang-en>MATLAB naming, formatting, performance best practices</td>
+    </tr>
+    <tr>
+      <td>Live Code Guidelines</td>
+      <td><code>guidelines://plain-text-live-code</code></td>
+      <td lang-ko>Live Script 생성 규칙 (R2025a+)</td>
+      <td lang-en>Live Script generation rules (R2025a+)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<h3 lang-ko>설정 옵션</h3>
+<h3 lang-en>Configuration Options</h3>
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th lang-ko>인자</th><th lang-en>Argument</th>
+    <th lang-ko>용도</th><th lang-en>Purpose</th>
+  </tr></thead>
+  <tbody>
+    <tr><td><code>--matlab-root</code></td><td lang-ko>MATLAB 설치 경로 지정</td><td lang-en>Specify MATLAB installation path</td></tr>
+    <tr><td><code>--initialize-matlab-on-startup</code></td><td lang-ko>세션 시작 시 MATLAB 즉시 실행</td><td lang-en>Start MATLAB immediately on session start</td></tr>
+    <tr><td><code>--initial-working-folder</code></td><td lang-ko>MATLAB 시작 디렉토리 설정</td><td lang-en>Set MATLAB's starting directory</td></tr>
+    <tr><td><code>--matlab-display-mode</code></td><td lang-ko>데스크톱 표시 여부 (<code>desktop</code> / <code>nodesktop</code>)</td><td lang-en>Desktop visibility (<code>desktop</code> / <code>nodesktop</code>)</td></tr>
+  </tbody>
+</table></div>
+
+<!-- ══ 6. LightHarness + MCP ═════════════════════════════ -->
+<h2 lang-ko>6. LightHarness &times; MCP</h2>
+<h2 lang-en>6. LightHarness &times; MCP</h2>
+
+<p lang-ko><a href="light_harness_guide.html" style="color:var(--purple);text-decoration:underline">LightHarness</a>는 Claude Pro 하나로 동작하는 경량 멀티 에이전트 오케스트레이터다. 이 시스템의 4-Tier 구조에서 MCP는 <strong>Tier 3~4의 로컬 도구 연결</strong>에 핵심 역할을 한다. 로컬 LLM, 외부 분석 도구, 자동화 스크립트를 MCP로 연결하면 Claude(Tier 1)의 토큰을 절약하면서 기능을 확장할 수 있다.</p>
+<p lang-en><a href="light_harness_guide.html" style="color:var(--purple);text-decoration:underline">LightHarness</a> is a lightweight multi-agent orchestrator running on a single Claude Pro subscription. In its 4-Tier architecture, MCP plays a key role in <strong>connecting local tools at Tier 3&ndash;4</strong>. Connecting local LLMs, analysis tools, and automation scripts via MCP extends capabilities while saving Claude (Tier 1) tokens.</p>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th>Tier</th>
+    <th lang-ko>MCP 활용</th><th lang-en>MCP Usage</th>
+    <th lang-ko>예시</th><th lang-en>Example</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td><span class="badge cloud">T1</span></td>
+      <td lang-ko>MCP Client로서 모든 서버를 호출</td>
+      <td lang-en>Calls all servers as MCP Client</td>
+      <td>Claude Code</td>
+    </tr>
+    <tr>
+      <td><span class="badge ok">T2</span></td>
+      <td lang-ko>Gemini CLI도 MCP Client 지원</td>
+      <td lang-en>Gemini CLI also supports MCP Client</td>
+      <td>Gemini + Filesystem MCP</td>
+    </tr>
+    <tr>
+      <td><span class="badge local">T3</span></td>
+      <td lang-ko>Groq/로컬 LLM을 MCP Server로 노출</td>
+      <td lang-en>Expose Groq/local LLM as MCP Server</td>
+      <td lang-ko>커스텀 MCP 래퍼</td>
+      <td lang-en>Custom MCP wrapper</td>
+    </tr>
+    <tr>
+      <td><span class="badge local">T4</span></td>
+      <td lang-ko>단순 도구를 MCP Server로 연결</td>
+      <td lang-en>Connect simple tools as MCP Server</td>
+      <td>MATLAB, Python scripts</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<!-- ══ 7. Getting Started ════════════════════════════════ -->
+<h2 lang-ko>7. 시작하기</h2>
+<h2 lang-en>7. Getting Started</h2>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th>#</th>
+    <th lang-ko>단계</th><th lang-en>Step</th>
+    <th lang-ko>명령 / 행동</th><th lang-en>Command / Action</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td lang-ko>MCP 서버 설치</td><td lang-en>Install MCP server</td>
+      <td lang-ko>바이너리 다운로드 또는 <code>npm/pip install</code></td>
+      <td lang-en>Download binary or <code>npm/pip install</code></td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td lang-ko>Claude Code에 등록</td><td lang-en>Register in Claude Code</td>
+      <td><code>claude mcp add --transport stdio [name] -- [path]</code></td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td lang-ko>확인</td><td lang-en>Verify</td>
+      <td><code>claude mcp list</code></td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td lang-ko>사용</td><td lang-en>Use</td>
+      <td lang-ko>Claude Code 세션에서 자연어로 도구 호출</td>
+      <td lang-en>Call tools via natural language in Claude Code</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<h3 lang-ko>나만의 MCP 서버 만들기</h3>
+<h3 lang-en>Build Your Own MCP Server</h3>
+<p lang-ko>Python SDK 또는 TypeScript SDK로 커스텀 MCP 서버를 만들 수 있다. 내부 API, 사내 도구, 독자적인 분석 파이프라인을 MCP로 감싸면 어떤 AI 에이전트에서든 즉시 사용 가능하다.</p>
+<p lang-en>Build custom MCP servers with Python SDK or TypeScript SDK. Wrap internal APIs, proprietary tools, or analysis pipelines with MCP to make them instantly usable from any AI agent.</p>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th>SDK</th>
+    <th lang-ko>언어</th><th lang-en>Language</th>
+    <th lang-ko>설치</th><th lang-en>Install</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td>Official</td>
+      <td>Python</td>
+      <td><code>pip install mcp</code></td>
+    </tr>
+    <tr>
+      <td>Official</td>
+      <td>TypeScript</td>
+      <td><code>npm install @modelcontextprotocol/sdk</code></td>
+    </tr>
+    <tr>
+      <td>JetBrains</td>
+      <td>Kotlin</td>
+      <td lang-ko>JetBrains 공식 유지</td>
+      <td lang-en>Maintained by JetBrains</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<!-- ══ Footer ══════════════════════════════════════════════ -->
+<div class="doc-footer">
+  <span><a href="agentic_ai_intro.html" lang-ko>&larr; Agentic AI 개념</a><a href="agentic_ai_intro.html" lang-en>&larr; Agentic AI Concepts</a> &middot; <a href="light_harness_guide.html" lang-ko>AI 개발 시스템 &rarr;</a><a href="light_harness_guide.html" lang-en>AI Dev System &rarr;</a></span>
+  <span>MCP Ecosystem Guide &middot; 2026-04-15</span>
+</div>
+
+</div><!-- .page -->
+
+<script>
+function setLang(lang) {
+  document.body.className = 'lang-' + lang;
+  document.getElementById('btn-ko').classList.toggle('active', lang === 'ko');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  try { localStorage.setItem('guide-lang', lang); } catch {}
+}
+(function() {
+  try { var s = localStorage.getItem('guide-lang'); if (s) setLang(s); } catch {}
+})();
+window.addEventListener('beforeprint', () => { document.fonts.ready; });
+</script>
+</body>
+</html>

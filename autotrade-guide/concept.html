@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>자동매매 시스템 개념 가이드</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg-card: #161b22;
+    --bg-card-alt: #1c2333;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --accent-blue: #58a6ff;
+    --accent-green: #3fb950;
+    --accent-orange: #d29922;
+    --accent-red: #f85149;
+    --accent-purple: #bc8cff;
+    --accent-cyan: #39d2c0;
+    --accent-pink: #f778ba;
+    --accent-yellow: #e3b341;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+
+  header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+  }
+
+  header p {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .toc h2 {
+    font-size: 1.1rem;
+    color: var(--accent-blue);
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .toc ol {
+    list-style: none;
+    counter-reset: toc;
+  }
+
+  .toc ol li {
+    counter-increment: toc;
+    margin-bottom: 0.4rem;
+  }
+
+  .toc ol li::before {
+    content: counter(toc) ".";
+    color: var(--accent-blue);
+    font-weight: 600;
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .toc a {
+    color: var(--text);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .toc a:hover {
+    color: var(--accent-blue);
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 3rem;
+    scroll-margin-top: 2rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .section-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .section h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .section p {
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+
+  /* Color themes per section */
+  .s1 .section-number { background: var(--accent-blue); color: var(--bg); }
+  .s1 .section-header { border-color: var(--accent-blue); }
+  .s2 .section-number { background: var(--accent-green); color: var(--bg); }
+  .s2 .section-header { border-color: var(--accent-green); }
+  .s3 .section-number { background: var(--accent-orange); color: var(--bg); }
+  .s3 .section-header { border-color: var(--accent-orange); }
+  .s4 .section-number { background: var(--accent-cyan); color: var(--bg); }
+  .s4 .section-header { border-color: var(--accent-cyan); }
+  .s5 .section-number { background: var(--accent-red); color: var(--bg); }
+  .s5 .section-header { border-color: var(--accent-red); }
+  .s6 .section-number { background: var(--accent-purple); color: var(--bg); }
+  .s6 .section-header { border-color: var(--accent-purple); }
+  .s7 .section-number { background: var(--accent-pink); color: var(--bg); }
+  .s7 .section-header { border-color: var(--accent-pink); }
+  .s8 .section-number { background: var(--accent-yellow); color: var(--bg); }
+  .s8 .section-header { border-color: var(--accent-yellow); }
+
+  /* Card */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .card h3 {
+    font-size: 1.05rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent-blue);
+  }
+
+  .card p, .card li {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .card ul, .card ol {
+    padding-left: 1.25rem;
+    margin-top: 0.5rem;
+  }
+
+  .card li {
+    margin-bottom: 0.3rem;
+  }
+
+  /* Grid */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    header h1 { font-size: 1.6rem; }
+    .container { padding: 1rem; }
+  }
+
+  /* Comparison table */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.95rem;
+  }
+
+  .compare-table th, .compare-table td {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    text-align: left;
+  }
+
+  .compare-table th {
+    background: var(--bg-card-alt);
+    color: var(--accent-blue);
+    font-weight: 600;
+  }
+
+  .compare-table td {
+    background: var(--bg-card);
+    color: var(--text-muted);
+  }
+
+  .compare-table tr:hover td {
+    background: var(--bg-card-alt);
+  }
+
+  /* Diagram (ASCII-style with CSS) */
+  .diagram {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1.25rem 0;
+    overflow-x: auto;
+  }
+
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .flow-box {
+    background: var(--bg-card-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    min-width: 100px;
+  }
+
+  .flow-arrow {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .flow-box.highlight-blue { border-color: var(--accent-blue); color: var(--accent-blue); }
+  .flow-box.highlight-green { border-color: var(--accent-green); color: var(--accent-green); }
+  .flow-box.highlight-orange { border-color: var(--accent-orange); color: var(--accent-orange); }
+  .flow-box.highlight-red { border-color: var(--accent-red); color: var(--accent-red); }
+  .flow-box.highlight-cyan { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+
+  /* Tag / Badge */
+  .tag {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-right: 0.4rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .tag-blue { background: rgba(88,166,255,0.15); color: var(--accent-blue); }
+  .tag-green { background: rgba(63,185,80,0.15); color: var(--accent-green); }
+  .tag-orange { background: rgba(210,153,34,0.15); color: var(--accent-orange); }
+  .tag-red { background: rgba(248,81,73,0.15); color: var(--accent-red); }
+  .tag-purple { background: rgba(188,140,255,0.15); color: var(--accent-purple); }
+  .tag-cyan { background: rgba(57,210,192,0.15); color: var(--accent-cyan); }
+
+  /* Highlight box */
+  .highlight-box {
+    border-left: 3px solid var(--accent-orange);
+    background: rgba(210,153,34,0.08);
+    padding: 1rem 1.25rem;
+    border-radius: 0 8px 8px 0;
+    margin: 1rem 0;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+
+  .highlight-box.danger {
+    border-left-color: var(--accent-red);
+    background: rgba(248,81,73,0.08);
+  }
+
+  .highlight-box strong {
+    color: var(--text);
+  }
+
+  /* Code block */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    overflow-x: auto;
+    white-space: pre;
+    margin: 0.75rem 0;
+    line-height: 1.6;
+  }
+
+  /* Architecture diagram */
+  .arch-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+
+  .arch-layer {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .arch-layer-label {
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    min-width: 80px;
+    flex-shrink: 0;
+  }
+
+  .arch-layer-content {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>자동매매 시스템 개념 가이드</h1>
+  <p>개발자를 위한 Algorithmic Trading 핵심 개념 정리</p>
+</header>
+
+<!-- Table of Contents -->
+<nav class="toc">
+  <h2>목차</h2>
+  <ol>
+    <li><a href="#s1">자동매매란?</a></li>
+    <li><a href="#s2">핵심 구성요소</a></li>
+    <li><a href="#s3">매매 전략 유형</a></li>
+    <li><a href="#s4">데이터 흐름</a></li>
+    <li><a href="#s5">리스크 관리</a></li>
+    <li><a href="#s6">장기 vs 단타</a></li>
+    <li><a href="#s7">기술 스택</a></li>
+    <li><a href="#s8">주의사항</a></li>
+  </ol>
+</nav>
+
+<!-- Section 1 -->
+<section class="section s1" id="s1">
+  <div class="section-header">
+    <span class="section-number">1</span>
+    <h2>자동매매란?</h2>
+  </div>
+
+  <p>자동매매(Algorithmic Trading)는 사전에 정의한 규칙과 알고리즘에 따라 컴퓨터가 자동으로 매수/매도 주문을 실행하는 시스템이다. 사람의 감정이나 판단 지연 없이, 코드로 정의된 조건이 충족되면 즉시 거래한다.</p>
+
+  <div class="card">
+    <h3>수동 매매 vs 자동 매매</h3>
+    <table class="compare-table">
+      <tr>
+        <th>항목</th>
+        <th>수동 매매</th>
+        <th>자동 매매</th>
+      </tr>
+      <tr>
+        <td>의사결정</td>
+        <td>사람이 차트 보고 판단</td>
+        <td>알고리즘이 조건 충족 시 실행</td>
+      </tr>
+      <tr>
+        <td>속도</td>
+        <td>초~분 단위 반응</td>
+        <td>밀리초 단위 반응</td>
+      </tr>
+      <tr>
+        <td>감정 영향</td>
+        <td>공포/탐욕에 취약</td>
+        <td>규칙 기반, 감정 배제</td>
+      </tr>
+      <tr>
+        <td>운영 시간</td>
+        <td>사람이 깨어 있는 동안</td>
+        <td>24시간 무인 운영 가능</td>
+      </tr>
+      <tr>
+        <td>확장성</td>
+        <td>동시 감시 종목 한계</td>
+        <td>수백 종목 동시 모니터링</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>왜 자동화하는가?</h3>
+    <ul>
+      <li><strong>일관성</strong> &mdash; 동일 조건에서 항상 동일한 행동을 보장</li>
+      <li><strong>속도</strong> &mdash; 시장 변화에 인간보다 빠르게 대응</li>
+      <li><strong>백테스트</strong> &mdash; 과거 데이터로 전략 검증 가능</li>
+      <li><strong>다중 전략</strong> &mdash; 여러 전략을 동시에 운영하여 리스크 분산</li>
+      <li><strong>무인 운영</strong> &mdash; 장 시간 동안 사람이 모니터링하지 않아도 됨</li>
+    </ul>
+  </div>
+</section>
+
+<!-- Section 2 -->
+<section class="section s2" id="s2">
+  <div class="section-header">
+    <span class="section-number">2</span>
+    <h2>핵심 구성요소</h2>
+  </div>
+
+  <p>자동매매 시스템은 다섯 가지 핵심 모듈로 구성된다. 각 모듈은 독립적으로 개발되지만 파이프라인으로 연결된다.</p>
+
+  <div class="arch-grid">
+    <div class="arch-layer">
+      <span class="arch-layer-label" style="color:var(--accent-blue)">데이터</span>
+      <div class="arch-layer-content">
+        <span class="tag tag-blue">실시간 시세</span>
+        <span class="tag tag-blue">과거 데이터</span>
+        <span class="tag tag-blue">뉴스/공시</span>
+        <span class="tag tag-blue">재무제표</span>
+      </div>
+    </div>
+    <div class="arch-layer">
+      <span class="arch-layer-label" style="color:var(--accent-green)">전략</span>
+      <div class="arch-layer-content">
+        <span class="tag tag-green">지표 계산</span>
+        <span class="tag tag-green">시그널 생성</span>
+        <span class="tag tag-green">백테스트</span>
+        <span class="tag tag-green">ML 모델</span>
+      </div>
+    </div>
+    <div class="arch-layer">
+      <span class="arch-layer-label" style="color:var(--accent-orange)">실행</span>
+      <div class="arch-layer-content">
+        <span class="tag tag-orange">브로커 API</span>
+        <span class="tag tag-orange">주문 관리</span>
+        <span class="tag tag-orange">체결 확인</span>
+        <span class="tag tag-orange">슬리피지 처리</span>
+      </div>
+    </div>
+    <div class="arch-layer">
+      <span class="arch-layer-label" style="color:var(--accent-red)">리스크</span>
+      <div class="arch-layer-content">
+        <span class="tag tag-red">손절 관리</span>
+        <span class="tag tag-red">포지션 사이징</span>
+        <span class="tag tag-red">일일 한도</span>
+        <span class="tag tag-red">비상 정지</span>
+      </div>
+    </div>
+    <div class="arch-layer">
+      <span class="arch-layer-label" style="color:var(--accent-purple)">모니터링</span>
+      <div class="arch-layer-content">
+        <span class="tag tag-purple">대시보드</span>
+        <span class="tag tag-purple">알림</span>
+        <span class="tag tag-purple">로그</span>
+        <span class="tag tag-purple">성과 분석</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>브로커 API</h3>
+      <p>증권사가 제공하는 REST/WebSocket API를 통해 주문을 넣고 잔고를 조회한다. 인증 토큰 관리, rate limit 준수, 에러 재시도 로직이 핵심이다.</p>
+    </div>
+    <div class="card">
+      <h3>전략 엔진</h3>
+      <p>시장 데이터를 입력받아 매수/매도/홀드 시그널을 생성한다. 기술적 지표(RSI, MACD 등)나 ML 모델을 사용하여 판단한다.</p>
+    </div>
+    <div class="card">
+      <h3>데이터 파이프라인</h3>
+      <p>시세 수집, 정제, 저장, 지표 계산을 담당한다. 실시간 스트리밍과 배치 처리 두 경로가 필요하다.</p>
+    </div>
+    <div class="card">
+      <h3>모니터링</h3>
+      <p>시스템 상태, 포지션 현황, 수익률을 실시간으로 추적한다. 이상 상황 발생 시 알림을 보내고 비상 정지를 트리거한다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Section 3 -->
+<section class="section s3" id="s3">
+  <div class="section-header">
+    <span class="section-number">3</span>
+    <h2>매매 전략 유형</h2>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>모멘텀 (Momentum)</h3>
+      <p>"오르는 종목은 계속 오른다"는 가정. 일정 기간 수익률이 높은 종목을 매수하고, 모멘텀이 꺾이면 매도한다.</p>
+      <ul>
+        <li>이동평균 교차 (골든크로스/데드크로스)</li>
+        <li>RSI 과매수/과매도</li>
+        <li>MACD 시그널</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>평균회귀 (Mean Reversion)</h3>
+      <p>"과도하게 벌어진 가격은 평균으로 돌아온다"는 가정. 볼린저 밴드 하단 터치 시 매수, 상단 터치 시 매도.</p>
+      <ul>
+        <li>볼린저 밴드</li>
+        <li>페어 트레이딩</li>
+        <li>Z-score 기반 진입/청산</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>변동성 돌파 (Volatility Breakout)</h3>
+      <p>전일 변동폭의 일정 비율을 돌파하면 매수하는 전략. 래리 윌리엄스의 변동성 돌파 전략이 대표적이다.</p>
+      <ul>
+        <li>K값 (보통 0.3~0.6)</li>
+        <li>당일 시가 + 전일 레인지 * K</li>
+        <li>장 종료 전 전량 매도</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>ML 기반 (Machine Learning)</h3>
+      <p>과거 데이터로 학습한 모델이 가격 방향이나 수익률을 예측한다. 피처 엔지니어링과 과적합 방지가 핵심 과제.</p>
+      <ul>
+        <li>분류: 상승/하락/보합 예측</li>
+        <li>회귀: 기대 수익률 예측</li>
+        <li>강화학습: 에이전트가 매매 행동 학습</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    <strong>전략 선택 팁:</strong> 단일 전략보다 여러 전략을 조합하는 앙상블 접근이 리스크 대비 수익이 안정적이다. 각 전략의 상관관계가 낮을수록 분산 효과가 크다.
+  </div>
+</section>
+
+<!-- Section 4 -->
+<section class="section s4" id="s4">
+  <div class="section-header">
+    <span class="section-number">4</span>
+    <h2>데이터 흐름</h2>
+  </div>
+
+  <p>자동매매 시스템의 데이터는 다음 다섯 단계를 거쳐 흐른다. 각 단계는 이전 단계의 출력을 입력으로 받는 파이프라인 구조이다.</p>
+
+  <div class="diagram">
+    <div class="flow">
+      <div class="flow-box highlight-blue">시세 수집<br><small>Market Data</small></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box highlight-cyan">지표 계산<br><small>Indicators</small></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box highlight-green">시그널 생성<br><small>Signal</small></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box highlight-orange">주문 실행<br><small>Execution</small></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box highlight-red">포지션 관리<br><small>Position Mgmt</small></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>1. 시세 수집 (Market Data Ingestion)</h3>
+    <p>증권사 API 또는 데이터 벤더로부터 실시간 체결가, 호가, 거래량을 수신한다. WebSocket 연결을 유지하며, 연결 끊김 시 자동 재연결 로직이 필수이다.</p>
+    <div class="code-block">WebSocket 연결
+  &darr;
+실시간 체결가, 호가, 거래량 수신
+  &darr;
+타임스탬프 정규화 + 캐시 저장
+  &darr;
+DB 적재 (시계열 테이블)</div>
+  </div>
+
+  <div class="card">
+    <h3>2. 지표 계산 (Technical Indicators)</h3>
+    <p>수집한 시세 데이터로 기술적 지표를 계산한다. 이동평균, RSI, MACD, 볼린저 밴드 등 전략에 필요한 지표를 실시간으로 업데이트한다.</p>
+  </div>
+
+  <div class="card">
+    <h3>3. 시그널 생성 (Signal Generation)</h3>
+    <p>계산된 지표를 전략 로직에 입력하여 매수(BUY), 매도(SELL), 홀드(HOLD) 시그널을 생성한다. 복수 전략의 시그널을 가중 합산하여 최종 결정을 내리기도 한다.</p>
+  </div>
+
+  <div class="card">
+    <h3>4. 주문 실행 (Order Execution)</h3>
+    <p>시그널이 BUY/SELL이면 브로커 API를 호출하여 주문을 접수한다. 시장가/지정가 선택, 수량 계산, 체결 확인, 미체결 관리까지 포함한다.</p>
+  </div>
+
+  <div class="card">
+    <h3>5. 포지션 관리 (Position Management)</h3>
+    <p>보유 종목의 수익률 추적, 손절/익절 조건 확인, 리밸런싱을 수행한다. 전체 포트폴리오 관점에서 비중 조절도 이 단계에서 처리한다.</p>
+  </div>
+</section>
+
+<!-- Section 5 -->
+<section class="section s5" id="s5">
+  <div class="section-header">
+    <span class="section-number">5</span>
+    <h2>리스크 관리</h2>
+  </div>
+
+  <p>자동매매에서 리스크 관리는 수익 전략보다 중요하다. "얼마를 벌 수 있는가"보다 "최악의 경우 얼마를 잃는가"를 먼저 설계해야 한다.</p>
+
+  <div class="highlight-box danger">
+    <strong>핵심 원칙:</strong> 리스크 관리 없는 자동매매는 자동 파산 시스템이다. 전략이 아무리 좋아도 리스크 관리 없이는 한 번의 블랙스완 이벤트로 전 재산을 잃을 수 있다.
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>손절 (Stop Loss)</h3>
+      <ul>
+        <li><strong>고정 비율:</strong> 매수가 대비 -2~3% 도달 시 자동 매도</li>
+        <li><strong>트레일링 스탑:</strong> 최고가 대비 일정 비율 하락 시 매도</li>
+        <li><strong>ATR 기반:</strong> 변동성에 비례한 동적 손절폭</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>포지션 사이징</h3>
+      <ul>
+        <li><strong>고정 금액:</strong> 종목당 투자금 고정</li>
+        <li><strong>고정 비율:</strong> 총 자산의 N% 배분</li>
+        <li><strong>켈리 기준:</strong> 승률과 손익비로 최적 비율 산출</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>일일 손실 한도</h3>
+      <ul>
+        <li>하루 최대 손실 금액/비율 초과 시 당일 거래 중단</li>
+        <li>연속 손실 N회 시 전략 자동 비활성화</li>
+        <li>월간 최대 낙폭(MDD) 한도 설정</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>분산 투자</h3>
+      <ul>
+        <li>단일 종목 최대 비중 제한 (예: 20%)</li>
+        <li>섹터/업종별 분산</li>
+        <li>전략 간 분산 (모멘텀 + 평균회귀)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>리스크 관리 체크리스트</h3>
+    <table class="compare-table">
+      <tr><th>항목</th><th>설정 예시</th><th>초과 시 행동</th></tr>
+      <tr><td>종목당 최대 손실</td><td>-3%</td><td>즉시 매도</td></tr>
+      <tr><td>일일 최대 손실</td><td>총 자산의 -2%</td><td>당일 거래 중단</td></tr>
+      <tr><td>최대 동시 보유 종목</td><td>5개</td><td>신규 매수 차단</td></tr>
+      <tr><td>단일 종목 최대 비중</td><td>20%</td><td>초과분 매도</td></tr>
+      <tr><td>월간 MDD 한도</td><td>-10%</td><td>전략 비활성화 + 점검</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- Section 6 -->
+<section class="section s6" id="s6">
+  <div class="section-header">
+    <span class="section-number">6</span>
+    <h2>장기 vs 단타</h2>
+  </div>
+
+  <div class="card">
+    <table class="compare-table">
+      <tr>
+        <th>구분</th>
+        <th>장기 투자 (Swing/Position)</th>
+        <th>단타 (Day/Scalp Trading)</th>
+      </tr>
+      <tr>
+        <td>보유 기간</td>
+        <td>수일 ~ 수개월</td>
+        <td>수초 ~ 당일 내 청산</td>
+      </tr>
+      <tr>
+        <td>의사결정 빈도</td>
+        <td>하루 1~2회</td>
+        <td>분/초 단위 수십~수백 회</td>
+      </tr>
+      <tr>
+        <td>주요 전략</td>
+        <td>추세 추종, 가치 기반</td>
+        <td>변동성 돌파, 스캘핑, 호가 분석</td>
+      </tr>
+      <tr>
+        <td>데이터 주기</td>
+        <td>일봉, 주봉</td>
+        <td>틱, 1분봉, 5분봉</td>
+      </tr>
+      <tr>
+        <td>거래 비용 영향</td>
+        <td>낮음 (거래 횟수 적음)</td>
+        <td>높음 (수수료 + 슬리피지 누적)</td>
+      </tr>
+      <tr>
+        <td>시스템 요구사항</td>
+        <td>cron 기반, 저사양 가능</td>
+        <td>실시간 스트리밍, 저지연 필수</td>
+      </tr>
+      <tr>
+        <td>심리적 부담</td>
+        <td>상대적으로 낮음</td>
+        <td>높음 (빈번한 손실 발생)</td>
+      </tr>
+      <tr>
+        <td>자동화 난이도</td>
+        <td>비교적 쉬움</td>
+        <td>높음 (실시간 처리, 예외 상황 많음)</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="highlight-box">
+    <strong>초보자 권장:</strong> 장기 전략부터 시작하라. 일봉 기반 전략은 데이터 처리량이 적고, 실시간 시스템 없이도 cron + REST API만으로 구현 가능하다. 단타는 인프라 복잡도가 급격히 높아진다.
+  </div>
+</section>
+
+<!-- Section 7 -->
+<section class="section s7" id="s7">
+  <div class="section-header">
+    <span class="section-number">7</span>
+    <h2>기술 스택</h2>
+  </div>
+
+  <p>자동매매 시스템 구축에 일반적으로 사용되는 기술 스택이다. 정답은 없으며, 요구사항에 맞게 선택하면 된다.</p>
+
+  <div class="card">
+    <h3>언어 및 프레임워크</h3>
+    <table class="compare-table">
+      <tr><th>계층</th><th>기술</th><th>역할</th></tr>
+      <tr><td>매매 로직</td><td>Python</td><td>전략 개발, 데이터 분석, ML 모델. pandas, numpy, scikit-learn 등 생태계가 풍부</td></tr>
+      <tr><td>대시보드</td><td>Next.js / React</td><td>포지션 현황, 수익률 차트, 설정 UI</td></tr>
+      <tr><td>백테스트</td><td>Python (backtrader, zipline)</td><td>과거 데이터로 전략 시뮬레이션</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>인프라</h3>
+    <table class="compare-table">
+      <tr><th>구성요소</th><th>기술</th><th>용도</th></tr>
+      <tr><td>데이터베이스</td><td>PostgreSQL</td><td>시세 히스토리, 거래 기록, 포지션 관리</td></tr>
+      <tr><td>봇 서버</td><td>Railway / AWS EC2</td><td>매매 봇 상시 구동 (24시간 서버)</td></tr>
+      <tr><td>프론트엔드</td><td>Vercel</td><td>대시보드 배포</td></tr>
+      <tr><td>스케줄러</td><td>cron / APScheduler</td><td>장 시작/종료 시 작업 스케줄링</td></tr>
+      <tr><td>메시지 큐</td><td>Redis / RabbitMQ</td><td>모듈 간 비동기 통신 (선택)</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>브로커 API</h3>
+    <p>한국 주식의 경우 증권사 Open API를 사용한다. REST API로 주문/조회를 처리하고, WebSocket으로 실시간 시세를 수신한다.</p>
+    <div class="code-block">일반적인 브로커 API 사용 흐름:
+
+1. 앱 키 발급  &rarr;  증권사 개발자 포털에서 APP KEY, SECRET 발급
+2. 접속 토큰   &rarr;  APP KEY + SECRET으로 OAuth 토큰 발행 (보통 24시간 유효)
+3. 시세 조회   &rarr;  GET /stock/price?symbol=005930
+4. 주문 실행   &rarr;  POST /stock/order { symbol, qty, price, side }
+5. 체결 확인   &rarr;  GET /stock/order/{orderId}
+6. 잔고 조회   &rarr;  GET /stock/balance</div>
+  </div>
+
+  <div class="card">
+    <h3>실시간 시세</h3>
+    <p>WebSocket을 통해 체결가, 호가를 실시간으로 수신한다. 연결 유지, 재연결, 구독 관리가 주요 과제이다. 장 시간(09:00~15:30) 동안 안정적인 연결 유지가 필수이다.</p>
+  </div>
+</section>
+
+<!-- Section 8 -->
+<section class="section s8" id="s8">
+  <div class="section-header">
+    <span class="section-number">8</span>
+    <h2>주의사항</h2>
+  </div>
+
+  <div class="card">
+    <h3>과적합 (Overfitting)</h3>
+    <p>백테스트에서 수익률이 높다고 실전에서도 잘 작동하리란 보장은 없다. 과거 데이터에 과도하게 맞춘 전략은 실전에서 실패한다.</p>
+    <ul>
+      <li>학습 데이터와 검증 데이터를 반드시 분리</li>
+      <li>파라미터 수를 최소화 (단순한 전략이 robust)</li>
+      <li>Out-of-sample 테스트 필수</li>
+      <li>워크포워드 분석으로 시간순 검증</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>슬리피지 (Slippage)</h3>
+    <p>주문 시점의 가격과 실제 체결 가격 사이의 차이. 유동성이 낮은 종목이나 큰 수량 주문에서 발생한다.</p>
+    <ul>
+      <li>백테스트 시 슬리피지 비용 반드시 반영</li>
+      <li>호가 잔량 확인 후 주문 수량 조절</li>
+      <li>시장가 주문보다 지정가 주문 활용 검토</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>API 장애 대응</h3>
+    <p>증권사 API는 장 시작/종료 시간대에 불안정할 수 있다. 네트워크 장애, 토큰 만료, rate limit 초과에 대한 방어 코드가 필수이다.</p>
+    <ul>
+      <li>지수 백오프(exponential backoff) 재시도</li>
+      <li>토큰 만료 전 자동 갱신</li>
+      <li>API 응답 타임아웃 설정</li>
+      <li>장애 시 미체결 주문 자동 정리</li>
+      <li>모든 API 호출을 로그로 남기기</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>법적 고려사항</h3>
+    <ul>
+      <li><strong>모의투자 먼저:</strong> 실전 투입 전 반드시 모의투자 환경에서 충분히 검증</li>
+      <li><strong>세금:</strong> 매매 차익에 대한 양도소득세, 거래세 등 세금 구조 파악</li>
+      <li><strong>시장 조작 금지:</strong> 허수 주문, 통정 매매 등은 자본시장법 위반</li>
+      <li><strong>API 이용약관:</strong> 증권사의 API 사용 정책 및 호출 제한 준수</li>
+      <li><strong>개인정보:</strong> 계좌번호, API 키 등 민감 정보의 안전한 관리</li>
+    </ul>
+  </div>
+
+  <div class="highlight-box danger">
+    <strong>최종 경고:</strong> 자동매매는 "돈을 자동으로 벌어주는 기계"가 아니다. 잘못된 전략이나 부실한 리스크 관리로 빠르게 손실이 누적될 수 있다. 반드시 충분한 백테스트와 모의투자를 거친 후, 소액으로 시작하라.
+  </div>
+</section>
+
+<footer>
+  <p>이 문서는 자동매매의 일반적인 개념을 설명하는 교육 자료입니다.</p>
+  <p>투자는 본인의 판단과 책임 하에 이루어져야 합니다.</p>
+</footer>
+
+</div>
+</body>
+</html>

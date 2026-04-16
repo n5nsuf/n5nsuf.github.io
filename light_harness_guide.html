@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Development System — LightHarness Agent Orchestrator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --purple:   #534AB7; --purple-l: #EEEDFE; --purple-d: #3C3489;
+    --teal:     #0F6E56; --teal-l:   #E1F5EE;
+    --amber:    #BA7517; --amber-l:  #FAEEDA;
+    --blue:     #185FA5; --blue-l:   #E6F1FB;
+    --coral:    #993C1D; --coral-l:  #FAECE7;
+    --red:      #A32D2D; --red-l:    #FCEBEB;
+    --gray:     #444441; --gray-l:   #F1EFE8;
+    --border:   #D3D1C7;
+    --text:     #2C2C2A;
+    --muted:    #5F5E5A;
+    --bg:       #FAFAF8;
+    --slate:    #64748B; --slate-l:  #F1F5F9;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--text);
+    background: var(--bg);
+    padding: 0;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 56px;
+    background: white;
+  }
+
+  /* ── Header ── */
+  .doc-header {
+    border-bottom: 2px solid var(--purple);
+    padding-bottom: 20px;
+    margin-bottom: 32px;
+  }
+  .doc-header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--purple);
+    letter-spacing: -0.3px;
+  }
+  .doc-header .subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .doc-header .meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .meta-tag {
+    background: var(--purple-l);
+    color: var(--purple-d);
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  /* ── Sections ── */
+  section { margin-bottom: 40px; }
+
+  h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--purple);
+    padding: 6px 0 6px 12px;
+    border-left: 3px solid var(--purple);
+    margin-bottom: 14px;
+    margin-top: 36px;
+  }
+  h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray);
+    margin: 18px 0 8px;
+  }
+
+  p { margin-bottom: 10px; color: var(--text); font-size: 13.5px; }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    font-size: 13px;
+  }
+  thead tr { background: var(--purple); }
+  thead th {
+    color: white;
+    font-weight: 600;
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 12px;
+    letter-spacing: 0.2px;
+  }
+  tbody tr:nth-child(even) { background: var(--gray-l); }
+  tbody tr:hover { background: var(--purple-l); }
+  tbody td {
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  td code {
+    background: var(--gray-l);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--purple-d);
+  }
+
+  /* ── Code blocks ── */
+  pre {
+    background: #1E1E2E;
+    color: #CDD6F4;
+    border-radius: 8px;
+    padding: 16px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.65;
+    overflow-x: auto;
+    margin-bottom: 16px;
+  }
+  pre .cm { color: #6C7086; }
+  pre .kw { color: #CBA6F7; }
+  pre .st { color: #A6E3A1; }
+  pre .nm { color: #89DCEB; }
+  pre .vl { color: #FAB387; }
+
+  /* ── Callouts ── */
+  .callout {
+    display: flex;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    font-size: 13px;
+  }
+  .callout.warn { background: var(--amber-l); border-left: 3px solid var(--amber); }
+  .callout.info { background: var(--blue-l);  border-left: 3px solid var(--blue); }
+  .callout .icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  .callout p { margin: 0; color: var(--gray); }
+
+  /* ── Diagram SVG ── */
+  .diagram-wrap {
+    margin: 16px 0 24px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 16px 16px;
+    background: white;
+    overflow: hidden;
+  }
+  .diagram-caption {
+    font-size: 11.5px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 10px;
+    font-style: italic;
+  }
+  svg text { font-family: 'Noto Sans KR', sans-serif !important; }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge.local  { background: var(--gray-l);  color: var(--gray); }
+  .badge.cloud  { background: var(--purple-l); color: var(--purple-d); }
+  .badge.hi     { background: var(--red-l);    color: var(--red); }
+  .badge.mid    { background: var(--amber-l);  color: var(--amber); }
+  .badge.ok     { background: var(--teal-l);   color: var(--teal); }
+
+  /* ── Pipeline cards ── */
+  .pipeline {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .pipe-card {
+    border-radius: 8px;
+    padding: 12px 10px;
+    text-align: center;
+    position: relative;
+  }
+  .pipe-card::after {
+    content: '\2192';
+    position: absolute;
+    right: -9px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--border);
+    font-size: 16px;
+    z-index: 1;
+  }
+  .pipe-card:last-child::after { display: none; }
+  .pipe-card.local { background: var(--gray-l); border: 1px solid var(--border); }
+  .pipe-card.cloud { background: var(--purple-l); border: 1px solid #AFA9EC; }
+  .pipe-card .step-num { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+  .pipe-card .step-name { font-size: 13px; font-weight: 700; }
+  .pipe-card .step-desc { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .pipe-card.local .step-num { color: var(--gray); }
+  .pipe-card.cloud .step-num { color: var(--purple); }
+
+  /* ── Category grid ── */
+  .cat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .cat-item {
+    border-radius: 7px;
+    padding: 9px 12px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .cat-num {
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 44px;
+  }
+  .cat-content .cat-title { font-size: 12.5px; font-weight: 700; }
+  .cat-content .cat-ex    { font-size: 11.5px; color: var(--muted); }
+  .cat-logic { background: var(--blue-l);  }
+  .cat-logic .cat-num { color: var(--blue); }
+  .cat-qual  { background: var(--amber-l); }
+  .cat-qual .cat-num  { color: var(--amber); }
+  .cat-sec   { background: var(--red-l);   }
+  .cat-sec .cat-num   { color: var(--red); }
+  .cat-perf  { background: var(--teal-l); }
+  .cat-perf .cat-num  { color: var(--teal); }
+  .cat-ops   { background: var(--slate-l); }
+  .cat-ops .cat-num   { color: var(--slate); }
+
+  /* ── Lint rules ── */
+  .lint-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .lint-list li {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: var(--gray-l);
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 13px;
+  }
+  .rule-tag {
+    background: var(--purple);
+    color: white;
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ── Tier visualization ── */
+  .tier-viz {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .tier-row {
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .tier-row.t1 { background: var(--purple-l); border: 1px solid #AFA9EC; }
+  .tier-row.t2 { background: var(--teal-l);   border: 1px solid #5DCAA5; }
+  .tier-row.t3 { background: var(--amber-l);  border: 1px solid #EF9F27; }
+  .tier-row.t4 { background: var(--slate-l);  border: 1px solid #94A3B8; }
+  .tier-label {
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 52px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    text-align: center;
+  }
+  .t1 .tier-label { background: var(--purple); color: white; }
+  .t2 .tier-label { background: var(--teal);   color: white; }
+  .t3 .tier-label { background: var(--amber);  color: white; }
+  .t4 .tier-label { background: var(--slate);  color: white; }
+  .tier-info .tier-name { font-size: 13.5px; font-weight: 700; }
+  .tier-info .tier-desc { font-size: 12px; color: var(--muted); }
+  .tier-envs { margin-left: auto; display: flex; gap: 6px; }
+  .env-chip {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: white;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  /* ── Command group ── */
+  .cmd-group {
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: var(--gray-l);
+  }
+  .cmd-group-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  /* ── Nav link ── */
+  .doc-nav {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 28px;
+    font-size: 12.5px;
+  }
+  .doc-nav a {
+    color: var(--purple);
+    text-decoration: none;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    transition: all 0.15s;
+  }
+  .doc-nav a:hover { background: var(--purple-l); border-color: var(--purple); }
+  .doc-nav a.current { background: var(--purple); color: white; border-color: var(--purple); pointer-events: none; }
+
+  /* ── Footer ── */
+  .doc-footer {
+    border-top: 1px solid var(--border);
+    margin-top: 48px;
+    padding-top: 16px;
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ── Language toggle bar ── */
+  .lang-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250,250,248,0.96);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 6px;
+  }
+  .lang-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: white;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+  .lang-btn.active { background: var(--purple); color: white; border-color: var(--purple); }
+
+  /* ── Language switch ── */
+  [lang-ko], [lang-en] { display: none; }
+  body.lang-ko [lang-ko] { display: revert; }
+  body.lang-en [lang-en] { display: revert; }
+
+  /* ── Table wrapper ── */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* ── Blueprint summary card ── */
+  .bp-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .bp-card {
+    border-radius: 8px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+  }
+  .bp-card h4 {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .bp-card p {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  .bp-card .bp-flow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--purple-d);
+    margin-top: 6px;
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 640px) {
+    .page { padding: 20px 16px 48px; }
+    .doc-header h1 { font-size: 20px; }
+    .doc-header .subtitle { font-size: 13px; }
+    .doc-header .meta { flex-wrap: wrap; gap: 6px; }
+    h2 { font-size: 14px; margin-top: 28px; }
+    table { min-width: 460px; }
+    .pipeline { grid-template-columns: 1fr 1fr; }
+    .pipe-card::after { display: none; }
+    .cat-grid { grid-template-columns: 1fr; }
+    .bp-summary { grid-template-columns: 1fr; }
+    .tier-envs { display: none; }
+    .diagram-wrap { overflow-x: auto; }
+    .diagram-wrap svg { min-width: 600px; }
+    pre { font-size: 11px; padding: 12px; }
+    .doc-footer { flex-direction: column; gap: 6px; font-size: 11px; }
+    .lang-bar { padding: 8px 16px; }
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { background: white; }
+    .page { padding: 20px 28px; max-width: 100%; }
+    .lang-bar { display: none; }
+    h2 { page-break-after: avoid; }
+    table, .diagram-wrap, .pipeline, .cat-grid { page-break-inside: avoid; }
+    pre { white-space: pre-wrap; }
+    [lang-ko], [lang-en] { display: revert !important; }
+  }
+</style>
+</head>
+<body class="lang-ko">
+
+<!-- ── Language toggle ── -->
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('ko')" id="btn-ko">한국어</button>
+  <button class="lang-btn" onclick="setLang('en')" id="btn-en">English</button>
+</div>
+
+<div class="page">
+
+<!-- ══ Header ══════════════════════════════════════════════ -->
+<div class="doc-header">
+  <h1 lang-ko>AI 개발 시스템 — LightHarness</h1>
+  <h1 lang-en>AI Development System — LightHarness</h1>
+  <div class="subtitle" lang-ko>4-Tier 라우팅 + 모듈형 스크립트 기반 에이전트 오케스트레이터</div>
+  <div class="subtitle" lang-en>Agent Orchestrator on 4-Tier Routing + Modular Script Layer</div>
+  <div class="meta">
+    <span class="meta-tag">2026-04-16</span>
+    <span class="meta-tag" lang-ko>Queue 머지 · 14 감사 카테고리 · 모듈형 스크립트 레이어</span>
+    <span class="meta-tag" lang-en>Queue Merge · 14 Audit Categories · Modular Script Layer</span>
+    <span class="meta-tag" lang-ko>Claude Pro 기반</span>
+    <span class="meta-tag" lang-en>Built for Claude Pro</span>
+  </div>
+</div>
+
+<div class="doc-nav">
+  <a href="agentic_ai_intro.html" lang-ko>Agentic AI 개념</a>
+  <a href="agentic_ai_intro.html" lang-en>Agentic AI Concepts</a>
+  <a href="mcp_ecosystem.html" lang-ko>MCP 생태계</a>
+  <a href="mcp_ecosystem.html" lang-en>MCP Ecosystem</a>
+  <a href="light_harness_guide.html" class="current" lang-ko>AI 개발 시스템 (현재)</a>
+  <a href="light_harness_guide.html" class="current" lang-en>AI Dev System (current)</a>
+</div>
+
+<!-- ══ 1. Overview ══════════════════════════════════════════ -->
+<h2 lang-ko>1. 개요</h2>
+<h2 lang-en>1. Overview</h2>
+<p lang-ko>LightHarness는 Claude Pro 안에서 소·중규모 작업을 효율적으로 처리하는 <strong>경량 에이전트 팀 프레임워크</strong>다. 4-Tier 라우팅 위의 워크플로우 오케스트레이터로, 슬래시 커맨드로 동작한다.</p>
+<p lang-en>LightHarness is a <strong>lightweight agent team framework</strong> for efficiently handling small-to-medium tasks within Claude Pro. It acts as a workflow orchestrator on top of 4-Tier routing, operated via slash commands.</p>
+<p lang-ko>핵심 원칙: <strong>cloud(Claude) 사용을 최소화</strong>하고 판단·조율만 맡기며, 실작업은 Tier 2~4에 위임한다. 기계적 작업(git, 파일 I/O, YAML, 볼트 동기화)은 <strong>Python 모듈</strong>이 병렬로 처리한다.</p>
+<p lang-en>Core principle: <strong>minimize direct cloud (Claude) usage</strong> — only judgment and coordination. Mechanical work (git, file I/O, YAML, vault sync) is handled by <strong>Python modules</strong> running in parallel.</p>
+
+<!-- ══ 2. 4-Tier Architecture ══════════════════════════════ -->
+<h2 lang-ko>2. 4-Tier 구조</h2>
+<h2 lang-en>2. 4-Tier Architecture</h2>
+
+<div class="tier-viz">
+  <div class="tier-row t1">
+    <span class="tier-label">Tier 1</span>
+    <div class="tier-info">
+      <div class="tier-name">Claude Code</div>
+      <div class="tier-desc" lang-ko>판단·조율, 슬래시 커맨드 처리, 아키텍처 결정, 결과 통합</div>
+      <div class="tier-desc" lang-en>Judgment, coordination, slash commands, architecture decisions</div>
+    </div>
+    <div class="tier-envs">
+      <span class="env-chip">Mac</span>
+      <span class="env-chip">Web</span>
+      <span class="env-chip">Codespaces</span>
+    </div>
+  </div>
+  <div class="tier-row t2">
+    <span class="tier-label">Tier 2</span>
+    <div class="tier-info">
+      <div class="tier-name">Gemini</div>
+      <div class="tier-desc" lang-ko>대규모 코드 분석, 감사, 린트. subagent 또는 API로 동작</div>
+      <div class="tier-desc" lang-en>Large codebase analysis, auditing, linting. Runs as subagent or API.</div>
+    </div>
+    <div class="tier-envs">
+      <span class="env-chip">Mac</span>
+      <span class="env-chip">Web</span>
+      <span class="env-chip">Codespaces</span>
+    </div>
+  </div>
+  <div class="tier-row t3">
+    <span class="tier-label">Tier 3</span>
+    <div class="tier-info">
+      <div class="tier-name">Groq (70B)</div>
+      <div class="tier-desc" lang-ko>플래닝, 리뷰, 분석, 코드 검증. Tier 2 실패 시 에스컬레이션 대상</div>
+      <div class="tier-desc" lang-en>Planning, review, analysis, code verification. Escalation target when Tier 2 fails.</div>
+    </div>
+    <div class="tier-envs">
+      <span class="env-chip">Mac</span>
+      <span class="env-chip">Web</span>
+    </div>
+  </div>
+  <div class="tier-row t4">
+    <span class="tier-label">Tier 4</span>
+    <div class="tier-info">
+      <div class="tier-name" lang-ko>로컬 LLM (7B)</div>
+      <div class="tier-name" lang-en>Local LLM (7B)</div>
+      <div class="tier-desc" lang-ko>단순 반복 전용: 커밋 메시지, 포맷 변환, 보일러플레이트 생성</div>
+      <div class="tier-desc" lang-en>Simple repetitive tasks only: commit messages, format conversion, boilerplate</div>
+    </div>
+    <div class="tier-envs">
+      <span class="env-chip">Mac only</span>
+    </div>
+  </div>
+</div>
+
+<!-- Architecture diagram -->
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 780 220" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round"/>
+    </marker>
+  </defs>
+  <!-- Tier 1 box -->
+  <rect x="10" y="10" width="760" height="52" rx="10" fill="#EEEDFE" stroke="#AFA9EC" stroke-width="1"/>
+  <text x="20" y="28" font-size="10" fill="#534AB7" font-weight="700">Tier 1 — Claude Code (orchestrator)</text>
+  <rect x="20"  y="32" width="88" height="24" rx="5" fill="#534AB7"/>
+  <text x="64"  y="48" text-anchor="middle" font-size="10" fill="white" font-weight="600">/harness</text>
+  <rect x="118" y="32" width="104" height="24" rx="5" fill="#534AB7"/>
+  <text x="170" y="48" text-anchor="middle" font-size="10" fill="white" font-weight="600">/harness-run</text>
+  <rect x="232" y="32" width="110" height="24" rx="5" fill="#534AB7"/>
+  <text x="287" y="48" text-anchor="middle" font-size="10" fill="white" font-weight="600">/harness-check</text>
+  <rect x="352" y="32" width="116" height="24" rx="5" fill="#534AB7"/>
+  <text x="410" y="48" text-anchor="middle" font-size="10" fill="white" font-weight="600">/harness-debug</text>
+  <rect x="478" y="32" width="80" height="24" rx="5" fill="#534AB7"/>
+  <text x="518" y="48" text-anchor="middle" font-size="10" fill="white" font-weight="600">/inspect</text>
+  <rect x="568" y="32" width="44" height="24" rx="5" fill="#534AB7"/>
+  <text x="590" y="48" text-anchor="middle" font-size="10" fill="white" font-weight="600">/ci</text>
+  <rect x="620" y="32" width="54" height="24" rx="5" fill="#534AB7"/>
+  <text x="647" y="48" text-anchor="middle" font-size="10" fill="white" font-weight="600">/maf</text>
+  <rect x="682" y="32" width="42" height="24" rx="5" fill="#534AB7"/>
+  <text x="703" y="48" text-anchor="middle" font-size="10" fill="white" font-weight="600">/rsm</text>
+  <rect x="732" y="32" width="32" height="24" rx="5" fill="#534AB7"/>
+  <text x="748" y="48" text-anchor="middle" font-size="9" fill="white" font-weight="600">/rsml</text>
+
+  <!-- Arrows down -->
+  <line x1="200" y1="62" x2="200" y2="88" stroke="#D3D1C7" stroke-width="1" marker-end="url(#arr)"/>
+  <line x1="500" y1="62" x2="500" y2="88" stroke="#D3D1C7" stroke-width="1" marker-end="url(#arr)"/>
+
+  <!-- Tier 2 -->
+  <rect x="10" y="90" width="370" height="38" rx="8" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+  <text x="195" y="108" text-anchor="middle" font-size="11" fill="#0F6E56" font-weight="700">Tier 2 — Gemini</text>
+  <text x="195" y="122" text-anchor="middle" font-size="10" fill="#0F6E56">analysis &middot; audit &middot; lint</text>
+
+  <!-- Tier 3 -->
+  <rect x="390" y="90" width="200" height="38" rx="8" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
+  <text x="490" y="108" text-anchor="middle" font-size="11" fill="#BA7517" font-weight="700">Tier 3 — Groq 70B</text>
+  <text x="490" y="122" text-anchor="middle" font-size="10" fill="#BA7517">plan &middot; review &middot; verify</text>
+
+  <!-- Tier 4 -->
+  <rect x="600" y="90" width="170" height="38" rx="8" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1"/>
+  <text x="685" y="108" text-anchor="middle" font-size="11" fill="#64748B" font-weight="700">Tier 4 — Local 7B</text>
+  <text x="685" y="122" text-anchor="middle" font-size="10" fill="#64748B">boilerplate only</text>
+
+  <!-- Escalation chain -->
+  <line x1="10" y1="148" x2="770" y2="148" stroke="#D3D1C7" stroke-width="0.5"/>
+  <text x="390" y="165" text-anchor="middle" font-size="10" fill="#888780" lang-ko>Escalation: T4 fail → T3 → T2 → T1 (Claude)</text>
+
+  <!-- Fallback arrows -->
+  <line x1="598" y1="117" x2="592" y2="117" stroke="#D3D1C7" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#arr)"/>
+  <line x1="388" y1="109" x2="382" y2="109" stroke="#D3D1C7" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#arr)"/>
+
+  <!-- Constraint -->
+  <text x="390" y="185" text-anchor="middle" font-size="10" fill="#888780">T3 → T1 direct escalation prohibited. Must pass through T2.</text>
+
+  <!-- Cloud budget -->
+  <rect x="260" y="195" width="260" height="22" rx="11" fill="#EEEDFE" stroke="#AFA9EC" stroke-width="1"/>
+  <text x="390" y="210" text-anchor="middle" font-size="10" fill="#534AB7" font-weight="600">Cloud budget: ≤10 steps / session</text>
+</svg>
+  <div class="diagram-caption" lang-ko>4-Tier 구조 및 에스컬레이션 체인</div>
+  <div class="diagram-caption" lang-en>4-Tier Architecture and Escalation Chain</div>
+</div>
+
+<div class="callout warn">
+  <span class="icon">&#9888;&#65039;</span>
+  <p lang-ko><strong>local 에이전트 프롬프트는 반드시 영어</strong>로 작성한다. 로컬 LLM 품질 최적화 목적. Lint RULE-2에서 자동 차단.</p>
+  <p lang-en><strong>Local agent prompts must be in English.</strong> Optimizes local LLM output quality. Lint RULE-2 blocks violations.</p>
+</div>
+
+<!-- ══ 2b. Modular Script Layer ══════════════════════════ -->
+<h2 lang-ko>2b. 모듈형 스크립트 레이어</h2>
+<h2 lang-en>2b. Modular Script Layer</h2>
+
+<p lang-ko>기계적 작업(git, 파일 I/O, YAML 파싱, 볼트 동기화)은 <strong>Python 모듈</strong>이 처리한다. AI는 판단이 필요한 경우에만 개입. 모듈은 <code>ThreadPoolExecutor</code>로 병렬 실행된다.</p>
+<p lang-en>Mechanical work (git, file I/O, YAML parsing, vault sync) is handled by <strong>Python modules</strong>. AI only intervenes when judgment is needed. Modules run in parallel via <code>ThreadPoolExecutor</code>.</p>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th>Module</th>
+    <th lang-ko>역할</th><th lang-en>Role</th>
+    <th lang-ko>사용 스킬</th><th lang-en>Used By</th>
+  </tr></thead>
+  <tbody>
+    <tr><td><code>lib/paths.py</code></td>
+      <td lang-ko>경로 상수, 날짜 헬퍼</td>
+      <td lang-en>Path constants, date helpers</td>
+      <td lang-ko>전체</td><td lang-en>All</td></tr>
+    <tr><td><code>lib/git_ops.py</code></td>
+      <td lang-ko>status, diff, commit, push, 병렬 repo 스캔</td>
+      <td lang-en>status, diff, commit, push, parallel repo scan</td>
+      <td>vault-sync, gsync, rsml</td></tr>
+    <tr><td><code>lib/vault_ops.py</code></td>
+      <td lang-ko>index.yaml R/W, README 패치, 타임라인, 미러</td>
+      <td lang-en>index.yaml R/W, README patch, timeline, mirror</td>
+      <td>vault-sync, gsync</td></tr>
+    <tr><td><code>lib/todo_ops.py</code></td>
+      <td lang-ko>[x] 감지, 완료 항목 이동, 날짜 섹션</td>
+      <td lang-en>[x] detection, move completed items, date sections</td>
+      <td>wtodo, rsml</td></tr>
+    <tr><td><code>lib/yaml_ops.py</code></td>
+      <td lang-ko>Blueprint YAML 파싱, 큐 머지 그룹 감지</td>
+      <td lang-en>Blueprint YAML parsing, merge group detection</td>
+      <td>harness-run</td></tr>
+    <tr><td><code>lib/inventory.py</code></td>
+      <td lang-ko>Git·스킬·스크립트·ALoop·훅 병렬 스캔</td>
+      <td lang-en>Parallel scan: Git, skills, scripts, ALoop, hooks</td>
+      <td>vault-sync</td></tr>
+    <tr><td><code>lib/resume_log.py</code></td>
+      <td lang-ko>템플릿 생성, 포인터 갱신, 자동 넘버링</td>
+      <td lang-en>Template gen, pointer update, auto-numbering</td>
+      <td>rsml</td></tr>
+  </tbody>
+</table></div>
+
+<div class="callout info">
+  <span class="icon">&#128161;</span>
+  <p lang-ko><strong>Script-first 원칙:</strong> git 명령, 파일 복사, 날짜 비교, YAML 파싱에 AI를 사용하지 않는다. 17개 repo 스캔이 순차 1.5초 → 병렬 0.3초. index.yaml은 1회 읽기 → 인메모리 패치 → 1회 쓰기.</p>
+  <p lang-en><strong>Script-first principle:</strong> No AI for git commands, file copy, date comparison, YAML parsing. 17-repo scan: sequential 1.5s &rarr; parallel 0.3s. index.yaml: 1 read &rarr; in-memory patch &rarr; 1 write.</p>
+</div>
+
+<!-- ══ 3. Slash Commands ══════════════════════════════════ -->
+<h2 lang-ko>3. 슬래시 커맨드</h2>
+<h2 lang-en>3. Slash Commands</h2>
+
+<h3 lang-ko>하네스 &amp; 코드 품질</h3>
+<h3 lang-en>Harness &amp; Code Quality</h3>
+<div class="table-wrap"><table>
+  <thead>
+    <tr>
+      <th lang-ko>커맨드</th><th lang-en>Command</th>
+      <th lang-ko>역할</th><th lang-en>Role</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>/harness [goal]</code></td>
+      <td lang-ko>Blueprint YAML 설계 + Lint 자동 실행</td>
+      <td lang-en>Design Blueprint YAML + auto Lint</td></tr>
+    <tr><td><code>/harness-run [name]</code></td>
+      <td lang-ko>Blueprint 실행. 인자 없으면 큐 자동 감지 (2+ → 머지 모드)</td>
+      <td lang-en>Execute Blueprint. No args → auto-detect queue (2+ → merge mode)</td></tr>
+    <tr><td><code>/harness-check [path]</code></td>
+      <td lang-ko>4단계 정적 버그 감사 (scout → audit → patch → verify)</td>
+      <td lang-en>4-step static bug audit (scout → audit → patch → verify)</td></tr>
+    <tr><td><code>/harness-debug [path]</code></td>
+      <td lang-ko>CRITICAL=0이 될 때까지 harness-check 반복 (최대 5라운드)</td>
+      <td lang-en>Repeats harness-check until CRITICAL=0 (max 5 rounds)</td></tr>
+    <tr><td><code>/inspect [target] [--scope diff]</code></td>
+      <td lang-ko>읽기 전용 14카테고리 감사. <code>--scope diff</code>로 변경분만 감사 (CAT-14 Reuse 포함). <code>--help</code>로 스킬 비교표 출력</td>
+      <td lang-en>Read-only 14-category audit. <code>--scope diff</code> for changed files only (incl. CAT-14 Reuse). <code>--help</code> prints skill comparison</td></tr>
+    <tr><td><code>/autodebug [target]</code></td>
+      <td lang-ko>런타임 디버그 루프: Audit → Fix → Deploy → Verify (백그라운드, 최대 5라운드)</td>
+      <td lang-en>Runtime debug loop: Audit → Fix → Deploy → Verify (background, max 5 rounds)</td></tr>
+    <tr><td><code>/ci [target]</code></td>
+      <td lang-ko>지속적 개선: 3-Tier로 스캔 → 평가 → 리포트 → <code>/harness</code> Blueprint 자동 생성</td>
+      <td lang-en>Continuous Improvement: 3-Tier scan → assess → report → auto-generate <code>/harness</code> Blueprint</td></tr>
+    <tr><td><code>/simplify</code></td>
+      <td lang-ko>변경된 코드의 재사용성·품질·효율성 리뷰 후 자동 수정</td>
+      <td lang-en>Review changed code for reuse, quality, efficiency — then fix</td></tr>
+  </tbody>
+</table></div>
+
+<h3 lang-ko>세션 관리</h3>
+<h3 lang-en>Session Management</h3>
+<div class="table-wrap"><table>
+  <thead>
+    <tr>
+      <th lang-ko>커맨드</th><th lang-en>Command</th>
+      <th lang-ko>역할</th><th lang-en>Role</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>/rsm</code></td>
+      <td lang-ko>세션 시작: 상태 로드 + vault 프리로드 + TODO 출력</td>
+      <td lang-en>Session start: load status + vault preload + show TODOs</td></tr>
+    <tr><td><code>/rsml</code></td>
+      <td lang-ko>세션 종료: 커밋 + TODO 정리 + resume-log 저장 + vault 동기화</td>
+      <td lang-en>Session end: commit + TODO cleanup + resume-log save + vault sync</td></tr>
+    <tr><td><code>/gsync</code></td>
+      <td lang-ko>프로젝트 커밋 + vault 동기화 (세션 중간) <span class="badge ok">script</span></td>
+      <td lang-en>Project commit + vault sync (mid-session) <span class="badge ok">script</span></td></tr>
+    <tr><td><code>/vault-sync</code></td>
+      <td lang-ko>전체 로컬→볼트 동기화: 17 repo + 스킬 + 스크립트 + 미러 push <span class="badge ok">script</span></td>
+      <td lang-en>Full local→vault sync: 17 repos + skills + scripts + mirror push <span class="badge ok">script</span></td></tr>
+    <tr><td><code>/wtodo</code></td>
+      <td lang-ko>TODO 갱신 + 완료 항목 아카이브 이동 <span class="badge ok">script</span></td>
+      <td lang-en>Update TODO + archive completed items <span class="badge ok">script</span></td></tr>
+  </tbody>
+</table></div>
+
+<h3 lang-ko>프로젝트 생성</h3>
+<h3 lang-en>Project Generation</h3>
+<div class="table-wrap"><table>
+  <thead>
+    <tr>
+      <th lang-ko>커맨드</th><th lang-en>Command</th>
+      <th lang-ko>역할</th><th lang-en>Role</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>/maf &lt;project&gt; &lt;req&gt;</code></td>
+      <td lang-ko>그린필드 자동 생성: scout → 병렬 subagent(3개) → verifier → export</td>
+      <td lang-en>Greenfield auto-gen: scout → parallel subagents(3) → verifier → export</td></tr>
+  </tbody>
+</table></div>
+
+<!-- ══ 4. Blueprint YAML ══════════════════════════════════ -->
+<h2 lang-ko>4. Blueprint YAML</h2>
+<h2 lang-en>4. Blueprint YAML</h2>
+
+<p lang-ko><code>/harness</code>로 생성되는 Blueprint는 에이전트 팀의 설계도다. 두 가지 패턴 중 하나를 선택한다.</p>
+<p lang-en>Blueprints generated by <code>/harness</code> are the design documents for agent teams. Choose one of two patterns.</p>
+
+<div class="bp-summary">
+  <div class="bp-card" style="background: var(--blue-l);">
+    <h4 lang-ko>Plan-Do-Review</h4>
+    <h4 lang-en>Plan-Do-Review</h4>
+    <p lang-ko>분해 가능한 작업, 반복 처리에 적합</p>
+    <p lang-en>For decomposable, iterative work</p>
+    <div class="bp-flow">planner <span class="badge local">local</span> → worker <span class="badge cloud">cloud</span> → reviewer <span class="badge local">local</span></div>
+  </div>
+  <div class="bp-card" style="background: var(--teal-l);">
+    <h4 lang-ko>Single-Agent+Helper</h4>
+    <h4 lang-en>Single-Agent+Helper</h4>
+    <p lang-ko>단순·소규모 작업, 보조만 필요한 경우</p>
+    <p lang-en>Simple/small tasks, local assist only</p>
+    <div class="bp-flow">helper <span class="badge local">local</span> → executor <span class="badge cloud">cloud</span></div>
+  </div>
+</div>
+
+<h3 lang-ko>주요 필드</h3>
+<h3 lang-en>Key Fields</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Field</th>
+    <th lang-ko>설명</th><th lang-en>Description</th>
+  </tr></thead>
+  <tbody>
+    <tr><td><code>Template_Name</code></td>
+      <td lang-ko>작업 식별자 (snake_case)</td>
+      <td lang-en>Task identifier (snake_case)</td></tr>
+    <tr><td><code>Pattern</code></td>
+      <td lang-ko>Plan-Do-Review 또는 Single-Agent+Helper</td>
+      <td lang-en>Plan-Do-Review or Single-Agent+Helper</td></tr>
+    <tr><td><code>Queue.*</code></td>
+      <td lang-ko>머지 판단 메타: <code>affected_files</code>, <code>merge_group</code>, <code>dependencies</code></td>
+      <td lang-en>Merge metadata: <code>affected_files</code>, <code>merge_group</code>, <code>dependencies</code></td></tr>
+    <tr><td><code>Agents[]</code></td>
+      <td lang-ko>Id, Role, Execution_Target(cloud/local), System_Prompt, Tools</td>
+      <td lang-en>Id, Role, Execution_Target(cloud/local), System_Prompt, Tools</td></tr>
+    <tr><td><code>Workflow[]</code></td>
+      <td lang-ko>From → To 흐름 + Error_Policy + token_budget</td>
+      <td lang-en>From → To flow + Error_Policy + token_budget</td></tr>
+    <tr><td><code>Defaults.Limits</code></td>
+      <td lang-ko>Max_Agents: 3, Max_Cloud_Steps: 10</td>
+      <td lang-en>Max_Agents: 3, Max_Cloud_Steps: 10</td></tr>
+  </tbody>
+</table></div>
+
+<div class="callout info">
+  <span class="icon">&#8505;&#65039;</span>
+  <p lang-ko>cloud 에이전트 비율 목표: 전체의 <strong>1/3 이하</strong>. 머지 모드에서 여러 cloud 단계를 1회로 병합해 추가 절감.</p>
+  <p lang-en>Cloud agent ratio target: <strong>&le;1/3</strong> of total. Merge mode further reduces by combining multiple cloud steps into 1 call.</p>
+</div>
+
+<!-- ══ 5. Execution Flow ══════════════════════════════════ -->
+<h2 lang-ko>5. /harness-run 실행 흐름</h2>
+<h2 lang-en>5. /harness-run Execution Flow</h2>
+
+<div class="diagram-wrap">
+<svg width="100%" viewBox="0 0 780 280" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round"/>
+    </marker>
+  </defs>
+  <!-- Start -->
+  <rect x="300" y="10" width="180" height="36" rx="18" fill="#D3D1C7"/>
+  <text x="390" y="32" text-anchor="middle" font-size="11" fill="#2C2C2A" font-weight="600">/harness-run</text>
+  <line x1="390" y1="46" x2="390" y2="72" stroke="#D3D1C7" stroke-width="1" marker-end="url(#arr2)"/>
+
+  <!-- Decision -->
+  <rect x="270" y="74" width="240" height="42" rx="8" fill="#EEEDFE" stroke="#AFA9EC" stroke-width="1"/>
+  <text x="390" y="92" text-anchor="middle" font-size="11" fill="#534AB7" font-weight="700" lang-ko>[name] 지정?</text>
+  <text x="390" y="92" text-anchor="middle" font-size="11" fill="#534AB7" font-weight="700" lang-en>[name] specified?</text>
+  <text x="390" y="108" text-anchor="middle" font-size="10" fill="#3C3489">--queue / --no-merge</text>
+
+  <!-- Yes → single -->
+  <line x1="510" y1="95" x2="600" y2="95" stroke="#D3D1C7" stroke-width="1" marker-end="url(#arr2)"/>
+  <text x="553" y="90" text-anchor="middle" font-size="10" fill="#888780">Yes</text>
+  <rect x="602" y="74" width="110" height="42" rx="8" fill="#E6F1FB" stroke="#85B7EB" stroke-width="1"/>
+  <text x="657" y="92" text-anchor="middle" font-size="11" fill="#185FA5" font-weight="700" lang-ko>단일 실행</text>
+  <text x="657" y="92" text-anchor="middle" font-size="11" fill="#185FA5" font-weight="700" lang-en>Single Run</text>
+  <text x="657" y="108" text-anchor="middle" font-size="10" fill="#185FA5">1 Blueprint</text>
+
+  <!-- No → queue detect -->
+  <line x1="390" y1="116" x2="390" y2="142" stroke="#D3D1C7" stroke-width="1" marker-end="url(#arr2)"/>
+  <text x="398" y="133" font-size="10" fill="#888780">No</text>
+
+  <rect x="250" y="144" width="280" height="42" rx="8" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+  <text x="390" y="162" text-anchor="middle" font-size="11" fill="#0F6E56" font-weight="700" lang-ko>큐 자동 감지</text>
+  <text x="390" y="162" text-anchor="middle" font-size="11" fill="#0F6E56" font-weight="700" lang-en>Auto-detect Queue</text>
+  <text x="390" y="178" text-anchor="middle" font-size="10" fill="#0F6E56" lang-ko>pending Blueprint 수 확인</text>
+  <text x="390" y="178" text-anchor="middle" font-size="10" fill="#0F6E56" lang-en>Check pending Blueprint count</text>
+
+  <!-- 2+ → merge -->
+  <line x1="250" y1="165" x2="160" y2="165" stroke="#D3D1C7" stroke-width="1" marker-end="url(#arr2)"/>
+  <text x="205" y="160" text-anchor="middle" font-size="10" fill="#888780">2+</text>
+  <rect x="50" y="144" width="110" height="42" rx="8" fill="#FAECE7" stroke="#F0997B" stroke-width="1"/>
+  <text x="105" y="162" text-anchor="middle" font-size="11" fill="#993C1D" font-weight="700" lang-ko>머지 모드</text>
+  <text x="105" y="162" text-anchor="middle" font-size="11" fill="#993C1D" font-weight="700" lang-en>Merge Mode</text>
+  <text x="105" y="178" text-anchor="middle" font-size="10" fill="#993C1D" lang-ko>배치 병합</text>
+  <text x="105" y="178" text-anchor="middle" font-size="10" fill="#993C1D" lang-en>Batch merge</text>
+
+  <!-- 1 → single -->
+  <line x1="530" y1="165" x2="620" y2="165" stroke="#D3D1C7" stroke-width="1" marker-end="url(#arr2)"/>
+  <text x="575" y="160" text-anchor="middle" font-size="10" fill="#888780">1</text>
+  <rect x="620" y="144" width="110" height="42" rx="8" fill="#E6F1FB" stroke="#85B7EB" stroke-width="1"/>
+  <text x="675" y="162" text-anchor="middle" font-size="11" fill="#185FA5" font-weight="700" lang-ko>단일 실행</text>
+  <text x="675" y="162" text-anchor="middle" font-size="11" fill="#185FA5" font-weight="700" lang-en>Single Run</text>
+  <text x="675" y="178" text-anchor="middle" font-size="10" fill="#185FA5" lang-ko>순차 처리</text>
+  <text x="675" y="178" text-anchor="middle" font-size="10" fill="#185FA5" lang-en>Sequential</text>
+
+  <!-- Plan-Do-Review pattern -->
+  <text x="390" y="212" text-anchor="middle" font-size="10" fill="#888780">Plan-Do-Review execution pattern</text>
+  <rect x="160" y="220" width="110" height="38" rx="6" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1"/>
+  <text x="215" y="235" text-anchor="middle" font-size="10" fill="#444441" font-weight="700">local</text>
+  <text x="215" y="250" text-anchor="middle" font-size="10" fill="#5F5E5A">planner</text>
+  <line x1="270" y1="239" x2="296" y2="239" stroke="#D3D1C7" stroke-width="1" marker-end="url(#arr2)"/>
+  <rect x="298" y="220" width="184" height="38" rx="6" fill="#EEEDFE" stroke="#AFA9EC" stroke-width="1"/>
+  <text x="390" y="235" text-anchor="middle" font-size="10" fill="#534AB7" font-weight="700" lang-ko>cloud (머지 시 N→1회)</text>
+  <text x="390" y="235" text-anchor="middle" font-size="10" fill="#534AB7" font-weight="700" lang-en>cloud (merge N→1 call)</text>
+  <text x="390" y="250" text-anchor="middle" font-size="10" fill="#3C3489">implementer</text>
+  <line x1="482" y1="239" x2="508" y2="239" stroke="#D3D1C7" stroke-width="1" marker-end="url(#arr2)"/>
+  <rect x="510" y="220" width="110" height="38" rx="6" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1"/>
+  <text x="565" y="235" text-anchor="middle" font-size="10" fill="#444441" font-weight="700">local</text>
+  <text x="565" y="250" text-anchor="middle" font-size="10" fill="#5F5E5A">reviewer</text>
+</svg>
+  <div class="diagram-caption" lang-ko>/harness-run 실행 분기 및 Plan-Do-Review 패턴</div>
+  <div class="diagram-caption" lang-en>/harness-run branching and Plan-Do-Review pattern</div>
+</div>
+
+<!-- ══ 6. Queue Merge Mode ═══════════════════════════════ -->
+<h2 lang-ko>6. Queue 머지 모드</h2>
+<h2 lang-en>6. Queue Merge Mode</h2>
+<p lang-ko>대기 중인 Blueprint들을 <code>/harness-run</code> 한 번에 처리. cloud 단계를 배치 내 1회로 병합해 <strong>실행 횟수를 절감</strong>한다.</p>
+<p lang-en>Processes pending Blueprints in a single <code>/harness-run</code>. Merges cloud steps within a batch into 1 call to <strong>reduce executions</strong>.</p>
+
+<h3 lang-ko>배치 구성 기준</h3>
+<h3 lang-en>Batch Grouping Rules</h3>
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th>#</th>
+    <th lang-ko>조건</th><th lang-en>Condition</th>
+    <th lang-ko>결과</th><th lang-en>Result</th>
+  </tr></thead>
+  <tbody>
+    <tr><td>1</td>
+      <td lang-ko><code>merge_group</code> 값 동일</td><td lang-en>Same <code>merge_group</code></td>
+      <td lang-ko>같은 배치</td><td lang-en>Same batch</td></tr>
+    <tr><td>2</td>
+      <td lang-ko><code>affected_files</code> 교집합</td><td lang-en><code>affected_files</code> overlap</td>
+      <td lang-ko>같은 배치</td><td lang-en>Same batch</td></tr>
+    <tr><td>3</td>
+      <td lang-ko><code>dependencies</code> 관계</td><td lang-en><code>dependencies</code> relation</td>
+      <td lang-ko>같은 배치, 순서 유지</td><td lang-en>Same batch, order preserved</td></tr>
+    <tr><td>4</td>
+      <td lang-ko>해당 없음</td><td lang-en>None</td>
+      <td lang-ko>별도 배치</td><td lang-en>Separate batch</td></tr>
+  </tbody>
+</table></div>
+
+<!-- ══ 7. Code Quality Pipeline ══════════════════════════ -->
+<h2 lang-ko>7. 코드 품질 파이프라인</h2>
+<h2 lang-en>7. Code Quality Pipeline</h2>
+
+<h3>harness-check — 4-step audit</h3>
+<div class="pipeline">
+  <div class="pipe-card local">
+    <div class="step-num">STEP 1</div>
+    <div class="step-name">scout</div>
+    <div class="step-desc"><span class="badge local">local</span><br>
+      <span lang-ko>프로젝트 타입 + 핵심 파일</span>
+      <span lang-en>Project type + key files</span>
+    </div>
+  </div>
+  <div class="pipe-card local">
+    <div class="step-num">STEP 2</div>
+    <div class="step-name">auditor</div>
+    <div class="step-desc"><span class="badge local">T2/T3</span><br>
+      <span lang-ko>8개 카테고리 버그 분석</span>
+      <span lang-en>8-category bug analysis</span>
+    </div>
+  </div>
+  <div class="pipe-card cloud">
+    <div class="step-num">STEP 3</div>
+    <div class="step-name">patcher</div>
+    <div class="step-desc"><span class="badge cloud">cloud</span><br>
+      <span lang-ko>CRITICAL / WARNING 수정</span>
+      <span lang-en>Fix CRITICAL / WARNING</span>
+    </div>
+  </div>
+  <div class="pipe-card local">
+    <div class="step-num">STEP 4</div>
+    <div class="step-name">verifier</div>
+    <div class="step-desc"><span class="badge local">T2/T3</span><br>
+      <span lang-ko>4가지 회귀 검증</span>
+      <span lang-en>4 regression checks</span>
+    </div>
+  </div>
+</div>
+
+<h3 lang-ko>harness-debug — 재귀 루프</h3>
+<h3 lang-en>harness-debug — Recursive Loop</h3>
+<p lang-ko>harness-check를 CRITICAL이 0이 될 때까지 반복한다. 라운드당 cloud 1회, 최대 5라운드 = cloud 5회 상한.</p>
+<p lang-en>Repeats harness-check until CRITICAL count reaches 0. 1 cloud step per round, max 5 rounds = 5 cloud steps cap.</p>
+
+<h3 lang-ko>inspect — 14카테고리 읽기 전용 감사</h3>
+<h3 lang-en>inspect — 14-Category Read-Only Audit</h3>
+<p lang-ko>harness-check의 8카테고리에 6카테고리를 추가한 확장 감사. 코드를 수정하지 않고 보고서만 출력한다. CRITICAL 발견 시 <code>/autodebug</code>를 백그라운드로 자동 실행. <code>--scope diff</code>로 git 변경분만 감사하면 CAT-14(Reuse)도 자동 활성화. <code>--help</code>로 전체 품질 스킬 비교표 출력.</p>
+<p lang-en>Extended audit adding 6 categories to harness-check's 8. Read-only — outputs report only. Auto-launches <code>/autodebug</code> in background on CRITICAL findings. Use <code>--scope diff</code> to audit only git changes (auto-enables CAT-14 Reuse). <code>--help</code> prints a comparison of all quality skills.</p>
+
+<h3 lang-ko>14개 감사 카테고리</h3>
+<h3 lang-en>14 Audit Categories</h3>
+<div class="cat-grid">
+  <div class="cat-item cat-logic">
+    <div class="cat-num">CAT-1</div>
+    <div class="cat-content">
+      <div class="cat-title">API Contract</div>
+      <div class="cat-ex" lang-ko>필드명, 타입 가정 오류</div>
+      <div class="cat-ex" lang-en>Field names, type assumptions</div>
+    </div>
+  </div>
+  <div class="cat-item cat-logic">
+    <div class="cat-num">CAT-2</div>
+    <div class="cat-content">
+      <div class="cat-title">Type Mismatch</div>
+      <div class="cat-ex" lang-ko>인터페이스 vs 실제 응답</div>
+      <div class="cat-ex" lang-en>Interface vs actual response</div>
+    </div>
+  </div>
+  <div class="cat-item cat-logic">
+    <div class="cat-num">CAT-3</div>
+    <div class="cat-content">
+      <div class="cat-title">Null Safety</div>
+      <div class="cat-ex" lang-ko>optional chaining 누락</div>
+      <div class="cat-ex" lang-en>Missing optional chaining</div>
+    </div>
+  </div>
+  <div class="cat-item cat-logic">
+    <div class="cat-num">CAT-4</div>
+    <div class="cat-content">
+      <div class="cat-title">Filter &amp; Edge Case</div>
+      <div class="cat-ex" lang-ko>빈 배열, 경계값 미처리</div>
+      <div class="cat-ex" lang-en>Empty arrays, boundary cases</div>
+    </div>
+  </div>
+  <div class="cat-item cat-qual">
+    <div class="cat-num">CAT-5</div>
+    <div class="cat-content">
+      <div class="cat-title">Dead Code</div>
+      <div class="cat-ex" lang-ko>미사용 export, 도달 불가 분기</div>
+      <div class="cat-ex" lang-en>Unused exports, unreachable branches</div>
+    </div>
+  </div>
+  <div class="cat-item cat-qual">
+    <div class="cat-num">CAT-6</div>
+    <div class="cat-content">
+      <div class="cat-title">Error Handling</div>
+      <div class="cat-ex" lang-ko>try/catch 누락, 에러 삼킴</div>
+      <div class="cat-ex" lang-en>Missing try/catch, swallowed errors</div>
+    </div>
+  </div>
+  <div class="cat-item cat-sec">
+    <div class="cat-num">CAT-7 <span class="badge hi">high</span></div>
+    <div class="cat-content">
+      <div class="cat-title">Security</div>
+      <div class="cat-ex" lang-ko>injection, XSS, 하드코딩 비밀값</div>
+      <div class="cat-ex" lang-en>Injection, XSS, hardcoded secrets</div>
+    </div>
+  </div>
+  <div class="cat-item cat-sec">
+    <div class="cat-num">CAT-8 <span class="badge hi">high</span></div>
+    <div class="cat-content">
+      <div class="cat-title">Integration</div>
+      <div class="cat-ex" lang-ko>파라미터명·env 불일치</div>
+      <div class="cat-ex" lang-en>Param name / env var mismatch</div>
+    </div>
+  </div>
+  <div class="cat-item cat-perf">
+    <div class="cat-num">CAT-9</div>
+    <div class="cat-content">
+      <div class="cat-title">Performance</div>
+      <div class="cat-ex" lang-ko>N+1 쿼리, 불필요한 재렌더</div>
+      <div class="cat-ex" lang-en>N+1 queries, unnecessary re-renders</div>
+    </div>
+  </div>
+  <div class="cat-item cat-perf">
+    <div class="cat-num">CAT-10</div>
+    <div class="cat-content">
+      <div class="cat-title">Concurrency</div>
+      <div class="cat-ex" lang-ko>레이스 컨디션, 데드락</div>
+      <div class="cat-ex" lang-en>Race conditions, deadlocks</div>
+    </div>
+  </div>
+  <div class="cat-item cat-ops">
+    <div class="cat-num">CAT-11</div>
+    <div class="cat-content">
+      <div class="cat-title">Resource Leaks</div>
+      <div class="cat-ex" lang-ko>미닫힌 커넥션, 파일 핸들</div>
+      <div class="cat-ex" lang-en>Unclosed connections, file handles</div>
+    </div>
+  </div>
+  <div class="cat-item cat-ops">
+    <div class="cat-num">CAT-12</div>
+    <div class="cat-content">
+      <div class="cat-title">Domain Logic</div>
+      <div class="cat-ex" lang-ko>비즈니스 규칙 위반, 잘못된 계산</div>
+      <div class="cat-ex" lang-en>Business rule violations, wrong calculations</div>
+    </div>
+  </div>
+  <div class="cat-item cat-ops">
+    <div class="cat-num">CAT-13</div>
+    <div class="cat-content">
+      <div class="cat-title">Observability</div>
+      <div class="cat-ex" lang-ko>로깅 부재, 모니터링 사각지대</div>
+      <div class="cat-ex" lang-en>Missing logging, monitoring blind spots</div>
+    </div>
+  </div>
+  <div class="cat-item cat-qual">
+    <div class="cat-num">CAT-14 <span class="badge mid">diff</span></div>
+    <div class="cat-content">
+      <div class="cat-title">Reuse</div>
+      <div class="cat-ex" lang-ko>기존 유틸 중복, 헬퍼 미활용 (<code>--scope diff</code> 전용)</div>
+      <div class="cat-ex" lang-en>Duplicates existing util, unused helpers (<code>--scope diff</code> only)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 7b. autodebug ═════════════════════════════════════ -->
+<h3 lang-ko>autodebug — 자율 디버그 루프</h3>
+<h3 lang-en>autodebug — Autonomous Debug Loop</h3>
+<p lang-ko><code>/inspect</code>가 CRITICAL을 발견하면 자동 연계되거나, 직접 <code>/autodebug [target]</code>으로 실행. 백그라운드에서 성공 조건 달성까지 반복한다.</p>
+<p lang-en>Auto-triggered when <code>/inspect</code> finds CRITICAL issues, or invoked directly via <code>/autodebug [target]</code>. Runs in background until success condition is met.</p>
+
+<div class="pipeline">
+  <div class="pipe-card local">
+    <div class="step-num">1</div>
+    <div class="step-name">Audit</div>
+    <div class="step-desc"><span class="badge local">T2/T3</span><br>
+      <span lang-ko>CRITICAL 버그 탐지</span>
+      <span lang-en>Detect CRITICAL bugs</span>
+    </div>
+  </div>
+  <div class="pipe-card cloud">
+    <div class="step-num">2</div>
+    <div class="step-name">Fix</div>
+    <div class="step-desc"><span class="badge cloud">cloud</span><br>
+      <span lang-ko>코드 수정</span>
+      <span lang-en>Patch code</span>
+    </div>
+  </div>
+  <div class="pipe-card local">
+    <div class="step-num">3</div>
+    <div class="step-name">Deploy</div>
+    <div class="step-desc"><span class="badge local">bash</span><br>
+      <span lang-ko>빌드 + 배포</span>
+      <span lang-en>Build + deploy</span>
+    </div>
+  </div>
+  <div class="pipe-card local">
+    <div class="step-num">4</div>
+    <div class="step-name">Verify</div>
+    <div class="step-desc"><span class="badge local">T2/T3</span><br>
+      <span lang-ko>성공? 종료 : 1번으로</span>
+      <span lang-en>Pass? Done : goto 1</span>
+    </div>
+  </div>
+</div>
+
+<div class="callout warn">
+  <span class="icon">&#9888;&#65039;</span>
+  <p lang-ko><strong>최대 5라운드.</strong> 3라운드 이내 수렴이 일반적. 라운드당 cloud 1회 = 최대 cloud 5회. 완료 후 수정 파일이 많으면 <code>/inspect --scope diff</code> 제안, 구조적 문제면 <code>/ci</code> 제안.</p>
+  <p lang-en><strong>Max 5 rounds.</strong> Typically converges within 3. 1 cloud step/round = max 5 cloud steps. On completion, suggests <code>/inspect --scope diff</code> if many files changed, or <code>/ci</code> for structural issues.</p>
+</div>
+
+<!-- ══ 7c. CI ════════════════════════════════════════════ -->
+<h3 lang-ko>/ci — 지속적 개선 에이전트</h3>
+<h3 lang-en>/ci — Continuous Improvement Agent</h3>
+<p lang-ko>디버깅이 아닌 <strong>개선</strong>에 특화. 프로젝트를 스캔해 불필요 코드, 중복, 성능 병목을 찾고, <code>/harness</code> Blueprint를 자동 생성한다. 실제 적용은 사용자가 <code>/harness-run</code>으로 나중에 수행.</p>
+<p lang-en>Specialized in <strong>improvement</strong>, not debugging. Scans projects for dead weight, redundancy, and perf bottlenecks, then auto-generates a <code>/harness</code> Blueprint. User applies later via <code>/harness-run</code>.</p>
+
+<div class="pipeline">
+  <div class="pipe-card local">
+    <div class="step-num">1</div>
+    <div class="step-name">Scan</div>
+    <div class="step-desc"><span class="badge local">Tier 3</span><br>
+      <span lang-ko>구조·의존성 분석</span>
+      <span lang-en>Structure + deps</span>
+    </div>
+  </div>
+  <div class="pipe-card local">
+    <div class="step-num">2</div>
+    <div class="step-name">Assess</div>
+    <div class="step-desc"><span class="badge local">Tier 2</span><br>
+      <span lang-ko>7가지 기준 평가</span>
+      <span lang-en>7-criteria eval</span>
+    </div>
+  </div>
+  <div class="pipe-card cloud">
+    <div class="step-num">3</div>
+    <div class="step-name">Report</div>
+    <div class="step-desc"><span class="badge cloud">Claude</span><br>
+      <span lang-ko>종합 + 우선순위</span>
+      <span lang-en>Synthesize + rank</span>
+    </div>
+  </div>
+  <div class="pipe-card local">
+    <div class="step-num">4</div>
+    <div class="step-name">Blueprint</div>
+    <div class="step-desc"><span class="badge local">/harness</span><br>
+      <span lang-ko>실행 계획 생성</span>
+      <span lang-en>Generate plan</span>
+    </div>
+  </div>
+</div>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th lang-ko>평가 카테고리</th><th lang-en>Assessment Category</th>
+    <th lang-ko>대상</th><th lang-en>What to Find</th>
+  </tr></thead>
+  <tbody>
+    <tr><td><strong>P-1</strong> Dead Weight</td>
+      <td lang-ko>미사용 의존성, 고아 파일, 죽은 export</td>
+      <td lang-en>Unused deps, orphan files, dead exports</td></tr>
+    <tr><td><strong>P-2</strong> Redundancy</td>
+      <td lang-ko>중복 로직, 복사-붙여넣기, 겹치는 헬퍼</td>
+      <td lang-en>Duplicate logic, copy-paste, overlapping helpers</td></tr>
+    <tr><td><strong>P-3</strong> Compactness</td>
+      <td lang-ko>과도한 추상화, 불필요한 래퍼</td>
+      <td lang-en>Over-abstraction, unnecessary wrappers</td></tr>
+    <tr><td><strong>P-4</strong> Performance</td>
+      <td lang-ko>느린 경로, N+1, 캐시 누락</td>
+      <td lang-en>Slow paths, N+1, missing cache</td></tr>
+    <tr><td><strong>P-5</strong> Procedure</td>
+      <td lang-ko>워크플로우 위반, 일관성 없는 패턴</td>
+      <td lang-en>Workflow violations, inconsistent patterns</td></tr>
+    <tr><td><strong>P-6</strong> Dependency</td>
+      <td lang-ko>과대 의존성, stdlib로 대체 가능</td>
+      <td lang-en>Oversized deps replaceable by stdlib</td></tr>
+    <tr><td><strong>P-7</strong> Structure</td>
+      <td lang-ko>잘못된 위치, 순환 임포트</td>
+      <td lang-en>Misplaced files, circular imports</td></tr>
+  </tbody>
+</table></div>
+
+<div class="callout info">
+  <span class="icon">&#128161;</span>
+  <p lang-ko><strong>/ci vs /inspect:</strong> <code>/inspect</code>는 <em>버그</em>를, <code>/ci</code>는 <em>개선점</em>을 찾는다. 버그가 없어도 코드는 더 좋아질 수 있다. <code>/ci</code>의 철학: "모든 줄은 자신의 존재를 증명해야 한다." 최근 변경분에 이슈가 집중되면 <code>/inspect --scope diff</code>를 제안한다.</p>
+  <p lang-en><strong>/ci vs /inspect:</strong> <code>/inspect</code> finds <em>bugs</em>; <code>/ci</code> finds <em>improvements</em>. Code can get better even without bugs. <code>/ci</code>'s philosophy: "Every line must earn its place." Suggests <code>/inspect --scope diff</code> when issues concentrate in recent changes.</p>
+</div>
+
+<!-- ══ 8. Blueprint Lint ══════════════════════════════════ -->
+<h2 lang-ko>8. Blueprint Lint</h2>
+<h2 lang-en>8. Blueprint Lint</h2>
+<p lang-ko><code>/harness</code>로 Blueprint 설계 직후 자동 실행. 위반 시 실행 차단.</p>
+<p lang-en>Auto-runs after <code>/harness</code> designs a Blueprint. Violations block execution.</p>
+<ul class="lint-list">
+  <li><span class="rule-tag">RULE-1</span> <span lang-ko>Workflow <code>To</code> 값 = Agent Id 또는 <code>END</code></span><span lang-en>Workflow <code>To</code> = Agent Id or <code>END</code></span></li>
+  <li><span class="rule-tag">RULE-2</span> <span lang-ko>local 에이전트 프롬프트에 한글 없음</span><span lang-en>No Korean in local agent prompts</span></li>
+  <li><span class="rule-tag">RULE-3</span> <span lang-ko>cloud 비율 &le; 0.5</span><span lang-en>Cloud ratio &le; 0.5</span></li>
+  <li><span class="rule-tag">RULE-4</span> <span lang-ko>모든 Workflow step에 <code>Error_Policy</code></span><span lang-en>Every step has <code>Error_Policy</code></span></li>
+  <li><span class="rule-tag">RULE-5</span> <span lang-ko><code>Queue.affected_files</code> 비어있지 않음</span><span lang-en><code>Queue.affected_files</code> not empty</span></li>
+</ul>
+
+<!-- ══ 9. Session Handoff ═════════════════════════════════ -->
+<h2 lang-ko>9. 세션 핸드오프</h2>
+<h2 lang-en>9. Session Handoff</h2>
+
+<p lang-ko>세션 간 컨텍스트를 유지하는 resume-log 시스템. 날짜 기반 파일명 <code>resume-log-YYYYMMDD-NN.md</code>을 사용한다.</p>
+<p lang-en>Resume-log system for cross-session context. Uses date-based filenames: <code>resume-log-YYYYMMDD-NN.md</code>.</p>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th lang-ko>커맨드</th><th lang-en>Command</th>
+    <th lang-ko>동작</th><th lang-en>Action</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td><code>/rsm</code></td>
+      <td lang-ko>최신 resume-log 로드 → 상태 출력 → vault 프리로드 (index.yaml) → TODO 표시</td>
+      <td lang-en>Load latest resume-log → show status → vault preload (index.yaml) → show TODOs</td>
+    </tr>
+    <tr>
+      <td><code>/rsml</code></td>
+      <td lang-ko>커밋 → TODO 정리 → resume-log 저장 → vault 동기화 → GitHub push</td>
+      <td lang-en>Commit → TODO cleanup → save resume-log → vault sync → GitHub push</td>
+    </tr>
+    <tr>
+      <td><code>/rsml -l</code></td>
+      <td lang-ko>resume-log만 저장 (git/TODO/sync 스킵)</td>
+      <td lang-en>Save resume-log only (skip git/TODO/sync)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<div class="callout info">
+  <span class="icon">&#8505;&#65039;</span>
+  <p lang-ko><code>/rsm</code> 시작 시 vault <code>index.yaml</code>을 L0 프리로드해 현재 프로젝트의 스택·상태·관련 문서를 즉시 파악한다.</p>
+  <p lang-en><code>/rsm</code> preloads vault <code>index.yaml</code> (L0) at session start to instantly identify current project's stack, status, and related docs.</p>
+</div>
+
+<!-- ══ 10. Real Use Cases ═════════════════════════════════ -->
+<h2 lang-ko>10. 실사용 예</h2>
+<h2 lang-en>10. Real Use Cases</h2>
+<table class="use-case-table">
+  <thead>
+    <tr>
+      <th lang-ko>날짜</th><th lang-en>Date</th>
+      <th>Blueprint</th>
+      <th lang-ko>작업 요약</th><th lang-en>Summary</th>
+      <th lang-ko>cloud 스텝</th><th lang-en>Cloud Steps</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>04-03</td>
+      <td><code>maxtrans_remaining_improvements</code></td>
+      <td lang-ko>Translator/History export 설계</td>
+      <td lang-en>Translator/History export design</td>
+      <td>2 / 10</td>
+    </tr>
+    <tr>
+      <td>04-04</td>
+      <td><code>subway_ui_fixes_v2</code></td>
+      <td lang-ko>UI 개선 (검색·정렬·파싱)</td>
+      <td lang-en>UI improvements (search, sort, parsing)</td>
+      <td>1 / 10</td>
+    </tr>
+    <tr>
+      <td>04-04</td>
+      <td><code>lm_studio_3tier_improve</code></td>
+      <td lang-ko>모델 자동 감지 + 타임아웃 설정</td>
+      <td lang-en>Model auto-detect + timeout config</td>
+      <td>1 / 10</td>
+    </tr>
+    <tr>
+      <td>04-07</td>
+      <td><code>maxtrans_full_encryption</code></td>
+      <td lang-ko>AES-256-GCM 전체 암호화</td>
+      <td lang-en>AES-256-GCM full encryption</td>
+      <td>1 / 10</td>
+    </tr>
+    <tr>
+      <td>04-09</td>
+      <td><code>harness-debug on autotrade-bot</code></td>
+      <td lang-ko>DT 파이프라인 버그 제거 (3라운드)</td>
+      <td lang-en>DT pipeline bug elimination (3 rounds)</td>
+      <td>3 / 10</td>
+    </tr>
+    <tr>
+      <td>04-15</td>
+      <td><code>inspect on kis-client</code></td>
+      <td lang-ko>vendored 패키지 13카테고리 감사</td>
+      <td lang-en>Vendored package 13-category audit</td>
+      <td>0 / 10</td>
+    </tr>
+    <tr>
+      <td>04-16</td>
+      <td><code>autodebug on autotrade-bot DT</code></td>
+      <td lang-ko>DT 중복 포지션 + sell 실패 자동 수정·배포·검증</td>
+      <td lang-en>DT duplicate position + sell failure auto-fix, deploy, verify</td>
+      <td>1 / 10</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout info">
+  <span class="icon">&#128161;</span>
+  <p lang-ko>모든 사례에서 cloud 스텝이 0~3회. <code>/inspect</code>는 read-only라 cloud 0회. <code>/harness-debug</code>도 3라운드에 cloud 3회로 수렴.</p>
+  <p lang-en>All cases show 0–3 cloud steps. <code>/inspect</code> is read-only (0 cloud). <code>/harness-debug</code> converged in 3 rounds = 3 cloud steps.</p>
+</div>
+
+<!-- ══ Footer ══════════════════════════════════════════════ -->
+<div class="doc-footer">
+  <span><a href="agentic_ai_intro.html" lang-ko>&larr; Agentic AI 개념</a><a href="agentic_ai_intro.html" lang-en>&larr; Agentic AI Concepts</a> &middot; <a href="mcp_ecosystem.html" lang-ko>MCP 생태계</a><a href="mcp_ecosystem.html" lang-en>MCP Ecosystem</a></span>
+  <span>Updated 2026-04-16</span>
+</div>
+
+</div><!-- .page -->
+
+<script>
+function setLang(lang) {
+  document.body.className = 'lang-' + lang;
+  document.getElementById('btn-ko').classList.toggle('active', lang === 'ko');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  try { localStorage.setItem('guide-lang', lang); } catch {}
+}
+(function() {
+  try { var s = localStorage.getItem('guide-lang'); if (s) setLang(s); } catch {}
+})();
+window.addEventListener('beforeprint', () => { document.fonts.ready; });
+</script>
+</body>
+</html>
