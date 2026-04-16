@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio — HCB</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --surface-hover: #f2f0eb;
+    --border: #e2dfd6;
+    --border-strong: #c8c4b8;
+    --text: #111111;
+    --muted: #999;
+    --muted-dark: #666;
+    --accent: #2563eb;
+    --accent-soft: #eff4ff;
+    --accent2: #0891b2;
+    --mono: 'DM Mono', monospace;
+    --sans: 'Syne', sans-serif;
+    --radius: 6px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Layout ── */
+  .page { max-width: 800px; margin: 0 auto; padding: 80px 40px 120px; }
+
+  /* ── Header ── */
+  header {
+    padding-bottom: 56px;
+    margin-bottom: 72px;
+    border-bottom: 1px solid var(--border);
+    animation: fadeUp 0.5s ease both;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid #bfcffd;
+    padding: 3px 10px;
+    border-radius: 3px;
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-family: var(--sans);
+    font-size: clamp(40px, 7vw, 64px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+  h1 span { color: var(--accent); }
+  .subtitle {
+    font-size: 13px;
+    color: var(--muted-dark);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  .about {
+    font-size: 14px;
+    color: #4a4a4a;
+    max-width: 560px;
+    line-height: 1.85;
+    margin-bottom: 32px;
+  }
+  .header-links { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+  .link-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 12px; color: var(--accent2);
+    text-decoration: none; letter-spacing: 0.04em;
+    padding: 5px 12px;
+    border: 1px solid #a5d8e6;
+    border-radius: 3px;
+    background: #f0fafd;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .link-pill:hover { background: #e0f4fa; border-color: var(--accent2); }
+  .link-pill::before { content: '↗'; font-size: 11px; }
+
+  /* ── Section label ── */
+  section { margin-bottom: 80px; animation: fadeUp 0.5s ease both; }
+  section:nth-child(2) { animation-delay: 0.1s; }
+  section:nth-child(3) { animation-delay: 0.2s; }
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted-dark);
+    font-weight: 500;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Project cards ── */
+  .projects { display: flex; flex-direction: column; gap: 8px; }
+  .project {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .project:hover { border-color: var(--border-strong); box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+  .project.featured {
+    border-color: #bfcffd;
+    background: #fdfeff;
+  }
+  .project.featured:hover { border-color: var(--accent); box-shadow: 0 2px 16px rgba(37,99,235,0.08); }
+  .project-header {
+    padding: 20px 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    user-select: none;
+  }
+  .project-left { display: flex; align-items: center; gap: 16px; flex: 1; min-width: 0; }
+  .project-icon {
+    width: 36px; height: 36px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    background: var(--accent-soft);
+    flex-shrink: 0;
+  }
+  .project.featured .project-icon { background: #eff4ff; }
+  .project-title-block { min-width: 0; }
+  .project-name {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    margin-bottom: 3px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .badge-live {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #059669;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 400;
+  }
+  .badge-featured {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid #bfcffd;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 400;
+  }
+  .project-desc { font-size: 12px; color: var(--muted-dark); line-height: 1.5; }
+  .project-toggle {
+    font-size: 10px;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: transform 0.25s, color 0.2s;
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+  }
+  .project.open .project-toggle { transform: rotate(180deg); color: var(--accent); border-color: #bfcffd; background: var(--accent-soft); }
+
+  /* ── Project body ── */
+  .project-body { display: none; border-top: 1px solid var(--border); }
+  .project.open .project-body { display: block; }
+  .spec-table { width: 100%; border-collapse: collapse; }
+  .spec-table tr { border-bottom: 1px solid var(--border); }
+  .spec-table tr:last-child { border-bottom: none; }
+  .spec-table td { padding: 11px 24px; font-size: 12.5px; vertical-align: top; line-height: 1.6; }
+  .spec-table td:first-child {
+    width: 90px;
+    color: var(--muted);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding-right: 12px;
+    padding-top: 13px;
+  }
+  .spec-table td:last-child { color: #333; }
+  .spec-table a { color: var(--accent2); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.15s; }
+  .spec-table a:hover { border-bottom-color: var(--accent2); }
+
+  /* ── Skills ── */
+  .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .skill-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: border-color 0.2s;
+  }
+  .skill-row:hover { border-color: var(--border-strong); }
+  .skill-category { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .skill-tag {
+    font-size: 11.5px;
+    color: #333;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 3px 9px;
+    border-radius: 3px;
+  }
+
+  /* ── Lang toggle ── */
+  .lang-toggle {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 100;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--muted-dark);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    user-select: none;
+  }
+  .lang-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── i18n visibility ── */
+  body.lang-en .t-ko,
+  body.lang-ko .t-en { display: none !important; }
+
+  /* ── Footer ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Animation ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .page { padding: 48px 20px 80px; }
+    .skills-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 8px; align-items: flex-start; }
+    .spec-table td:first-child { width: 72px; }
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { background: #fff; }
+    .project { border-color: #ddd; break-inside: avoid; box-shadow: none; }
+    .project-body { display: block !important; }
+    .project-toggle { display: none; }
+    header, section { animation: none; }
+    a { color: #0066cc; }
+  }
+</style>
+</head>
+<body class="lang-en">
+<button class="lang-toggle" onclick="toggleLang()">KR</button>
+<div class="page">
+
+  <header>
+    <div class="tag">Portfolio · 2026</div>
+    <h1>HCB<span>.</span></h1>
+    <p class="subtitle t-en">Full-Stack Developer · AI Automation · SaaS Builder · Ship Fast, Ship Right</p>
+    <p class="subtitle t-ko">풀스택 개발자 · AI 자동화 · SaaS 빌더 · 빠르게, 제대로</p>
+    <p class="about t-en">
+      I build and deploy production-grade web apps, AI-powered automation, and SaaS products end-to-end — from database schema to payment integration.
+      Need an MVP shipped in weeks, not months? I've launched multiple live products solo, handling everything from React/Next.js frontends to Node.js/Python backends, Stripe billing, and cloud deployment (Railway, Vercel).
+      I specialize in integrating LLMs (Claude, Gemini) into real workflows — not toy demos — with proven 40–55% cost reduction through intelligent model routing.
+    </p>
+    <p class="about t-ko">
+      DB 설계부터 결제 연동까지, 프로덕션 수준의 웹앱·AI 자동화·SaaS 제품을 혼자서 기획-개발-배포합니다.
+      MVP를 몇 달이 아닌 몇 주 안에 출시해야 할 때 — React/Next.js 프론트엔드, Node.js/Python 백엔드, Stripe 결제, 클라우드 배포(Railway, Vercel)까지 전 과정을 직접 처리합니다.
+      LLM(Claude, Gemini)을 실제 워크플로우에 통합하는 것이 전문 분야이며, 지능형 모델 라우팅으로 AI 토큰 비용 40–55% 절감을 달성한 실적이 있습니다.
+    </p>
+    <div class="header-links">
+      <a class="link-pill" href="https://github.com/n5nsuf" target="_blank">github.com/n5nsuf</a>
+      <a class="link-pill" href="agentic_ai_intro.html">Agentic AI</a>
+      <a class="link-pill" href="autotrade-guide/">AutoTrade Guide</a>
+    </div>
+  </header>
+
+  <section>
+    <div class="section-label t-en">Projects</div>
+    <div class="section-label t-ko">프로젝트</div>
+    <div class="projects">
+
+      <div class="project featured open">
+        <div class="project-header" onclick="toggle(this)">
+          <div class="project-left">
+            <div class="project-icon">⚡</div>
+            <div class="project-title-block">
+              <div class="project-name">
+                MaxTrans
+                <span class="badge-live">Live</span>
+                <span class="badge-featured">Featured</span>
+              </div>
+              <div class="project-desc t-en">AI document translation SaaS — subscription + token billing</div>
+              <div class="project-desc t-ko">AI 문서 번역 SaaS — 구독 + 토큰 과금</div>
+            </div>
+          </div>
+          <div class="project-toggle">▼</div>
+        </div>
+        <div class="project-body">
+          <table class="spec-table">
+            <tr><td>Stack</td><td>Node.js · React 19 · tRPC · Drizzle ORM · Better Auth · MySQL · Stripe</td></tr>
+            <tr><td>Infra</td><td>Railway · Vercel · Cloudflare R2</td></tr>
+            <tr class="t-en"><td>Features</td><td>PDF/DOCX upload · AI translation (EN↔KR) · Subscription billing · Token metering · AES-256-GCM encryption</td></tr>
+            <tr class="t-ko"><td>기능</td><td>PDF/DOCX 업로드 · AI 번역 (EN↔KR) · 구독 결제 · 토큰 미터링 · AES-256-GCM 암호화</td></tr>
+            <tr><td>Live</td><td><a href="https://maxtrans-production.up.railway.app" target="_blank">maxtrans-production.up.railway.app</a></td></tr>
+            <tr><td>GitHub</td><td><a href="https://github.com/n5nsuf/MaxTrans" target="_blank">n5nsuf/MaxTrans</a></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="project">
+        <div class="project-header" onclick="toggle(this)">
+          <div class="project-left">
+            <div class="project-icon">🤖</div>
+            <div class="project-title-block">
+              <div class="project-name">Multi-Agent Framework</div>
+              <div class="project-desc t-en">Orchestrator–subagent pipeline · 40–55% AI token cost reduction</div>
+              <div class="project-desc t-ko">오케스트레이터–서브에이전트 파이프라인 · AI 토큰 비용 40–55% 절감</div>
+            </div>
+          </div>
+          <div class="project-toggle">▼</div>
+        </div>
+        <div class="project-body">
+          <table class="spec-table">
+            <tr><td>Stack</td><td>Python · FastAPI · Claude API · Gemini CLI · Ollama · Railway</td></tr>
+            <tr class="t-en"><td>Features</td><td>Agent routing · Task decomposition · Local LLM integration · REST API</td></tr>
+            <tr class="t-ko"><td>기능</td><td>에이전트 라우팅 · 태스크 분해 · 로컬 LLM 통합 · REST API</td></tr>
+            <tr class="t-en"><td>Result</td><td>Claude token usage reduced 40–55% via intelligent model routing</td></tr>
+            <tr class="t-ko"><td>성과</td><td>지능형 모델 라우팅으로 Claude 토큰 사용량 40–55% 절감</td></tr>
+            <tr><td>Live</td><td><a href="https://railway.com/project/9446c2c5-2bbd-4db4-b8c8-22e12ffa980f" target="_blank">Railway</a></td></tr>
+            <tr><td>GitHub</td><td><a href="https://github.com/n5nsuf/my-agent-framework" target="_blank">n5nsuf/my-agent-framework</a></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="project featured">
+        <div class="project-header" onclick="toggle(this)">
+          <div class="project-left">
+            <div class="project-icon">📈</div>
+            <div class="project-title-block">
+              <div class="project-name">
+                AutoTrade
+                <span class="badge-live">Live</span>
+                <span class="badge-featured">Featured</span>
+              </div>
+              <div class="project-desc t-en">AI automated stock trading — LightGBM + Gemini + KIS API</div>
+              <div class="project-desc t-ko">AI 자동매매 — LightGBM + Gemini + 한투 API</div>
+            </div>
+          </div>
+          <div class="project-toggle">▼</div>
+        </div>
+        <div class="project-body">
+          <table class="spec-table">
+            <tr><td>Stack</td><td>Python · LightGBM · LSTM · Gemini 2.5 Flash · KIS OpenAPI · Next.js</td></tr>
+            <tr><td>Infra</td><td>Railway · Vercel · Neon PostgreSQL · WebSocket</td></tr>
+            <tr class="t-en"><td>Features</td><td>Dual-account (long-term + day-trade) · ML ensemble · Real-time quotes · Auto-recovery · Ledger DB · Telegram alerts</td></tr>
+            <tr class="t-ko"><td>기능</td><td>듀얼 계좌 (장기+단타) · ML 앙상블 · 실시간 시세 · 자동 복구 · 통합 DB · 텔레그램 알림</td></tr>
+            <tr class="t-en"><td>Guide</td><td><a href="autotrade-guide/">AutoTrade Concept & Build Guide</a></td></tr>
+            <tr class="t-ko"><td>가이드</td><td><a href="autotrade-guide/">자동매매 개념 & 구축 가이드</a></td></tr>
+            <tr><td>GitHub</td><td><a href="https://github.com/n5nsuf/autotrade-bot" target="_blank">n5nsuf/autotrade-bot</a></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="project">
+        <div class="project-header" onclick="toggle(this)">
+          <div class="project-left">
+            <div class="project-icon">✍️</div>
+            <div class="project-title-block">
+              <div class="project-name">GemWriter</div>
+              <div class="project-desc t-en">Slack AI writing bot — dual-LLM content generation</div>
+              <div class="project-desc t-ko">Slack AI 글쓰기 봇 — 듀얼 LLM 콘텐츠 생성</div>
+            </div>
+          </div>
+          <div class="project-toggle">▼</div>
+        </div>
+        <div class="project-body">
+          <table class="spec-table">
+            <tr><td>Stack</td><td>Node.js · Claude API · Gemini · GitHub Actions</td></tr>
+            <tr class="t-en"><td>Features</td><td>Slack slash commands · Dual-LLM routing (Claude + Gemini) · Automated content drafts · CI/CD</td></tr>
+            <tr class="t-ko"><td>기능</td><td>Slack 슬래시 커맨드 · 듀얼 LLM 라우팅 (Claude + Gemini) · 자동 콘텐츠 초안 · CI/CD</td></tr>
+            <tr class="t-en"><td>Deploy</td><td>Internal Slack workspace</td></tr>
+            <tr class="t-ko"><td>배포</td><td>내부 Slack 워크스페이스</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="project">
+        <div class="project-header" onclick="toggle(this)">
+          <div class="project-left">
+            <div class="project-icon">✈️</div>
+            <div class="project-title-block">
+              <div class="project-name">FlightWatch <span class="badge-live">Live</span></div>
+              <div class="project-desc t-en">Automated flight data collection & visualization dashboard</div>
+              <div class="project-desc t-ko">자동 항공편 데이터 수집 & 시각화 대시보드</div>
+            </div>
+          </div>
+          <div class="project-toggle">▼</div>
+        </div>
+        <div class="project-body">
+          <table class="spec-table">
+            <tr><td>Stack</td><td>Node.js · Next.js · PostgreSQL · GitHub Actions</td></tr>
+            <tr class="t-en"><td>Features</td><td>Scheduled data ingestion · Real-time dashboard · Automated pipeline</td></tr>
+            <tr class="t-ko"><td>기능</td><td>스케줄 데이터 수집 · 실시간 대시보드 · 자동화 파이프라인</td></tr>
+            <tr><td>Live</td><td><a href="https://flight-data-red.vercel.app" target="_blank">flight-data-red.vercel.app</a></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="project">
+        <div class="project-header" onclick="toggle(this)">
+          <div class="project-left">
+            <div class="project-icon">🔗</div>
+            <div class="project-title-block">
+              <div class="project-name">USum <span class="badge-live">Live</span></div>
+              <div class="project-desc t-en">URL content summarization REST API</div>
+              <div class="project-desc t-ko">URL 콘텐츠 요약 REST API</div>
+            </div>
+          </div>
+          <div class="project-toggle">▼</div>
+        </div>
+        <div class="project-body">
+          <table class="spec-table">
+            <tr><td>Stack</td><td>Python · FastAPI · Gemini API · Railway</td></tr>
+            <tr class="t-en"><td>Features</td><td>URL fetch · AI summarization · REST API endpoints</td></tr>
+            <tr class="t-ko"><td>기능</td><td>URL 가져오기 · AI 요약 · REST API 엔드포인트</td></tr>
+            <tr><td>Live</td><td><a href="https://usum-production.up.railway.app" target="_blank">usum-production.up.railway.app</a></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="project">
+        <div class="project-header" onclick="toggle(this)">
+          <div class="project-left">
+            <div class="project-icon">🚇</div>
+            <div class="project-title-block">
+              <div class="project-name">Subway Tracker <span class="badge-live">Live</span></div>
+              <div class="project-desc t-en">Real-time transit data tracker with live dashboard</div>
+              <div class="project-desc t-ko">실시간 대중교통 데이터 추적 및 라이브 대시보드</div>
+            </div>
+          </div>
+          <div class="project-toggle">▼</div>
+        </div>
+        <div class="project-body">
+          <table class="spec-table">
+            <tr><td>Stack</td><td>Next.js · TypeScript · PostgreSQL · Railway · Vercel</td></tr>
+            <tr class="t-en"><td>Features</td><td>Real-time data feed · Live dashboard UI · Full-stack TypeScript</td></tr>
+            <tr class="t-ko"><td>기능</td><td>실시간 데이터 피드 · 라이브 대시보드 UI · 풀스택 TypeScript</td></tr>
+            <tr><td>Live</td><td><a href="https://subway-tracker-bay.vercel.app" target="_blank">subway-tracker-bay.vercel.app</a></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="project">
+        <div class="project-header" onclick="toggle(this)">
+          <div class="project-left">
+            <div class="project-icon">📧</div>
+            <div class="project-title-block">
+              <div class="project-name">Email Deliverability Checker</div>
+              <div class="project-desc t-en">Automated deliverability audit tool with Notion reporting</div>
+              <div class="project-desc t-ko">자동 이메일 전달율 감사 도구 + Notion 리포팅</div>
+            </div>
+          </div>
+          <div class="project-toggle">▼</div>
+        </div>
+        <div class="project-body">
+          <table class="spec-table">
+            <tr><td>Stack</td><td>Python · Notion API</td></tr>
+            <tr class="t-en"><td>Features</td><td>Automated audit pipeline · Notion integration for reporting</td></tr>
+            <tr class="t-ko"><td>기능</td><td>자동 감사 파이프라인 · Notion 연동 리포팅</td></tr>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="section-label t-en">Skills</div>
+    <div class="section-label t-ko">기술 스택</div>
+    <div class="skills-grid">
+      <div class="skill-row">
+        <span class="skill-category">Languages</span>
+        <div class="skill-tags"><span class="skill-tag">TypeScript</span><span class="skill-tag">Python</span><span class="skill-tag">Node.js</span></div>
+      </div>
+      <div class="skill-row">
+        <span class="skill-category">Frontend</span>
+        <div class="skill-tags"><span class="skill-tag">React 19</span><span class="skill-tag">Next.js</span><span class="skill-tag">Vite</span></div>
+      </div>
+      <div class="skill-row">
+        <span class="skill-category">Backend</span>
+        <div class="skill-tags"><span class="skill-tag">Express.js</span><span class="skill-tag">FastAPI</span><span class="skill-tag">tRPC</span></div>
+      </div>
+      <div class="skill-row">
+        <span class="skill-category">Database</span>
+        <div class="skill-tags"><span class="skill-tag">MySQL</span><span class="skill-tag">PostgreSQL</span><span class="skill-tag">Drizzle ORM</span></div>
+      </div>
+      <div class="skill-row">
+        <span class="skill-category">AI / LLM</span>
+        <div class="skill-tags"><span class="skill-tag">Claude API</span><span class="skill-tag">Gemini API</span><span class="skill-tag">Ollama</span></div>
+      </div>
+      <div class="skill-row">
+        <span class="skill-category">Infra</span>
+        <div class="skill-tags"><span class="skill-tag">Railway</span><span class="skill-tag">Vercel</span><span class="skill-tag">Cloudflare R2</span><span class="skill-tag">GitHub Actions</span></div>
+      </div>
+      <div class="skill-row">
+        <span class="skill-category">Billing / Auth</span>
+        <div class="skill-tags"><span class="skill-tag">Stripe</span><span class="skill-tag">Better Auth</span></div>
+      </div>
+      <div class="skill-row">
+        <span class="skill-category">Security</span>
+        <div class="skill-tags"><span class="skill-tag">AES-256-GCM</span><span class="skill-tag">JWT</span><span class="skill-tag">OAuth 2.0</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>HCB · 2026</span>
+    <a class="link-pill" href="https://github.com/n5nsuf" target="_blank">github.com/n5nsuf</a>
+  </footer>
+
+</div>
+<script>
+  function toggle(header) {
+    const project = header.closest('.project');
+    project.classList.toggle('open');
+  }
+  function toggleLang() {
+    const body = document.body;
+    const btn = document.querySelector('.lang-toggle');
+    if (body.classList.contains('lang-en')) {
+      body.classList.replace('lang-en', 'lang-ko');
+      document.documentElement.lang = 'ko';
+      btn.textContent = 'EN';
+    } else {
+      body.classList.replace('lang-ko', 'lang-en');
+      document.documentElement.lang = 'en';
+      btn.textContent = 'KR';
+    }
+  }
+</script>
+</body>
+</html>
