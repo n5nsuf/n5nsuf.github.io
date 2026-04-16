@@ -3,68 +3,221 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>자동매매 봇 구축 가이드</title>
+<title>AutoTrade Build Prompt Guide</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.7;padding:2rem;max-width:900px;margin:0 auto}
-h1{color:#58a6ff;font-size:1.8rem;margin:2rem 0 1rem;border-bottom:1px solid #30363d;padding-bottom:.5rem}
-h2{color:#79c0ff;font-size:1.4rem;margin:2rem 0 .8rem}
-h3{color:#d2a8ff;font-size:1.1rem;margin:1.5rem 0 .5rem}
-p{margin:.5rem 0}
-a{color:#58a6ff;text-decoration:none}
-a:hover{text-decoration:underline}
-blockquote{border-left:3px solid #58a6ff;padding:.5rem 1rem;margin:1rem 0;background:#161b22;border-radius:0 6px 6px 0}
-pre{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:1rem;overflow-x:auto;margin:1rem 0;font-size:.85rem}
-code{font-family:"SF Mono",Consolas,monospace;background:#161b22;padding:.15rem .3rem;border-radius:3px;font-size:.9em;color:#e6edf3}
-pre code{background:none;padding:0}
-table{width:100%;border-collapse:collapse;margin:1rem 0}
-th,td{border:1px solid #30363d;padding:.5rem .8rem;text-align:left;font-size:.9rem}
-th{background:#161b22;color:#79c0ff;font-weight:600}
-tr:nth-child(even){background:#0d1117}
-li{margin:.3rem 0 .3rem 1.5rem}
-hr{border:none;border-top:1px solid #30363d;margin:2rem 0}
-strong{color:#e6edf3}
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --purple:#534AB7;--purple-l:#EEEDFE;--purple-d:#3C3489;
+    --teal:#0F6E56;--teal-l:#E1F5EE;
+    --amber:#BA7517;--amber-l:#FAEEDA;
+    --blue:#185FA5;--blue-l:#E6F1FB;
+    --coral:#993C1D;--coral-l:#FAECE7;
+    --red:#A32D2D;--red-l:#FCEBEB;
+    --gray:#444441;--gray-l:#F1EFE8;
+    --border:#D3D1C7;--text:#2C2C2A;--muted:#5F5E5A;--bg:#FAFAF8;
+    --slate:#64748B;--slate-l:#F1F5F9;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.8;color:var(--text);background:var(--bg)}
+  .page{max-width:860px;margin:0 auto;padding:48px 56px;background:white}
+  .doc-header{border-bottom:2px solid var(--purple);padding-bottom:24px;margin-bottom:36px}
+  .doc-header h1{font-size:28px;font-weight:700;color:var(--purple);line-height:1.3}
+  .doc-header .subtitle{font-size:15px;color:var(--muted);margin-top:6px}
+  .doc-header .meta{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:12px;flex-wrap:wrap}
+  .meta-tag{background:var(--purple-l);color:var(--purple-d);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500}
+  h2{font-size:17px;font-weight:700;color:var(--purple);padding:6px 0 6px 12px;border-left:3px solid var(--purple);margin-bottom:16px;margin-top:42px}
+  h3{font-size:14px;font-weight:700;color:var(--gray);margin:20px 0 10px}
+  p{margin-bottom:12px;color:var(--text);font-size:13.5px}
+  ul,ol{margin-bottom:12px;padding-left:20px;font-size:13.5px}
+  li{margin-bottom:4px}
+  table{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px}
+  thead tr{background:var(--purple)}
+  thead th{color:white;font-weight:600;padding:8px 12px;text-align:left;font-size:12px}
+  tbody tr:nth-child(even){background:var(--gray-l)}
+  tbody tr:hover{background:var(--purple-l)}
+  tbody td{padding:7px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  td code,p code,li code{background:var(--gray-l);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--purple-d)}
+  .callout{display:flex;gap:10px;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px}
+  .callout.warn{background:var(--amber-l);border-left:3px solid var(--amber)}
+  .callout.info{background:var(--blue-l);border-left:3px solid var(--blue)}
+  .callout.ok{background:var(--teal-l);border-left:3px solid var(--teal)}
+  .callout .icon{font-size:16px;flex-shrink:0;margin-top:1px}
+  .callout p{margin:0;color:var(--gray)}
+
+  .doc-nav{display:flex;gap:16px;margin-bottom:28px;font-size:12.5px;flex-wrap:wrap}
+  .doc-nav a{color:var(--purple);text-decoration:none;padding:4px 12px;border-radius:20px;border:1px solid var(--border);transition:all .15s}
+  .doc-nav a:hover{background:var(--purple-l);border-color:var(--purple)}
+  .doc-nav a.current{background:var(--purple);color:white;border-color:var(--purple);pointer-events:none}
+
+  .prompt-block{background:var(--purple-l);border:1px solid #AFA9EC;border-radius:10px;padding:18px 20px;margin:14px 0 18px;position:relative;overflow-x:auto}
+  .prompt-block::before{content:'AI Prompt';position:absolute;top:0;right:0;background:var(--purple);color:white;font-size:10px;font-weight:600;padding:2px 10px;border-radius:0 9px 0 8px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px}
+  .prompt-block pre{background:none;border:none;padding:0;margin:0;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;color:var(--purple-d);white-space:pre-wrap;word-wrap:break-word}
+
+  .env-block{background:var(--slate-l);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:14px 0 18px;position:relative;overflow-x:auto}
+  .env-block::before{content:'.env';position:absolute;top:0;right:0;background:var(--slate);color:white;font-size:10px;font-weight:600;padding:2px 10px;border-radius:0 9px 0 8px;font-family:'JetBrains Mono',monospace}
+  .env-block pre{background:none;border:none;padding:0;margin:0;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;color:var(--gray);white-space:pre-wrap;word-wrap:break-word}
+
+  .check-box{background:var(--teal-l);border:1px solid #5DCAA5;border-radius:8px;padding:10px 16px;margin:12px 0 18px;font-size:13px;color:var(--teal);font-weight:500}
+  .check-box::before{content:'\\2713  ';font-weight:700}
+
+  .step-badge{display:inline-block;background:var(--purple);color:white;font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;margin-right:8px;font-family:'JetBrains Mono',monospace;vertical-align:middle}
+
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+  .doc-footer{border-top:1px solid var(--border);margin-top:48px;padding-top:16px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+  .doc-footer a{color:var(--purple);text-decoration:none}
+  .doc-footer a:hover{text-decoration:underline}
+
+  .lang-bar{position:sticky;top:0;z-index:100;background:rgba(250,250,248,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;justify-content:flex-end;align-items:center;gap:6px}
+  .lang-btn{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 14px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--muted);cursor:pointer;transition:all .15s}
+  .lang-btn.active{background:var(--purple);color:white;border-color:var(--purple)}
+  [lang-ko],[lang-en]{display:none}
+  body.lang-ko [lang-ko]{display:revert}
+  body.lang-en [lang-en]{display:revert}
+
+  @media(max-width:640px){
+    .page{padding:20px 16px 48px}.doc-header h1{font-size:21px}h2{font-size:15px;margin-top:32px}
+    .prompt-block{padding:14px 12px}.prompt-block pre{font-size:11px}
+    .doc-footer{flex-direction:column;gap:6px}.doc-nav{gap:8px}
+  }
+  @media print{
+    body{background:white}.page{padding:20px 28px;max-width:100%}.lang-bar{display:none}
+    h2{page-break-after:avoid}table,.prompt-block{page-break-inside:avoid}
+    [lang-ko],[lang-en]{display:revert !important}
+  }
 </style>
 </head>
-<body>
-<h1>자동매매 봇 구축 프롬프트</h1>
-<blockquote>이 문서 하나만으로 모의투자 자동매매 봇을 처음부터 구축할 수 있습니다.</blockquote>
-<blockquote>AI 코딩 어시스턴트(Claude, Cursor 등)에 단계별로 입력하세요.</blockquote>
-<hr>
-<h2>사전 준비 (프롬프트 실행 전 완료)</h2>
-<h3>1. 한국투자증권 계좌 개설 + API 발급</h3>
-<p>1. <a href="https://securities.koreainvestment.com">한국투자증권</a> 계좌 개설 (비대면 가능)</p>
-<p>2. <a href="https://apiportal.koreainvestment.com">KIS Developers</a> 접속 → 회원가입</p>
-<p>3. <strong>모의투자 신청</strong> → 모의투자 APP KEY/SECRET 발급</p>
-<p>4. 발급된 값 메모:</p>
-<p>   - <code>APP_KEY</code>: (32자리 영숫자)</p>
-<p>   - <code>APP_SECRET</code>: (긴 영숫자+특수문자)</p>
-<p>   - <code>ACCOUNT_NO</code>: (8자리 숫자)</p>
-<h3>2. 설치할 것</h3>
-<table><tr>
-<th>항목</th><th>설치 방법</th>
-</tr>
-<tr><td>Python 3.11+</td><td>[python.org](https://www.python.org/downloads/)</td></tr>
-<tr><td>Git</td><td>[git-scm.com](https://git-scm.com/)</td></tr>
-<tr><td>코드 에디터</td><td>VS Code 권장</td></tr>
-<tr><td>PostgreSQL (선택)</td><td>[Neon](https://neon.tech) 무료 클라우드 DB 권장</td></tr>
-</table>
-<h3>3. KIS API 기본 정보</h3>
-<table><tr>
-<th>항목</th><th>모의투자</th>
-</tr>
-<tr><td>REST URL</td><td>`https://openapivts.koreainvestment.com:29443`</td></tr>
-<tr><td>토큰 발급</td><td>`POST /oauth2/tokenP`</td></tr>
-<tr><td>현재가 조회</td><td>`GET /uapi/domestic-stock/v1/quotations/inquire-price` (tr_id: FHKST01010100)</td></tr>
-<tr><td>잔고 조회</td><td>`GET /uapi/domestic-stock/v1/trading/inquire-balance` (tr_id: VTTC8434R)</td></tr>
-<tr><td>매수</td><td>`POST /uapi/domestic-stock/v1/trading/order-cash` (tr_id: VTTC0802U)</td></tr>
-<tr><td>매도</td><td>`POST /uapi/domestic-stock/v1/trading/order-cash` (tr_id: VTTC0801U)</td></tr>
-</table>
-<hr>
-<h2>Step 1: 프로젝트 생성 + KIS 연결</h2>
-<p>아래를 AI에 입력하세요:</p>
-<pre><code>
-Python 자동매매 봇 프로젝트를 만들어줘.
+<body class="lang-ko">
+
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('ko')" id="btn-ko">한국어</button>
+  <button class="lang-btn" onclick="setLang('en')" id="btn-en">English</button>
+</div>
+
+<div class="page">
+
+<div class="doc-header">
+  <h1 lang-ko>자동매매 봇 구축 프롬프트 가이드</h1>
+  <h1 lang-en>AutoTrade Bot Build Prompt Guide</h1>
+  <div class="subtitle" lang-ko>AI 코딩 어시스턴트에 단계별로 입력하여 모의투자 자동매매 봇을 처음부터 구축</div>
+  <div class="subtitle" lang-en>Build a paper-trading bot from scratch by feeding step-by-step prompts to an AI coding assistant</div>
+  <div class="meta">
+    <span class="meta-tag">2026-04-16</span>
+    <span class="meta-tag" lang-ko>구축 가이드</span>
+    <span class="meta-tag" lang-en>Build Guide</span>
+    <span class="meta-tag">KIS API</span>
+    <span class="meta-tag">Python</span>
+  </div>
+</div>
+
+<div class="doc-nav">
+  <a href="../" lang-ko>홈</a>
+  <a href="../" lang-en>Home</a>
+  <a href="./" lang-ko>AutoTrade 목차</a>
+  <a href="./" lang-en>AutoTrade Index</a>
+  <a href="concept.html" lang-ko>개념</a>
+  <a href="concept.html" lang-en>Concept</a>
+  <a href="build-prompt.html" class="current" lang-ko>구축 프롬프트 (현재)</a>
+  <a href="build-prompt.html" class="current" lang-en>Build Prompt (current)</a>
+</div>
+
+<div class="callout info">
+  <span class="icon">&#128161;</span>
+  <p lang-ko><strong>사용법:</strong> 이 문서의 프롬프트 블록(보라색 박스)을 AI 코딩 어시스턴트(Claude, Cursor 등)에 순서대로 붙여넣으세요. 각 단계를 완료한 후 다음 단계로 넘어갑니다.</p>
+  <p lang-en><strong>How to use:</strong> Paste each prompt block (purple box) into your AI coding assistant (Claude, Cursor, etc.) in order. Complete each step before moving to the next.</p>
+</div>
+
+<!-- 사전 준비 -->
+<h2 lang-ko>사전 준비 (프롬프트 실행 전 완료)</h2>
+<h2 lang-en>Prerequisites (Complete Before Running Prompts)</h2>
+
+<h3 lang-ko>1. 한국투자증권 계좌 개설 + API 발급</h3>
+<h3 lang-en>1. Open KIS Account + Get API Keys</h3>
+
+<ol>
+  <li lang-ko><a href="https://securities.koreainvestment.com" style="color:var(--purple)">한국투자증권</a> 계좌 개설 (비대면 가능)</li>
+  <li lang-en>Open an account at <a href="https://securities.koreainvestment.com" style="color:var(--purple)">Korea Investment & Securities</a> (online)</li>
+  <li lang-ko><a href="https://apiportal.koreainvestment.com" style="color:var(--purple)">KIS Developers</a> 접속 &rarr; 회원가입</li>
+  <li lang-en>Visit <a href="https://apiportal.koreainvestment.com" style="color:var(--purple)">KIS Developers</a> &rarr; Sign up</li>
+  <li lang-ko><strong>모의투자 신청</strong> &rarr; 모의투자 APP KEY / SECRET 발급</li>
+  <li lang-en><strong>Apply for paper trading</strong> &rarr; Get paper trading APP KEY / SECRET</li>
+  <li lang-ko>발급된 값 메모: <code>APP_KEY</code> (32자리), <code>APP_SECRET</code> (긴 영숫자+특수문자), <code>ACCOUNT_NO</code> (8자리)</li>
+  <li lang-en>Note down: <code>APP_KEY</code> (32 chars), <code>APP_SECRET</code> (long alphanumeric), <code>ACCOUNT_NO</code> (8 digits)</li>
+</ol>
+
+<h3 lang-ko>2. 설치할 것</h3>
+<h3 lang-en>2. Things to Install</h3>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th lang-ko>항목</th><th lang-en>Item</th>
+    <th lang-ko>설치 방법</th><th lang-en>Installation</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td>Python 3.11+</td>
+      <td><a href="https://www.python.org/downloads/" style="color:var(--purple)">python.org</a></td>
+    </tr>
+    <tr>
+      <td>Git</td>
+      <td><a href="https://git-scm.com/" style="color:var(--purple)">git-scm.com</a></td>
+    </tr>
+    <tr>
+      <td lang-ko>코드 에디터</td><td lang-en>Code Editor</td>
+      <td lang-ko>VS Code 권장</td><td lang-en>VS Code recommended</td>
+    </tr>
+    <tr>
+      <td lang-ko>PostgreSQL (선택)</td><td lang-en>PostgreSQL (optional)</td>
+      <td lang-ko><a href="https://neon.tech" style="color:var(--purple)">Neon</a> 무료 클라우드 DB 권장</td>
+      <td lang-en><a href="https://neon.tech" style="color:var(--purple)">Neon</a> free cloud DB recommended</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<h3 lang-ko>3. KIS API 기본 정보</h3>
+<h3 lang-en>3. KIS API Reference</h3>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th lang-ko>항목</th><th lang-en>Endpoint</th>
+    <th lang-ko>모의투자</th><th lang-en>Paper Trading</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td>REST URL</td>
+      <td><code>https://openapivts.koreainvestment.com:29443</code></td>
+    </tr>
+    <tr>
+      <td lang-ko>토큰 발급</td><td lang-en>Token</td>
+      <td><code>POST /oauth2/tokenP</code></td>
+    </tr>
+    <tr>
+      <td lang-ko>현재가 조회</td><td lang-en>Current Price</td>
+      <td><code>GET /uapi/.../inquire-price</code> <span style="color:var(--muted);font-size:11px">(FHKST01010100)</span></td>
+    </tr>
+    <tr>
+      <td lang-ko>잔고 조회</td><td lang-en>Balance</td>
+      <td><code>GET /uapi/.../inquire-balance</code> <span style="color:var(--muted);font-size:11px">(VTTC8434R)</span></td>
+    </tr>
+    <tr>
+      <td lang-ko>매수</td><td lang-en>Buy</td>
+      <td><code>POST /uapi/.../order-cash</code> <span style="color:var(--muted);font-size:11px">(VTTC0802U)</span></td>
+    </tr>
+    <tr>
+      <td lang-ko>매도</td><td lang-en>Sell</td>
+      <td><code>POST /uapi/.../order-cash</code> <span style="color:var(--muted);font-size:11px">(VTTC0801U)</span></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<!-- Step 1 -->
+<h2><span class="step-badge">Step 1</span> <span lang-ko>프로젝트 생성 + KIS 연결</span><span lang-en>Project Setup + KIS Connection</span></h2>
+
+<p lang-ko>아래 프롬프트를 AI에 입력하세요:</p>
+<p lang-en>Paste the following prompt into your AI assistant:</p>
+
+<div class="prompt-block"><pre>Python 자동매매 봇 프로젝트를 만들어줘.
 
 폴더 구조:
 autotrade/
@@ -112,13 +265,18 @@ python-dotenv
 .env 예시:
 APP_KEY=여기에_입력
 APP_SECRET=여기에_입력
-ACCOUNT_NO=여기에_입력
-</code></pre>
-<p><strong>확인:</strong> <code>python main.py</code> 실행 → 삼성전자 현재가 + 잔고 출력되면 성공.</p>
-<hr>
-<h2>Step 2: 기본 매매 전략</h2>
-<pre><code>
-strategy.py에 간단한 매매 전략을 만들어줘.
+ACCOUNT_NO=여기에_입력</pre></div>
+
+<div class="check-box" lang-ko><code>python main.py</code> 실행 &rarr; 삼성전자 현재가 + 잔고 출력되면 성공</div>
+<div class="check-box" lang-en>Run <code>python main.py</code> &rarr; Success if Samsung Electronics price + balance is printed</div>
+
+<!-- Step 2 -->
+<h2><span class="step-badge">Step 2</span> <span lang-ko>기본 매매 전략</span><span lang-en>Basic Trading Strategy</span></h2>
+
+<p lang-ko>RSI(14일) 기반 전략을 구현합니다.</p>
+<p lang-en>Implement an RSI(14-day) based strategy.</p>
+
+<div class="prompt-block"><pre>strategy.py에 간단한 매매 전략을 만들어줘.
 
 RSI(14일) 기반 전략:
 - RSI &lt; 30 → 매수 (과매도)
@@ -140,12 +298,18 @@ RSI(14일) 기반 전략:
 get_daily_prices(symbol, days=30):
   → GET /uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice
   → tr_id: FHKST03010100
-  → 종가 리스트 반환
-</code></pre>
-<hr>
-<h2>Step 3: 자동 실행 (스케줄러)</h2>
-<pre><code>
-main.py에 스케줄러를 추가해서 자동으로 매매하게 만들어줘.
+  → 종가 리스트 반환</pre></div>
+
+<div class="callout info">
+  <span class="icon">&#128161;</span>
+  <p lang-ko><strong>RSI 기초:</strong> RSI(Relative Strength Index)는 0~100 사이의 값으로, 30 이하는 과매도(매수 신호), 70 이상은 과매수(매도 신호)를 의미합니다.</p>
+  <p lang-en><strong>RSI basics:</strong> RSI (Relative Strength Index) ranges 0-100. Below 30 = oversold (buy signal), above 70 = overbought (sell signal).</p>
+</div>
+
+<!-- Step 3 -->
+<h2><span class="step-badge">Step 3</span> <span lang-ko>자동 실행 (스케줄러)</span><span lang-en>Auto Execution (Scheduler)</span></h2>
+
+<div class="prompt-block"><pre>main.py에 스케줄러를 추가해서 자동으로 매매하게 만들어줘.
 
 pip install apscheduler 추가.
 
@@ -166,13 +330,18 @@ pip install apscheduler 추가.
 
 로그 형식:
 [09:05] 005930 RSI=28.3 → BUY 1주 @ 72,300원
-[09:05] 035720 RSI=55.1 → HOLD
-</code></pre>
-<p><strong>확인:</strong> 모의투자 시간(평일 09:00~15:30) 내 실행 → 로그 출력되면 성공.</p>
-<hr>
-<h2>Step 4: 리스크 관리</h2>
-<pre><code>
-리스크 관리 모듈을 추가해줘. risk.py 파일로.
+[09:05] 035720 RSI=55.1 → HOLD</pre></div>
+
+<div class="check-box" lang-ko>모의투자 시간(평일 09:00~15:30) 내 실행 &rarr; 로그 출력되면 성공</div>
+<div class="check-box" lang-en>Run during paper trading hours (weekdays 09:00-15:30) &rarr; Success if logs are printed</div>
+
+<!-- Step 4 -->
+<h2><span class="step-badge">Step 4</span> <span lang-ko>리스크 관리</span><span lang-en>Risk Management</span></h2>
+
+<p lang-ko>수익보다 <strong>생존</strong>이 먼저입니다. 리스크 관리 모듈을 추가합니다.</p>
+<p lang-en><strong>Survival</strong> comes before profit. Add a risk management module.</p>
+
+<div class="prompt-block"><pre>리스크 관리 모듈을 추가해줘. risk.py 파일로.
 
 규칙:
 1. 최대 보유 종목 수: 5개
@@ -189,12 +358,18 @@ pip install apscheduler 추가.
 run_cycle()에 적용:
 - 매수 전: can_buy + calc_qty
 - 매 사이클: 보유 종목 손절 체크
-- 일일 한도 초과 시: 사이클 스킵
-</code></pre>
-<hr>
-<h2>Step 5: 데이터 저장 (DB)</h2>
-<pre><code>
-거래 기록을 PostgreSQL에 저장해줘.
+- 일일 한도 초과 시: 사이클 스킵</pre></div>
+
+<div class="callout warn">
+  <span class="icon">&#9888;&#65039;</span>
+  <p lang-ko><strong>필수 규칙:</strong> "한 번의 거래로 전체 자본의 2% 이상을 잃지 않는다." 이 단순한 규칙 하나만 지켜도 파산 확률이 극적으로 줄어듭니다.</p>
+  <p lang-en><strong>Essential rule:</strong> "Never lose more than 2% of total capital on a single trade." This single rule dramatically reduces the probability of ruin.</p>
+</div>
+
+<!-- Step 5 -->
+<h2><span class="step-badge">Step 5</span> <span lang-ko>데이터 저장 (DB)</span><span lang-en>Data Storage (DB)</span></h2>
+
+<div class="prompt-block"><pre>거래 기록을 PostgreSQL에 저장해줘.
 
 Neon DB 사용 (무료):
 1. neon.tech 가입 → 프로젝트 생성 → Connection string 복사
@@ -215,12 +390,18 @@ db.py에 구현:
 run_cycle()에서:
 - 매수/매도 시 log_trade() 호출
 - 사이클 끝에 save_balance() 호출
-- 시작 시 init_tables() 호출
-</code></pre>
-<hr>
-<h2>Step 6: 알림</h2>
-<pre><code>
-Telegram 알림을 추가해줘.
+- 시작 시 init_tables() 호출</pre></div>
+
+<div class="callout ok">
+  <span class="icon">&#9989;</span>
+  <p lang-ko><strong>Neon DB:</strong> 무료 플랜으로도 충분합니다. 가입 후 Connection string을 <code>.env</code>의 <code>DATABASE_URL</code>에 추가하세요.</p>
+  <p lang-en><strong>Neon DB:</strong> The free plan is sufficient. After signup, add the connection string to <code>DATABASE_URL</code> in your <code>.env</code>.</p>
+</div>
+
+<!-- Step 6 -->
+<h2><span class="step-badge">Step 6</span> <span lang-ko>알림</span><span lang-en>Notifications</span></h2>
+
+<div class="prompt-block"><pre>Telegram 알림을 추가해줘.
 
 준비:
 1. @BotFather에서 봇 생성 → BOT_TOKEN
@@ -233,15 +414,21 @@ notify.py:
 - send(message) → Telegram으로 메시지 전송
 
 알림 시점:
-- 매수 시: "🟢 [BUY] 005930 삼성전자 1주 @ 72,300원"
-- 매도 시: "🔴 [SELL] 005930 삼성전자 1주 @ 74,100원 (+2.5%)"
-- 봇 시작: "✅ 자동매매 시작 — 3종목"
-- 에러 발생: "🚨 오류: {메시지}"
-</code></pre>
-<hr>
-<h2>Step 7: 모니터링 대시보드</h2>
-<pre><code>
-간단한 웹 대시보드를 만들어줘. Python Flask 사용.
+- 매수 시: "[BUY] 005930 삼성전자 1주 @ 72,300원"
+- 매도 시: "[SELL] 005930 삼성전자 1주 @ 74,100원 (+2.5%)"
+- 봇 시작: "자동매매 시작 — 3종목"
+- 에러 발생: "오류: {메시지}"</pre></div>
+
+<div class="callout info">
+  <span class="icon">&#128161;</span>
+  <p lang-ko><strong>Telegram Bot 만들기:</strong> Telegram에서 <code>@BotFather</code>를 검색하고 <code>/newbot</code> 명령어를 입력하면 됩니다. 봇 이름과 username을 지정하면 BOT_TOKEN이 발급됩니다.</p>
+  <p lang-en><strong>Creating a Telegram Bot:</strong> Search for <code>@BotFather</code> in Telegram and enter the <code>/newbot</code> command. Specify a name and username to receive your BOT_TOKEN.</p>
+</div>
+
+<!-- Step 7 -->
+<h2><span class="step-badge">Step 7</span> <span lang-ko>모니터링 대시보드</span><span lang-en>Monitoring Dashboard</span></h2>
+
+<div class="prompt-block"><pre>간단한 웹 대시보드를 만들어줘. Python Flask 사용.
 
 pip install flask 추가.
 
@@ -257,12 +444,12 @@ HTML 페이지 내용 (인라인 CSS, 단일 파일):
 
 Flask 서버를 별도 스레드로 실행 (스케줄러와 병행):
 - main.py에서 threading으로 시작
-- 포트: 8080
-</code></pre>
-<hr>
-<h2>Step 8: 배포 (선택)</h2>
-<pre><code>
-Railway에 봇을 배포해줘.
+- 포트: 8080</pre></div>
+
+<!-- Step 8 -->
+<h2><span class="step-badge">Step 8</span> <span lang-ko>배포 (선택)</span><span lang-en>Deployment (Optional)</span></h2>
+
+<div class="prompt-block"><pre>Railway에 봇을 배포해줘.
 
 준비:
 1. railway.com 가입
@@ -282,35 +469,101 @@ Railway 환경변수 설정:
 배포 후 확인:
 - Railway 로그에서 "자동매매 시작" 확인
 - 대시보드 URL 접속
-- Telegram 알림 수신
-</code></pre>
-<hr>
-<h2>완성 후 확장 아이디어</h2>
-<table><tr>
-<th>단계</th><th>내용</th>
-</tr>
-<tr><td>전략 추가</td><td>이동평균 크로스, MACD, 볼린저 밴드</td></tr>
-<tr><td>ML 도입</td><td>scikit-learn으로 매수/매도 확률 예측</td></tr>
-<tr><td>LLM 활용</td><td>Gemini/Claude API로 뉴스 분석 → 매매 판단 보조</td></tr>
-<tr><td>실시간 시세</td><td>WebSocket으로 체결가 수신</td></tr>
-<tr><td>단타 모드</td><td>5분봉 기반 변동성 돌파 전략</td></tr>
-<tr><td>실전 전환</td><td>모의투자 검증 후 실전 URL/KEY로 교체</td></tr>
-</table>
-<hr>
-<h2>트러블슈팅</h2>
-<table><tr>
-<th>증상</th><th>원인</th><th>해결</th>
-</tr>
-<tr><td>`EGW00001`</td><td>일시적 서버 오류</td><td>3초 후 재시도</td></tr>
-<tr><td>`기간이 만료된 token`</td><td>토큰 24시간 만료</td><td>토큰 재발급</td></tr>
-<tr><td>잔고 0</td><td>모의투자 초기 자금 미설정</td><td>KIS 홈페이지에서 모의투자 신청 확인</td></tr>
-<tr><td>주문 실패</td><td>장 외 시간</td><td>09:00~15:30 확인</td></tr>
-<tr><td>RSI 50 고정</td><td>일봉 데이터 부족</td><td>15일 이상 데이터 필요</td></tr>
-</table>
-<hr>
-<h2>.env 전체 예시</h2>
-<pre><code>
-# KIS 모의투자
+- Telegram 알림 수신</pre></div>
+
+<div class="callout ok">
+  <span class="icon">&#9989;</span>
+  <p lang-ko><strong>배포 체크리스트:</strong> (1) 환경변수 전부 설정, (2) Railway 로그에서 정상 시작 확인, (3) 대시보드 접속 확인, (4) Telegram 알림 수신 확인.</p>
+  <p lang-en><strong>Deploy checklist:</strong> (1) All env vars configured, (2) Confirm normal startup in Railway logs, (3) Verify dashboard access, (4) Verify Telegram alerts.</p>
+</div>
+
+<!-- 확장 아이디어 -->
+<h2 lang-ko>완성 후 확장 아이디어</h2>
+<h2 lang-en>Extension Ideas After Completion</h2>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th lang-ko>단계</th><th lang-en>Phase</th>
+    <th lang-ko>내용</th><th lang-en>Description</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td lang-ko><strong>전략 추가</strong></td><td lang-en><strong>Add Strategies</strong></td>
+      <td lang-ko>이동평균 크로스, MACD, 볼린저 밴드</td>
+      <td lang-en>Moving average crossover, MACD, Bollinger Bands</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>ML 도입</strong></td><td lang-en><strong>Introduce ML</strong></td>
+      <td lang-ko>scikit-learn으로 매수/매도 확률 예측</td>
+      <td lang-en>Predict buy/sell probability with scikit-learn</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>LLM 활용</strong></td><td lang-en><strong>Use LLMs</strong></td>
+      <td lang-ko>Gemini/Claude API로 뉴스 분석 &rarr; 매매 판단 보조</td>
+      <td lang-en>News analysis via Gemini/Claude API &rarr; supplemental trading judgment</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>실시간 시세</strong></td><td lang-en><strong>Real-time Quotes</strong></td>
+      <td lang-ko>WebSocket으로 체결가 수신</td>
+      <td lang-en>Receive tick data via WebSocket</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>단타 모드</strong></td><td lang-en><strong>Day Trading Mode</strong></td>
+      <td lang-ko>5분봉 기반 변동성 돌파 전략</td>
+      <td lang-en>5-min candle volatility breakout strategy</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>실전 전환</strong></td><td lang-en><strong>Go Live</strong></td>
+      <td lang-ko>모의투자 검증 후 실전 URL/KEY로 교체</td>
+      <td lang-en>After paper trading validation, switch to live URL/KEY</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<!-- 트러블슈팅 -->
+<h2 lang-ko>트러블슈팅</h2>
+<h2 lang-en>Troubleshooting</h2>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th lang-ko>증상</th><th lang-en>Symptom</th>
+    <th lang-ko>원인</th><th lang-en>Cause</th>
+    <th lang-ko>해결</th><th lang-en>Solution</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td><code>EGW00001</code></td>
+      <td lang-ko>일시적 서버 오류</td><td lang-en>Temporary server error</td>
+      <td lang-ko>3초 후 재시도</td><td lang-en>Retry after 3 seconds</td>
+    </tr>
+    <tr>
+      <td lang-ko><code>기간이 만료된 token</code></td><td lang-en><code>Expired token</code></td>
+      <td lang-ko>토큰 24시간 만료</td><td lang-en>Token expires after 24h</td>
+      <td lang-ko>토큰 재발급</td><td lang-en>Re-issue token</td>
+    </tr>
+    <tr>
+      <td lang-ko>잔고 0</td><td lang-en>Balance 0</td>
+      <td lang-ko>모의투자 초기 자금 미설정</td><td lang-en>Paper trading initial funds not set</td>
+      <td lang-ko>KIS 홈페이지에서 모의투자 신청 확인</td><td lang-en>Verify paper trading registration on KIS website</td>
+    </tr>
+    <tr>
+      <td lang-ko>주문 실패</td><td lang-en>Order failed</td>
+      <td lang-ko>장 외 시간</td><td lang-en>Outside market hours</td>
+      <td lang-ko>09:00~15:30 확인</td><td lang-en>Verify 09:00-15:30 KST</td>
+    </tr>
+    <tr>
+      <td lang-ko>RSI 50 고정</td><td lang-en>RSI stuck at 50</td>
+      <td lang-ko>일봉 데이터 부족</td><td lang-en>Insufficient daily candle data</td>
+      <td lang-ko>15일 이상 데이터 필요</td><td lang-en>Need 15+ days of data</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<!-- .env 예시 -->
+<h2 lang-ko>.env 전체 예시</h2>
+<h2 lang-en>.env Full Example</h2>
+
+<div class="env-block"><pre># KIS 모의투자 / KIS Paper Trading
 APP_KEY=PSxxxxxxxxxxxxxxxxxx
 APP_SECRET=xxxxxxxxxxxxxxxxxxxx
 ACCOUNT_NO=50xxxxxx
@@ -320,9 +573,35 @@ DATABASE_URL=postgresql://user:pass@host/db?sslmode=require
 
 # Telegram
 TELEGRAM_BOT_TOKEN=123456:ABCxxxxx
-TELEGRAM_CHAT_ID=123456789
-</code></pre>
-<hr>
-<p>*이 문서는 교육 목적입니다. 실전 투자 전 충분한 모의투자 검증을 권장합니다.*</p>
+TELEGRAM_CHAT_ID=123456789</pre></div>
+
+<div class="callout warn">
+  <span class="icon">&#9888;&#65039;</span>
+  <p lang-ko><strong>보안:</strong> <code>.env</code> 파일은 <strong>절대 Git에 커밋하지 마세요</strong>. <code>.gitignore</code>에 <code>.env</code>를 반드시 추가하세요.</p>
+  <p lang-en><strong>Security:</strong> <strong>Never commit</strong> your <code>.env</code> file to Git. Always add <code>.env</code> to <code>.gitignore</code>.</p>
+</div>
+
+<p lang-ko style="font-size:12.5px;color:var(--muted);margin-top:32px;font-style:italic">이 문서는 교육 목적입니다. 실전 투자 전 충분한 모의투자 검증을 권장합니다.</p>
+<p lang-en style="font-size:12.5px;color:var(--muted);margin-top:32px;font-style:italic">This document is for educational purposes. Thorough paper trading validation is recommended before live trading.</p>
+
+<div class="doc-footer">
+  <span><a href="../" lang-ko>홈으로</a><a href="../" lang-en>Home</a> &middot; <a href="./" lang-ko>AutoTrade 목차</a><a href="./" lang-en>AutoTrade Index</a> &middot; <a href="concept.html" lang-ko>개념 가이드</a><a href="concept.html" lang-en>Concept Guide</a></span>
+  <span>AutoTrade Build Prompt Guide &middot; 2026-04-16</span>
+</div>
+
+</div>
+
+<script>
+function setLang(lang) {
+  document.body.className = 'lang-' + lang;
+  document.getElementById('btn-ko').classList.toggle('active', lang === 'ko');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  try { localStorage.setItem('guide-lang', lang); } catch {}
+}
+(function() {
+  try { var s = localStorage.getItem('guide-lang'); if (s) setLang(s); } catch {}
+})();
+window.addEventListener('beforeprint', () => { document.fonts.ready; });
+</script>
 </body>
 </html>
