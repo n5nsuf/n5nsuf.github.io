@@ -9,7 +9,7 @@
 
   :root {
     --purple:#534AB7;--purple-l:#EEEDFE;--purple-d:#3C3489;
-    --teal:#0F6E56;--teal-l:#E1F5EE;
+    --teal:#0F6E56;--teal-l:#E1F5EE;--teal-d:#0D5A47;
     --amber:#BA7517;--amber-l:#FAEEDA;--amber-d:#8B570F;
     --blue:#185FA5;--blue-l:#E6F1FB;
     --coral:#993C1D;--coral-l:#FAECE7;
@@ -24,10 +24,10 @@
 
   .nav-bar{position:sticky;top:0;z-index:100;background:rgba(250,250,248,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;justify-content:space-between;align-items:center}
   .nav-home{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;padding:4px 14px;border-radius:20px;border:1px solid var(--border);transition:all .15s}
-  .nav-home:hover{background:var(--amber-l);border-color:var(--amber);color:var(--amber)}
+  .nav-home:hover{background:var(--teal-l);border-color:var(--teal);color:var(--teal)}
   .nav-lang{display:flex;gap:6px}
   .lang-btn{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 14px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--muted);cursor:pointer;transition:all .15s}
-  .lang-btn.active{background:var(--amber);color:white;border-color:var(--amber)}
+  .lang-btn.active{background:var(--teal);color:white;border-color:var(--teal)}
 
   [lang-ko],[lang-en]{display:none}
   body.lang-ko [lang-ko]{display:revert}
@@ -35,26 +35,26 @@
 
   .page{max-width:860px;margin:0 auto;padding:48px 56px;background:white}
 
-  .doc-header{border-bottom:2px solid var(--amber);padding-bottom:24px;margin-bottom:36px}
-  .doc-header h1{font-size:28px;font-weight:700;color:var(--amber);line-height:1.3}
+  .doc-header{border-bottom:2px solid var(--teal);padding-bottom:24px;margin-bottom:36px}
+  .doc-header h1{font-size:28px;font-weight:700;color:var(--teal);line-height:1.3}
   .doc-header .subtitle{font-size:15px;color:var(--muted);margin-top:6px}
   .doc-header .meta{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:12px;flex-wrap:wrap}
-  .meta-tag{background:var(--amber-l);color:var(--amber-d);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500}
+  .meta-tag{background:var(--teal-l);color:var(--teal-d);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500}
 
-  h2{font-size:17px;font-weight:700;color:var(--amber);padding:6px 0 6px 12px;border-left:3px solid var(--amber);margin-bottom:16px;margin-top:42px}
+  h2{font-size:17px;font-weight:700;color:var(--teal);padding:6px 0 6px 12px;border-left:3px solid var(--teal);margin-bottom:16px;margin-top:42px}
   h3{font-size:14px;font-weight:700;color:var(--gray);margin:20px 0 10px}
   p{margin-bottom:12px;color:var(--text);font-size:13.5px}
   ul,ol{margin-bottom:12px;padding-left:20px;font-size:13.5px}
   li{margin-bottom:4px}
-  a{color:var(--amber)}
+  a{color:var(--teal)}
 
   table{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px}
-  thead tr{background:var(--amber)}
+  thead tr{background:var(--teal)}
   thead th{color:white;font-weight:600;padding:8px 12px;text-align:left;font-size:12px}
   tbody tr:nth-child(even){background:var(--gray-l)}
-  tbody tr:hover{background:var(--amber-l)}
+  tbody tr:hover{background:var(--teal-l)}
   tbody td{padding:7px 12px;border-bottom:1px solid var(--border);vertical-align:top}
-  td code,p code{background:var(--gray-l);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--amber-d)}
+  td code,p code{background:var(--gray-l);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--teal-d)}
 
   .callout{display:flex;gap:10px;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px}
   .callout.warn{background:var(--amber-l);border-left:3px solid var(--amber)}
@@ -68,7 +68,7 @@
   .badge.ok{background:var(--teal-l);color:var(--teal)}
 
   .doc-footer{border-top:1px solid var(--border);margin-top:48px;padding-top:16px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
-  .doc-footer a{color:var(--amber);text-decoration:none}
+  .doc-footer a{color:var(--teal);text-decoration:none}
   .doc-footer a:hover{text-decoration:underline}
 
   @media(max-width:640px){
@@ -131,27 +131,27 @@
   </thead>
   <tbody>
     <tr>
-      <td><code>Node.js</code></td><td><code>Node.js</code></td>
+      <td><code>Node.js</code></td>
       <td lang-ko>애플리케이션 런타임 및 로직 제어</td>
       <td lang-en>Application runtime and logic control</td>
     </tr>
     <tr>
-      <td><code>Claude Haiku</code></td><td><code>Claude Haiku</code></td>
+      <td><code>Claude Haiku</code></td>
       <td lang-ko>최종 콘텐츠 문장 생성 및 스타일링</td>
       <td lang-en>Final content generation and styling</td>
     </tr>
     <tr>
-      <td><code>Gemini</code></td><td><code>Gemini</code></td>
+      <td><code>Gemini</code></td>
       <td lang-ko>Gems 기반 지식 추출 및 원천 데이터 제공</td>
       <td lang-en>Gems-based knowledge extraction and source data</td>
     </tr>
     <tr>
-      <td><code>Telegram</code></td><td><code>Telegram</code></td>
+      <td><code>Telegram</code></td>
       <td lang-ko>콘텐츠 발행 및 사용자 접점 채널</td>
       <td lang-en>Content publishing and user interface channel</td>
     </tr>
     <tr>
-      <td><code>GitHub Actions</code></td><td><code>GitHub Actions</code></td>
+      <td><code>GitHub Actions</code></td>
       <td lang-ko>평일 08:30 KST 정기 실행 및 워크플로우 자동화</td>
       <td lang-en>Scheduled runs at 08:30 KST and workflow automation</td>
     </tr>
