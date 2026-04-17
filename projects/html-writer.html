@@ -295,16 +295,43 @@
 </ul>
 
 <h2>
+  <span lang-ko>Admin UI</span>
+  <span lang-en>Admin UI</span>
+</h2>
+<p lang-ko>Admin 웹앱(devprofile-admin.vercel.app)은 이 저작 도구의 사용자 인터페이스입니다. GitHub 로그인 후 자연어 프롬프트를 입력하면 백엔드 파이프라인이 페이지를 생성하거나 편집합니다.</p>
+<p lang-en>The Admin web app (devprofile-admin.vercel.app) is the user interface for this authoring tool. After GitHub sign-in, natural-language prompts trigger the backend pipeline to create or edit pages.</p>
+<ul>
+  <li>
+    <span lang-ko><b>Provider 토글</b> — Gemini와 Claude를 번갈아 선택. 기본값 Gemini (무료 API), 품질 재현이 필요할 때 Claude로 전환.</span>
+    <span lang-en><b>Provider toggle</b> — switch between Gemini and Claude. Default Gemini (free API); flip to Claude when stronger quality is needed.</span>
+  </li>
+  <li>
+    <span lang-ko><b>히스토리 컨텍스트</b> — 과거 요청과 결과(커밋 해시, 새 페이지, AI 요약)를 다음 요청에 자동 첨부하여 일관성 유지.</span>
+    <span lang-en><b>History context</b> — past prompts + outcomes (commit sha, new pages, AI summary) auto-attached to the next request for consistency.</span>
+  </li>
+  <li>
+    <span lang-ko><b>AI 자동 요약</b> — 작업 완료·실패 시 Gemini가 한국어 1-2문장으로 결과 요약.</span>
+    <span lang-en><b>AI auto-summary</b> — on completion/failure, Gemini produces a short Korean summary.</span>
+  </li>
+  <li>
+    <span lang-ko><b>보존 정책</b> — DB 용량 캡(오늘 사용량 기준 5일치 ~10KB). 초과 시 오래된 레코드부터 자동 삭제.</span>
+    <span lang-en><b>Retention</b> — DB size cap (~10KB, 5-day budget from today's usage). Oldest rows auto-pruned when exceeded.</span>
+  </li>
+</ul>
+
+<h2>
   <span lang-ko>링크</span>
   <span lang-en>Links</span>
 </h2>
 <ul lang-ko>
-  <li><span class="badge local">Demo</span> &nbsp; <a href="#" target="_blank">온라인 에디터 (준비 중)</a></li>
-  <li><span class="badge ok">Public</span> &nbsp; <a href="https://github.com/n5nsuf" target="_blank">GitHub — HTML Writer Repo</a></li>
+  <li><span class="badge cloud">Live</span> &nbsp; <a href="https://devprofile-admin.vercel.app" target="_blank">Admin UI — devprofile-admin.vercel.app</a></li>
+  <li><span class="badge ok">Public</span> &nbsp; <a href="https://github.com/Seeuferil/devprofile-admin" target="_blank">GitHub — devprofile-admin</a></li>
+  <li><span class="badge ok">Public</span> &nbsp; <a href="https://github.com/n5nsuf/n5nsuf.github.io" target="_blank">GitHub — Target repo</a></li>
 </ul>
 <ul lang-en>
-  <li><span class="badge local">Demo</span> &nbsp; <a href="#" target="_blank">Online Editor (In Progress)</a></li>
-  <li><span class="badge ok">Public</span> &nbsp; <a href="https://github.com/n5nsuf" target="_blank">GitHub — HTML Writer Repo</a></li>
+  <li><span class="badge cloud">Live</span> &nbsp; <a href="https://devprofile-admin.vercel.app" target="_blank">Admin UI — devprofile-admin.vercel.app</a></li>
+  <li><span class="badge ok">Public</span> &nbsp; <a href="https://github.com/Seeuferil/devprofile-admin" target="_blank">GitHub — devprofile-admin</a></li>
+  <li><span class="badge ok">Public</span> &nbsp; <a href="https://github.com/n5nsuf/n5nsuf.github.io" target="_blank">GitHub — Target repo</a></li>
 </ul>
 
 <div class="doc-footer">
