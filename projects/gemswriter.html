@@ -176,6 +176,52 @@
 </ul>
 
 <h2>
+  <span lang-ko>아키텍처</span>
+  <span lang-en>Architecture</span>
+</h2>
+<div class="diagram-wrap" style="margin: 16px 0 24px; border: 1px solid var(--border); border-radius: 10px; padding: 24px 16px 16px; background: white; overflow: hidden;">
+  <svg width="100%" viewBox="0 0 800 160" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round"/>
+      </marker>
+    </defs>
+    <!-- Nodes -->
+    <rect x="10" y="55" width="130" height="50" rx="8" fill="var(--gray-l)" stroke="var(--border)"/>
+    <text x="75" y="82" text-anchor="middle" font-size="11" font-weight="700" fill="var(--gray)">GitHub Actions</text>
+    <text x="75" y="95" text-anchor="middle" font-size="9" fill="var(--muted)">Cron Trigger (08:30)</text>
+
+    <line x1="140" y1="80" x2="165" y2="80" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+    <rect x="170" y="55" width="140" height="50" rx="8" fill="var(--blue-l)" stroke="var(--blue)" stroke-opacity="0.3"/>
+    <text x="240" y="82" text-anchor="middle" font-size="11" font-weight="700" fill="var(--blue)">Gemini (Gems)</text>
+    <text x="240" y="95" text-anchor="middle" font-size="9" fill="var(--blue)">Knowledge & Draft</text>
+
+    <line x1="310" y1="80" x2="335" y2="80" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+    <rect x="340" y="55" width="140" height="50" rx="8" fill="var(--purple-l)" stroke="var(--purple)" stroke-opacity="0.3"/>
+    <text x="410" y="82" text-anchor="middle" font-size="11" font-weight="700" fill="var(--purple)">Claude Haiku</text>
+    <text x="410" y="95" text-anchor="middle" font-size="9" fill="var(--purple-d)">Style & Persona</text>
+
+    <line x1="480" y1="80" x2="505" y2="80" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+    <rect x="510" y="55" width="130" height="50" rx="8" fill="var(--teal-l)" stroke="var(--teal)" stroke-opacity="0.3"/>
+    <text x="575" y="82" text-anchor="middle" font-size="11" font-weight="700" fill="var(--teal)">Telegram Bot</text>
+    <text x="575" y="95" text-anchor="middle" font-size="9" fill="var(--teal-d)">Channel Publishing</text>
+
+    <line x1="640" y1="80" x2="665" y2="80" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+    <rect x="670" y="55" width="120" height="50" rx="8" fill="var(--gray-l)" stroke="var(--border)"/>
+    <text x="730" y="82" text-anchor="middle" font-size="11" font-weight="700" fill="var(--gray)">Users</text>
+    <text x="730" y="95" text-anchor="middle" font-size="9" fill="var(--muted)">Mobile/Desktop</text>
+  </svg>
+  <div style="font-size: 11.5px; color: var(--muted); text-align: center; margin-top: 10px; font-style: italic;">
+    <span lang-ko>스케줄링 기반 하이브리드 LLM 콘텐츠 생성 워크플로우</span>
+    <span lang-en>Scheduling-based hybrid LLM content generation workflow</span>
+  </div>
+</div>
+
+<h2>
   <span lang-ko>작동 구조 및 AI의 역할</span>
   <span lang-en>Working Structure & AI's Role</span>
 </h2>

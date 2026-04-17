@@ -185,6 +185,58 @@
 </ul>
 
 <h2>
+  <span lang-ko>아키텍처</span>
+  <span lang-en>Architecture</span>
+</h2>
+<div class="diagram-wrap" style="margin: 16px 0 24px; border: 1px solid var(--border); border-radius: 10px; padding: 24px 16px 16px; background: white; overflow: hidden;">
+  <svg width="100%" viewBox="0 0 800 140" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round"/>
+      </marker>
+    </defs>
+    <!-- Nodes -->
+    <rect x="10" y="45" width="100" height="50" rx="8" fill="var(--gray-l)" stroke="var(--border)"/>
+    <text x="60" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="var(--gray)">KIS API</text>
+    <text x="60" y="85" text-anchor="middle" font-size="9" fill="var(--muted)">Market Data</text>
+
+    <line x1="110" y1="70" x2="135" y2="70" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <rect x="140" y="45" width="110" height="50" rx="8" fill="var(--teal-l)" stroke="var(--teal)" stroke-opacity="0.3"/>
+    <text x="195" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="var(--teal)">Ingestion</text>
+    <text x="195" y="85" text-anchor="middle" font-size="9" fill="var(--teal-d)">Data Pipeline</text>
+
+    <line x1="250" y1="70" x2="275" y2="70" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <rect x="280" y="45" width="130" height="50" rx="8" fill="var(--teal-l)" stroke="var(--teal)" stroke-opacity="0.3"/>
+    <text x="345" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="var(--teal)">AI Model</text>
+    <text x="345" y="85" text-anchor="middle" font-size="9" fill="var(--teal-d)">LGBM + LSTM</text>
+
+    <line x1="410" y1="70" x2="435" y2="70" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <rect x="440" y="45" width="110" height="50" rx="8" fill="var(--teal-l)" stroke="var(--teal)" stroke-opacity="0.3"/>
+    <text x="495" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="var(--teal)">Risk Check</text>
+    <text x="495" y="85" text-anchor="middle" font-size="9" fill="var(--teal-d)">Stop-loss/Sizing</text>
+
+    <line x1="550" y1="70" x2="575" y2="70" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <rect x="580" y="45" width="100" height="50" rx="8" fill="var(--teal-l)" stroke="var(--teal)" stroke-opacity="0.3"/>
+    <text x="630" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="var(--teal)">Execution</text>
+    <text x="630" y="85" text-anchor="middle" font-size="9" fill="var(--teal-d)">Order Logic</text>
+
+    <line x1="680" y1="70" x2="705" y2="70" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <rect x="710" y="45" width="80" height="50" rx="8" fill="var(--gray-l)" stroke="var(--border)"/>
+    <text x="750" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="var(--gray)">KIS API</text>
+    <text x="750" y="85" text-anchor="middle" font-size="9" fill="var(--muted)">Order Fill</text>
+  </svg>
+  <div style="font-size: 11.5px; color: var(--muted); text-align: center; margin-top: 10px; font-style: italic;">
+    <span lang-ko>데이터 수집부터 체결까지의 핵심 파이프라인</span>
+    <span lang-en>Core pipeline from data ingestion to execution</span>
+  </div>
+</div>
+
+<h2>
   <span lang-ko>작동 구조 및 AI의 역할</span>
   <span lang-en>Working Structure & AI's Role</span>
 </h2>
