@@ -55,11 +55,7 @@ jobs:
             echo "No changes produced"
             exit 0
           fi
-          SHORT_PROMPT=$(head -c 60 /tmp/claude-edit/prompt.txt | tr '\n' ' ')
-          MSG="chore: apply prompt — ${SHORT_PROMPT}"
-          if [ -n "$JOB_ID" ]; then
-            MSG="$MSG [job:${JOB_ID}]"
-          fi
+          MSG="chore: apply claude edit [job:${JOB_ID:-manual}]"
           git commit -m "$MSG"
           git push origin HEAD:main
 
