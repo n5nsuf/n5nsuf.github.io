@@ -28,7 +28,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 2
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -49,7 +49,6 @@ jobs:
         run: |
           mkdir -p /tmp/gemini-edit
           printf '%s' "$PROMPT" > /tmp/gemini-edit/prompt.txt
-          echo "Prompt length: $(wc -c < /tmp/gemini-edit/prompt.txt)"
 
       - name: Run Gemini
         env:
@@ -57,16 +56,52 @@ jobs:
         run: bash scripts/run-gemini.sh /tmp/gemini-edit/prompt.txt
 
       - name: Commit and push
+        id: commit
         env:
           JOB_ID: ${{ inputs.job_id }}
         run: |
           git add -A
           if git diff --cached --quiet; then
             echo "No changes produced"
+            echo "commit_sha=" >> "$GITHUB_OUTPUT"
+            echo "new_pages=" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git commit -m "chore: apply gemini edit [job:${JOB_ID:-manual}]"
           git push origin HEAD:main
+          SHA=$(git rev-parse HEAD)
+          NEW_FILES=$(git diff HEAD~1 HEAD --name-only --diff-filter=A | grep '^projects/' | head -5 | paste -sd ',' -)
+          echo "commit_sha=$SHA" >> "$GITHUB_OUTPUT"
+          echo "new_pages=$NEW_FILES" >> "$GITHUB_OUTPUT"
+
+      - name: Notify webapp
+        if: always() && inputs.job_id != ''
+        env:
+          JOB_ID: ${{ inputs.job_id }}
+          COMMIT_SHA: ${{ steps.commit.outputs.commit_sha }}
+          NEW_PAGES: ${{ steps.commit.outputs.new_pages }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          STATUS_FINAL: ${{ job.status }}
+          CALLBACK_SECRET: ${{ secrets.CALLBACK_SECRET }}
+        run: |
+          if [ -z "$CALLBACK_SECRET" ]; then
+            echo "CALLBACK_SECRET not set — skipping notify"
+            exit 0
+          fi
+          STATUS="success"
+          if [ "$STATUS_FINAL" != "success" ]; then STATUS="failed"; fi
+          curl -sS -X POST https://devprofile-admin.vercel.app/api/callback \
+            -H "Authorization: Bearer $CALLBACK_SECRET" \
+            -H "Content-Type: application/json" \
+            --data-binary @- <<EOF || echo "callback failed (non-fatal)"
+          {
+            "job_id": "$JOB_ID",
+            "status": "$STATUS",
+            "commit_sha": "$COMMIT_SHA",
+            "new_pages": "$NEW_PAGES",
+            "workflow_url": "$RUN_URL"
+          }
+          EOF
 
       - name: Cleanup
         if: always()
