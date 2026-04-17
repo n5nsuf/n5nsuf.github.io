@@ -225,15 +225,65 @@
     </tr>
     <tr>
       <td lang-ko>최종 검증 및 정제</td><td lang-en>Validation & Refinement</td>
-      <td lang-ko>Validator가 링크 유효성, 태그 중첩 에러, 스타일 일관성을 최종 확인 후 배포형 파일 생성</td>
-      <td lang-en>Validator performs final checks on link validity, tag nesting errors, and style consistency before generating the deployable file</td>
+      <td lang-ko>Validator가 링크 유효성, 태그 중첩 에러, 스타일 일관성을 최종 확인 후 배포형 파일 생성</td><td lang-en>Validator performs final checks on link validity, tag nesting errors, and style consistency before generating the deployable file</td>
     </tr>
-  </tbody>
-</table>
+    </tbody>
+    </table>
 
-<h3 lang-ko>3. 도입 효과</h3>
-<h3 lang-en>3. Benefits of Integration</h3>
-<ul lang-ko>
+    <h2>
+    <span lang-ko>아키텍처 구조도</span>
+    <span lang-en>Architecture Diagram</span>
+    </h2>
+    <div style="background:var(--slate-l);padding:32px;border-radius:12px;margin-bottom:24px;display:flex;justify-content:center">
+    <svg width="600" height="320" viewBox="0 0 600 320" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto">
+    <!-- Nodes -->
+    <rect x="240" y="20" width="120" height="40" rx="8" fill="var(--blue)" />
+    <text x="300" y="45" text-anchor="middle" fill="white" font-family="JetBrains Mono" font-size="12" font-weight="500">User Intent</text>
+
+    <rect x="220" y="100" width="160" height="50" rx="8" fill="white" stroke="var(--blue)" stroke-width="2" />
+    <text x="300" y="130" text-anchor="middle" fill="var(--blue)" font-family="JetBrains Mono" font-size="12" font-weight="700">Planner Agent</text>
+
+    <rect x="40" y="190" width="140" height="50" rx="8" fill="white" stroke="var(--slate)" stroke-width="1.5" />
+    <text x="110" y="220" text-anchor="middle" fill="var(--text)" font-family="Noto Sans KR" font-size="11">Content Agent</text>
+
+    <rect x="230" y="190" width="140" height="50" rx="8" fill="white" stroke="var(--slate)" stroke-width="1.5" />
+    <text x="300" y="220" text-anchor="middle" fill="var(--text)" font-family="Noto Sans KR" font-size="11">Component Agent</text>
+
+    <rect x="420" y="190" width="140" height="50" rx="8" fill="white" stroke="var(--slate)" stroke-width="1.5" />
+    <text x="490" y="220" text-anchor="middle" fill="var(--text)" font-family="Noto Sans KR" font-size="11">Style Validator</text>
+
+    <rect x="240" y="280" width="120" height="40" rx="8" fill="var(--teal)" />
+    <text x="300" y="305" text-anchor="middle" fill="white" font-family="JetBrains Mono" font-size="12" font-weight="500">Final HTML</text>
+
+    <!-- Arrows -->
+    <path d="M300 60V100" stroke="var(--blue)" stroke-width="2" marker-end="url(#arrow-blue)" />
+    <path d="M300 150V190" stroke="var(--slate)" stroke-width="1.5" marker-end="url(#arrow-slate)" />
+    <path d="M220 125H110V190" stroke="var(--slate)" stroke-width="1.5" fill="none" marker-end="url(#arrow-slate)" />
+    <path d="M380 125H490V190" stroke="var(--slate)" stroke-width="1.5" fill="none" marker-end="url(#arrow-slate)" />
+
+    <path d="M110 240V260H300V280" stroke="var(--slate)" stroke-width="1.5" fill="none" marker-end="url(#arrow-slate)" />
+    <path d="M300 240V280" stroke="var(--slate)" stroke-width="1.5" marker-end="url(#arrow-slate)" />
+    <path d="M490 240V260H300V280" stroke="var(--slate)" stroke-width="1.5" fill="none" marker-end="url(#arrow-slate)" />
+
+    <!-- Marker definitions -->
+    <defs>
+      <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+        <path d="M0 0L10 5L0 10Z" fill="var(--blue)" />
+      </marker>
+      <marker id="arrow-slate" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+        <path d="M0 0L10 5L0 10Z" fill="var(--slate)" />
+      </marker>
+    </defs>
+    </svg>
+    </div>
+
+    <p lang-ko>상기 구조도는 에이전트 간의 유기적인 협업을 시각화한 것입니다. 각 에이전트는 독립된 루프를 돌며 자신의 결과물을 다음 단계로 전달하거나, Validator의 피드백을 받아 수정합니다.</p>
+    <p lang-en>The architecture diagram above visualizes the organic collaboration between agents. Each agent runs an independent loop, passing its output to the next stage or refining it based on feedback from the Validator.</p>
+
+    <h3>
+    <span lang-ko>3. 도입 효과</span>
+    <span lang-en>3. Benefits of Integration</span>
+    </h3>
   <li><strong>일관성 보장:</strong> 제작자가 달라도 동일한 디자인 언어와 코드 구조를 유지합니다.</li>
   <li><strong>생산성 향상:</strong> 복잡한 HTML 수동 코딩 시간을 90% 이상 단축하고 콘텐츠 기획에 집중할 수 있습니다.</li>
   <li><strong>확장성:</strong> 새로운 컴포넌트나 스타일 규칙이 추가되어도 에이전트의 지침만 업데이트하면 즉시 적용됩니다.</li>
