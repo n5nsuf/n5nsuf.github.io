@@ -171,23 +171,77 @@
 </ul>
 
 <h2>
-  <span lang-ko>작동 구조 및 AI의 역할</span>
-  <span lang-en>Working Structure & AI's Role</span>
+  <span lang-ko>작동 구조 및 에이전틱 AI 도입</span>
+  <span lang-en>Operational Structure & Agentic AI Integration</span>
 </h2>
-<p lang-ko>사용자가 입력한 마크다운이나 텍스트를 <strong>구조 분석 → 컴포넌트 매칭 → 스타일 주입 → 최종 렌더링</strong> 과정을 거쳐 스타일 가이드가 적용된 HTML로 변환합니다.</p>
-<p lang-en>The tool transforms user-provided Markdown or text into style-guide-compliant HTML through <strong>Structure Analysis → Component Matching → Style Injection → Final Rendering</strong>.</p>
+<p lang-ko>HTML Writer는 단순한 텍스트 변환을 넘어, 여러 특화된 AI 에이전트가 협력하여 고품질의 웹 콘텐츠를 생산하는 <strong>에이전틱 워크플로우(Agentic Workflow)</strong>를 채택하고 있습니다.</p>
+<p lang-en>Beyond simple text transformation, HTML Writer employs an <strong>Agentic Workflow</strong> where multiple specialized AI agents collaborate to produce high-quality web content.</p>
 
-<h3 lang-ko>AI의 역할</h3>
-<h3 lang-en>The Role of AI</h3>
+<div class="callout info">
+  <span class="icon">🤖</span>
+  <p lang-ko>에이전틱 AI는 단일 LLM 호출의 한계를 극복하기 위해 '계획-실행-검증'의 반복 루프를 수행하며, 각 단계에서 전문화된 페르소나를 활용합니다.</p>
+  <p lang-en>Agentic AI overcomes the limitations of single LLM calls by performing an iterative 'Plan-Act-Verify' loop, utilizing specialized personas at each stage.</p>
+</div>
+
+<h3 lang-ko>1. 에이전트 팀 구성</h3>
+<h3 lang-en>1. Agent Team Composition</h3>
 <ul lang-ko>
-  <li><strong>시맨틱 구조화:</strong> 비정형 텍스트를 분석하여 적절한 HTML 태그(h2, callout, table 등)와 컴포넌트를 자동으로 제안합니다.</li>
-  <li><strong>스타일 가이드 준수:</strong> 프로젝트의 디자인 토큰을 학습하여 색상, 간격, 폰트가 일관되게 적용되도록 코드를 교정합니다.</li>
-  <li><strong>다국어 브릿지:</strong> 한국어 내용을 바탕으로 자연스러운 영어 번역을 생성하고 <code>lang-ko/en</code> 구조를 자동으로 구축합니다.</li>
+  <li><strong>Planner Agent:</strong> 사용자의 의도를 분석하고 페이지의 전체 구조(Outline)와 필요한 컴포넌트 배치를 설계합니다.</li>
+  <li><strong>Content Agent:</strong> 설계된 구조에 따라 본문을 작성하며, 한국어와 영어의 문맥적 일치성을 유지하며 다국어 텍스트를 생성합니다.</li>
+  <li><strong>Component Agent:</strong> 텍스트의 의미에 가장 적합한 UI 패턴(Callout, Card, Badge 등)을 선택하고 HTML 코드로 매칭합니다.</li>
+  <li><strong>Style Validator:</strong> 최종 결과물이 <code>STYLE_GUIDE.md</code>의 디자인 토큰과 레이아웃 규칙을 준수하는지 검사하고 교정합니다.</li>
 </ul>
 <ul lang-en>
-  <li><strong>Semantic Structuring:</strong> Analyzes unstructured text to automatically suggest appropriate HTML tags (h2, callout, table, etc.) and components.</li>
-  <li><strong>Style Guide Compliance:</strong> Learns project design tokens and corrects code to ensure colors, spacing, and fonts are consistently applied.</li>
-  <li><strong>Multilingual Bridge:</strong> Generates natural English translations based on Korean content and automatically builds <code>lang-ko/en</code> structures.</li>
+  <li><strong>Planner Agent:</strong> Analyzes user intent and designs the overall page structure (outline) and component placement.</li>
+  <li><strong>Content Agent:</strong> Writes the body text according to the designed structure, generating multilingual text while maintaining contextual consistency between Korean and English.</li>
+  <li><strong>Component Agent:</strong> Selects the most appropriate UI patterns (Callout, Card, Badge, etc.) for the text's meaning and matches them to HTML code.</li>
+  <li><strong>Style Validator:</strong> Inspects and corrects the final output to ensure compliance with the design tokens and layout rules in <code>STYLE_GUIDE.md</code>.</li>
+</ul>
+
+<h3 lang-ko>2. 구동 프로세스 (Workflow)</h3>
+<h3 lang-en>2. Operational Process (Workflow)</h3>
+<table>
+  <thead>
+    <tr>
+      <th lang-ko>단계</th><th lang-en>Stage</th>
+      <th lang-ko>설명</th><th lang-en>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td lang-ko>컨텍스트 주입</td><td lang-en>Context Injection</td>
+      <td lang-ko>프로젝트의 스타일 가이드와 기존 문서 패턴을 AI의 시스템 프롬프트에 동적으로 결합</td>
+      <td lang-en>Dynamically combine project style guides and existing document patterns into the AI's system prompt</td>
+    </tr>
+    <tr>
+      <td lang-ko>초안 생성</td><td lang-en>Draft Generation</td>
+      <td lang-ko>Planner와 Content 에이전트가 협업하여 기본 마크다운 및 다국어 구조 생성</td>
+      <td lang-en>Planner and Content agents collaborate to generate basic Markdown and multilingual structures</td>
+    </tr>
+    <tr>
+      <td lang-ko>컴포넌트 인젝션</td><td lang-en>Component Injection</td>
+      <td lang-ko>단순 텍스트를 스타일 가이드에 정의된 <code>doc-header</code>, <code>callout</code> 등의 시맨틱 태그로 치환</td>
+      <td lang-en>Replace simple text with semantic tags like <code>doc-header</code> and <code>callout</code> defined in the style guide</td>
+    </tr>
+    <tr>
+      <td lang-ko>최종 검증 및 정제</td><td lang-en>Validation & Refinement</td>
+      <td lang-ko>Validator가 링크 유효성, 태그 중첩 에러, 스타일 일관성을 최종 확인 후 배포형 파일 생성</td>
+      <td lang-en>Validator performs final checks on link validity, tag nesting errors, and style consistency before generating the deployable file</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 lang-ko>3. 도입 효과</h3>
+<h3 lang-en>3. Benefits of Integration</h3>
+<ul lang-ko>
+  <li><strong>일관성 보장:</strong> 제작자가 달라도 동일한 디자인 언어와 코드 구조를 유지합니다.</li>
+  <li><strong>생산성 향상:</strong> 복잡한 HTML 수동 코딩 시간을 90% 이상 단축하고 콘텐츠 기획에 집중할 수 있습니다.</li>
+  <li><strong>확장성:</strong> 새로운 컴포넌트나 스타일 규칙이 추가되어도 에이전트의 지침만 업데이트하면 즉시 적용됩니다.</li>
+</ul>
+<ul lang-en>
+  <li><strong>Guaranteed Consistency:</strong> Maintains the same design language and code structure regardless of the creator.</li>
+  <li><strong>Increased Productivity:</strong> Reduces manual HTML coding time by over 90%, allowing focus on content planning.</li>
+  <li><strong>Scalability:</strong> New components or style rules can be applied immediately by simply updating the agent's instructions.</li>
 </ul>
 
 <h2>
