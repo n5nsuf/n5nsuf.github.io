@@ -67,6 +67,16 @@
   .badge.local{background:var(--gray-l);color:var(--gray)}
   .badge.ok{background:var(--teal-l);color:var(--teal)}
 
+  /* Structure Map */
+  .struct-container{margin:32px 0;padding:24px;background:var(--bg);border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;gap:16px}
+  .struct-step{display:flex;align-items:center;gap:12px}
+  .struct-box{flex:1;background:white;border:1px solid var(--border);padding:14px;border-radius:8px;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,.02)}
+  .struct-box .title{font-weight:700;font-size:13px;color:var(--blue);margin-bottom:4px;display:block}
+  .struct-box .desc{font-size:11px;color:var(--muted);line-height:1.4;display:block}
+  .struct-arrow{color:var(--border);font-size:18px;flex-shrink:0}
+  .struct-group{display:flex;gap:10px;flex:1}
+  .struct-box.accent{border-color:var(--blue);background:var(--blue-l)}
+
   .doc-footer{border-top:1px solid var(--border);margin-top:48px;padding-top:16px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
   .doc-footer a{color:var(--blue);text-decoration:none}
   .doc-footer a:hover{text-decoration:underline}
@@ -75,6 +85,9 @@
     .page{padding:20px 16px 48px}
     .doc-header h1{font-size:21px}
     h2{font-size:15px;margin-top:32px}
+    .struct-step{flex-direction:column;gap:8px}
+    .struct-arrow{transform:rotate(90deg);margin:4px 0}
+    .struct-group{flex-direction:column;width:100%}
     .doc-footer{flex-direction:column;gap:6px}
   }
 </style>
@@ -198,6 +211,67 @@
   <li><strong>QA Agent:</strong> Verifies if the translated results comply with the user's Glossary, detects mistranslations or omissions, and requests corrections.</li>
   <li><strong>Refiner:</strong> Finalizes the sentences to optimize them towards native expressions of the target country.</li>
 </ul>
+
+<h2>
+  <span lang-ko>전체 구조 맵</span>
+  <span lang-en>System Structure Map</span>
+</h2>
+
+<div class="struct-container">
+  <div class="struct-step">
+    <div class="struct-box">
+      <span class="title" lang-ko>입력 데이터</span><span class="title" lang-en>Input Data</span>
+      <span class="desc">JSON / CSV / MD</span>
+    </div>
+    <div class="struct-arrow">→</div>
+    <div class="struct-box accent">
+      <span class="title" lang-ko>전처리</span><span class="title" lang-en>Pre-processing</span>
+      <span class="desc" lang-ko>토큰 분할 & 컨텍스트 추출</span>
+      <span class="desc" lang-en>Chunking & Context Extraction</span>
+    </div>
+  </div>
+
+  <div class="struct-step">
+    <div style="width:100%; text-align:center; color:var(--border); margin:-8px 0">↓</div>
+  </div>
+
+  <div class="struct-step">
+    <div class="struct-group">
+      <div class="struct-box">
+        <span class="title" lang-ko>번역 에이전트</span><span class="title" lang-en>Translation Agent</span>
+        <span class="desc" lang-ko>초안 생성</span><span class="desc" lang-en>Drafting</span>
+      </div>
+      <div class="struct-arrow" style="margin-top:10px">↔</div>
+      <div class="struct-box">
+        <span class="title" lang-ko>QA 에이전트</span><span class="title" lang-en>QA Agent</span>
+        <span class="desc" lang-ko>용어집/품질 검수</span><span class="desc" lang-en>Glossary/QA</span>
+      </div>
+      <div class="struct-arrow" style="margin-top:10px">↔</div>
+      <div class="struct-box">
+        <span class="title" lang-ko>리파이너</span><span class="title" lang-en>Refiner</span>
+        <span class="desc" lang-ko>자연스러운 문체</span><span class="desc" lang-en>Style Polish</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="struct-step">
+    <div style="width:100%; text-align:center; color:var(--border); margin:-8px 0">↓</div>
+  </div>
+
+  <div class="struct-step">
+    <div class="struct-box accent">
+      <span class="title" lang-ko>일관성 체크</span><span class="title" lang-en>Consistency Check</span>
+      <span class="desc" lang-ko>전역 용어 및 맥락 정합성</span>
+      <span class="desc" lang-en>Global Terminology Audit</span>
+    </div>
+    <div class="struct-arrow">→</div>
+    <div class="struct-box">
+      <span class="title" lang-ko>최종 결과물</span><span class="title" lang-en>Final Output</span>
+      <span class="desc" lang-ko>원본 포맷 복원</span>
+      <span class="desc" lang-en>Format Reconstruction</span>
+    </div>
+  </div>
+</div>
 
 <h3 lang-ko>데이터 흐름</h3>
 <h3 lang-en>Data Flow</h3>
