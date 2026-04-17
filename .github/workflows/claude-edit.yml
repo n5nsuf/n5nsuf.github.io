@@ -1,0 +1,65 @@
+name: Claude Edit
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: Edit request prompt
+        required: true
+        type: string
+      job_id:
+        description: Job UUID for webapp callback (optional)
+        required: false
+        type: string
+        default: ''
+
+concurrency:
+  group: claude-edit
+  cancel-in-progress: false
+
+jobs:
+  edit:
+    runs-on: [self-hosted, macOS]
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Configure git
+        run: |
+          git config user.name "devprofile-admin-bot"
+          git config user.email "bot@devprofile-admin.local"
+
+      - name: Write prompt file
+        env:
+          PROMPT: ${{ inputs.prompt }}
+        run: |
+          mkdir -p /tmp/claude-edit
+          printf '%s' "$PROMPT" > /tmp/claude-edit/prompt.txt
+          echo "Prompt length: $(wc -c < /tmp/claude-edit/prompt.txt)"
+
+      - name: Run Claude Code
+        run: bash scripts/run-claude.sh /tmp/claude-edit/prompt.txt
+
+      - name: Commit and push
+        env:
+          JOB_ID: ${{ inputs.job_id }}
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes produced"
+            exit 0
+          fi
+          SHORT_PROMPT=$(head -c 60 /tmp/claude-edit/prompt.txt | tr '\n' ' ')
+          MSG="chore: apply prompt — ${SHORT_PROMPT}"
+          if [ -n "$JOB_ID" ]; then
+            MSG="$MSG [job:${JOB_ID}]"
+          fi
+          git commit -m "$MSG"
+          git push origin HEAD:main
+
+      - name: Cleanup
+        if: always()
+        run: rm -rf /tmp/claude-edit
