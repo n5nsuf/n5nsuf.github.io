@@ -383,6 +383,7 @@ After creating `projects/<slug>.html`:
 - Mix Mode A and Mode B styles on the same page.
 - Delete existing pages without explicit instruction.
 - Change the common nav-bar HTML structure (Home + lang toggle).
+- **Modify `index.html` card-grid entries or `doc-footer` links unless the prompt explicitly names them.** Deleting a project page does NOT imply removing its home card or footer link. If the user says "delete `projects/foo.html`", delete only that file — leave `index.html` untouched unless the user additionally says "remove foo from home" or "remove the admin footer link". When in doubt, err on the side of preserving navigation.
 
 ## 13. Files Off-Limits
 
