@@ -171,6 +171,26 @@
 </ul>
 
 <h2>
+  <span lang-ko>작동 구조 및 AI의 역할</span>
+  <span lang-en>Working Structure & AI's Role</span>
+</h2>
+<p lang-ko>전체 프로세스는 <strong>파일 파싱 → 청크 분할 → 용어집 매칭 → AI 병렬 번역 → 결과 병합</strong>의 단계를 거칩니다. Redis를 활용한 캐싱으로 동일 문장에 대한 중복 연산을 방지합니다.</p>
+<p lang-en>The process involves <strong>File Parsing → Chunking → Glossary Matching → Parallel AI Translation → Result Merging</strong>. Redis caching prevents redundant operations for identical sentences.</p>
+
+<h3 lang-ko>AI의 역할</h3>
+<h3 lang-en>The Role of AI</h3>
+<ul lang-ko>
+  <li><strong>문맥 유지 번역:</strong> 단순히 문장을 번역하는 것이 아니라, 앞뒤 문맥과 문서 전체의 주제를 파악하여 가장 적합한 어휘를 선택합니다.</li>
+  <li><strong>용어 일관성 강제:</strong> 사용자가 정의한 Glossary를 프롬프트에 동적으로 주입하여 전문 용어의 번역이 흐트러지지 않게 제어합니다.</li>
+  <li><strong>어조 및 스타일 변환:</strong> 타겟 언어의 문화적 특성을 고려하여 기술 문서, 블로그 포스트 등 목적에 맞는 문체로 조정합니다.</li>
+</ul>
+<ul lang-en>
+  <li><strong>Context-Preserving Translation:</strong> Instead of simple sentence translation, it identifies the surrounding context and overall document theme to select the most appropriate vocabulary.</li>
+  <li><strong>Terminology Consistency:</strong> Dynamically injects user-defined glossaries into prompts to ensure technical terms are translated consistently.</li>
+  <li><strong>Tone & Style Adaptation:</strong> Adjusts the writing style (e.g., technical docs, blog posts) considering the cultural nuances of the target language.</li>
+</ul>
+
+<h2>
   <span lang-ko>링크</span>
   <span lang-en>Links</span>
 </h2>

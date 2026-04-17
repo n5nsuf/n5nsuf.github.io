@@ -185,13 +185,24 @@
 </ul>
 
 <h2>
-  <span lang-ko>아키텍처</span>
-  <span lang-en>Architecture</span>
+  <span lang-ko>작동 구조 및 AI의 역할</span>
+  <span lang-en>Working Structure & AI's Role</span>
 </h2>
-<p lang-ko>파이프라인은 <strong>수집 → 피처 엔지니어링 → 모델 추론 → 시그널 결정 → 리스크 체크 → 주문 실행 → 로깅</strong>의 단방향 흐름입니다. 각 단계는 독립 모듈로 분리되어, 모델 교체나 리스크 규칙 수정이 하위 단계에 영향을 주지 않도록 설계되었습니다.</p>
-<p lang-en>The pipeline follows a one-way flow: <strong>ingest → feature engineering → model inference → signal decision → risk check → order execution → logging</strong>. Each stage is an independent module, so swapping the model or adjusting risk rules does not ripple into downstream stages.</p>
-<p lang-ko>모델 학습은 오프라인 배치 잡으로 수행되고, 운영 봇은 저장된 아티팩트를 로드해 추론만 담당합니다. 학습과 운영이 분리되어 있어 재학습 중에도 봇은 중단 없이 동작합니다.</p>
-<p lang-en>Training runs as an offline batch job; the live bot only loads saved artifacts and performs inference. The separation between training and execution lets the bot keep running even while models are being retrained.</p>
+<p lang-ko>시스템은 <strong>수집 → 피처 엔지니어링 → AI 추론 → 시그널 결정 → 리스크 체크 → 주문 실행</strong>의 파이프라인으로 작동합니다. 각 단계는 독립 모듈로 구성되어 장애 발생 시 해당 지점부터 복구가 가능합니다.</p>
+<p lang-en>The system operates through a pipeline: <strong>Ingestion → Feature Engineering → AI Inference → Signal Decision → Risk Check → Order Execution</strong>. Each stage is modularized to allow recovery from the point of failure.</p>
+
+<h3 lang-ko>AI의 역할</h3>
+<h3 lang-en>The Role of AI</h3>
+<ul lang-ko>
+  <li><strong>수익률 예측:</strong> LightGBM을 사용하여 수백 개의 기술적 지표와 수급 데이터를 바탕으로 차기 캔들의 방향성을 분류합니다.</li>
+  <li><strong>패턴 인식:</strong> LSTM 시계열 모델이 가격의 흐름과 변동성 패턴을 분석하여 모델의 판단에 가중치를 부여합니다.</li>
+  <li><strong>동적 임계값:</strong> 시장 상황에 따라 매수·매도 시그널의 강도를 조절하여 불필요한 거래를 억제합니다.</li>
+</ul>
+<ul lang-en>
+  <li><strong>Return Prediction:</strong> Uses LightGBM to classify the direction of the next candle based on hundreds of technical indicators and supply/demand data.</li>
+  <li><strong>Pattern Recognition:</strong> The LSTM time-series model analyzes price flow and volatility patterns to weight the model's decisions.</li>
+  <li><strong>Dynamic Thresholding:</strong> Adjusts the strength of buy/sell signals according to market conditions to suppress unnecessary trades.</li>
+</ul>
 
 <div class="callout warn">
   <span class="icon">⚠️</span>
