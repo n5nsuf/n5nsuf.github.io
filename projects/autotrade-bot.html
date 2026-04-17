@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoTrade Bot — AI 기반 한국 주식 자동매매</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --purple:#534AB7;--purple-l:#EEEDFE;--purple-d:#3C3489;
+    --teal:#0F6E56;--teal-l:#E1F5EE;--teal-d:#0A4F3E;
+    --amber:#BA7517;--amber-l:#FAEEDA;
+    --blue:#185FA5;--blue-l:#E6F1FB;
+    --coral:#993C1D;--coral-l:#FAECE7;
+    --red:#A32D2D;--red-l:#FCEBEB;
+    --gray:#444441;--gray-l:#F1EFE8;
+    --border:#D3D1C7;--text:#2C2C2A;--muted:#5F5E5A;--bg:#FAFAF8;
+    --slate:#64748B;--slate-l:#F1F5F9;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.8;color:var(--text);background:var(--bg)}
+  code,.mono{font-family:'JetBrains Mono',monospace}
+
+  .nav-bar{position:sticky;top:0;z-index:100;background:rgba(250,250,248,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;justify-content:space-between;align-items:center}
+  .nav-home{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;padding:4px 14px;border-radius:20px;border:1px solid var(--border);transition:all .15s}
+  .nav-home:hover{background:var(--teal-l);border-color:var(--teal);color:var(--teal)}
+  .nav-lang{display:flex;gap:6px}
+  .lang-btn{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 14px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--muted);cursor:pointer;transition:all .15s}
+  .lang-btn.active{background:var(--teal);color:white;border-color:var(--teal)}
+
+  [lang-ko],[lang-en]{display:none}
+  body.lang-ko [lang-ko]{display:revert}
+  body.lang-en [lang-en]{display:revert}
+
+  .page{max-width:860px;margin:0 auto;padding:48px 56px;background:white}
+
+  .doc-header{border-bottom:2px solid var(--teal);padding-bottom:24px;margin-bottom:36px}
+  .doc-header h1{font-size:28px;font-weight:700;color:var(--teal);line-height:1.3}
+  .doc-header .subtitle{font-size:15px;color:var(--muted);margin-top:6px}
+  .doc-header .meta{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:12px;flex-wrap:wrap}
+  .meta-tag{background:var(--teal-l);color:var(--teal-d);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500}
+
+  h2{font-size:17px;font-weight:700;color:var(--teal);padding:6px 0 6px 12px;border-left:3px solid var(--teal);margin-bottom:16px;margin-top:42px}
+  h3{font-size:14px;font-weight:700;color:var(--gray);margin:20px 0 10px}
+  p{margin-bottom:12px;color:var(--text);font-size:13.5px}
+  ul,ol{margin-bottom:12px;padding-left:20px;font-size:13.5px}
+  li{margin-bottom:4px}
+  a{color:var(--teal)}
+
+  table{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px}
+  thead tr{background:var(--teal)}
+  thead th{color:white;font-weight:600;padding:8px 12px;text-align:left;font-size:12px}
+  tbody tr:nth-child(even){background:var(--gray-l)}
+  tbody tr:hover{background:var(--teal-l)}
+  tbody td{padding:7px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  td code,p code{background:var(--gray-l);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--teal-d)}
+
+  .callout{display:flex;gap:10px;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px}
+  .callout.warn{background:var(--amber-l);border-left:3px solid var(--amber)}
+  .callout.info{background:var(--blue-l);border-left:3px solid var(--blue)}
+  .callout.ok{background:var(--teal-l);border-left:3px solid var(--teal)}
+  .callout .icon{font-size:16px;flex-shrink:0;margin-top:1px}
+  .callout p{margin:0;color:var(--gray)}
+
+  .badge{display:inline-block;padding:1px 8px;border-radius:20px;font-size:11px;font-weight:600}
+  .badge.local{background:var(--gray-l);color:var(--gray)}
+  .badge.ok{background:var(--teal-l);color:var(--teal)}
+
+  .doc-footer{border-top:1px solid var(--border);margin-top:48px;padding-top:16px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+  .doc-footer a{color:var(--teal);text-decoration:none}
+  .doc-footer a:hover{text-decoration:underline}
+
+  @media(max-width:640px){
+    .page{padding:20px 16px 48px}
+    .doc-header h1{font-size:21px}
+    h2{font-size:15px;margin-top:32px}
+    .doc-footer{flex-direction:column;gap:6px}
+  }
+  @media print{
+    body{background:white}
+    .page{padding:20px 28px;max-width:100%}
+    .lang-bar,.nav-bar{display:none}
+    h2{page-break-after:avoid}
+    table{page-break-inside:avoid}
+    [lang-ko],[lang-en]{display:revert !important}
+  }
+</style>
+</head>
+<body class="lang-ko">
+
+<div class="nav-bar">
+  <a href="/" class="nav-home">← Home</a>
+  <div class="nav-lang">
+    <button class="lang-btn active" onclick="setLang('ko')" id="btn-ko">한국어</button>
+    <button class="lang-btn" onclick="setLang('en')" id="btn-en">English</button>
+  </div>
+</div>
+
+<div class="page">
+
+<div class="doc-header">
+  <h1 lang-ko>AutoTrade Bot</h1>
+  <h1 lang-en>AutoTrade Bot</h1>
+  <div class="subtitle" lang-ko>AI 기반 한국 주식 자동매매 봇 — LightGBM과 LSTM을 결합한 실전 운영 시스템</div>
+  <div class="subtitle" lang-en>AI-powered Korean equities auto-trading bot — a live system combining LightGBM and LSTM</div>
+  <div class="meta">
+    <span class="meta-tag">2026-04-17</span>
+    <span class="meta-tag" lang-ko>프로젝트</span>
+    <span class="meta-tag" lang-en>Project</span>
+    <span class="meta-tag" lang-ko>실전 운영 중</span>
+    <span class="meta-tag" lang-en>Live in Production</span>
+  </div>
+</div>
+
+<h2>
+  <span lang-ko>개요</span>
+  <span lang-en>Overview</span>
+</h2>
+<p lang-ko>한국투자증권(KIS) Open API를 통해 실계좌에서 운영 중인 AI 기반 주식 자동매매 봇입니다. LightGBM으로 단기 방향성을 예측하고, LSTM으로 시계열 패턴을 보조 판단하여 매수·매도 시그널을 산출합니다.</p>
+<p lang-en>A production auto-trading bot running on a live brokerage account via the Korea Investment &amp; Securities (KIS) Open API. LightGBM predicts short-term directionality and an LSTM model provides sequential pattern support, together producing buy/sell signals.</p>
+<p lang-ko>설계 목표는 예측 정확도 자체보다 <strong>리스크 관리와 안정적 운영</strong>입니다. 포지션 사이즈, 손절·익절 규칙, 장애 복구 로직이 모델과 동등한 비중으로 다뤄집니다.</p>
+<p lang-en>The design goal is not peak prediction accuracy but <strong>risk management and operational stability</strong>. Position sizing, stop-loss / take-profit rules, and fault-recovery logic are treated with the same weight as the model itself.</p>
+
+<div class="callout info">
+  <span class="icon">🔒</span>
+  <p lang-ko>소스 저장소는 비공개(private)입니다. 라이브 URL은 제공되지 않습니다.</p>
+  <p lang-en>The source repository is private. No live URL is published.</p>
+</div>
+
+<h2>
+  <span lang-ko>스택</span>
+  <span lang-en>Stack</span>
+</h2>
+<table>
+  <thead>
+    <tr>
+      <th lang-ko>기술</th><th lang-en>Tech</th>
+      <th lang-ko>역할</th><th lang-en>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Python</code></td><td><code>Python</code></td>
+      <td lang-ko>전체 파이프라인 — 수집, 피처, 학습, 체결 로직</td>
+      <td lang-en>End-to-end pipeline — ingest, features, training, order logic</td>
+    </tr>
+    <tr>
+      <td><code>LightGBM</code></td><td><code>LightGBM</code></td>
+      <td lang-ko>단기 수익률 방향성 예측 (분류/회귀)</td>
+      <td lang-en>Short-term return direction prediction (classification/regression)</td>
+    </tr>
+    <tr>
+      <td><code>LSTM</code></td><td><code>LSTM</code></td>
+      <td lang-ko>시계열 패턴 인식 및 보조 신호</td>
+      <td lang-en>Sequential pattern recognition and secondary signals</td>
+    </tr>
+    <tr>
+      <td><code>KIS API</code></td><td><code>KIS API</code></td>
+      <td lang-ko>한국투자증권 Open API — 시세 조회 및 실주문</td>
+      <td lang-en>KIS Open API — market data and live order execution</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>
+  <span lang-ko>주요 기능</span>
+  <span lang-en>Features</span>
+</h2>
+<ul lang-ko>
+  <li>KIS Open API 기반 실시간 시세 수집 및 실계좌 주문 실행</li>
+  <li>LightGBM + LSTM 하이브리드 모델로 매수·매도 시그널 산출</li>
+  <li>종목별 포지션 사이즈 계산 및 분산 배분</li>
+  <li>손절(stop-loss), 익절(take-profit), 일일 최대 손실 한도 자동 적용</li>
+  <li>장 시작·마감 스케줄러 및 비정상 종료 시 포지션 복구 로직</li>
+  <li>체결·손익·에러 로그의 구조화된 기록으로 사후 분석 가능</li>
+</ul>
+<ul lang-en>
+  <li>Real-time quote ingestion and live-account order execution via KIS Open API</li>
+  <li>Hybrid LightGBM + LSTM signal engine for buy/sell decisions</li>
+  <li>Per-ticker position sizing and diversified allocation</li>
+  <li>Automated stop-loss, take-profit, and daily max-loss guardrails</li>
+  <li>Market open/close scheduler with position recovery after abnormal shutdowns</li>
+  <li>Structured logs for fills, P&amp;L, and errors to enable post-hoc analysis</li>
+</ul>
+
+<h2>
+  <span lang-ko>아키텍처</span>
+  <span lang-en>Architecture</span>
+</h2>
+<p lang-ko>파이프라인은 <strong>수집 → 피처 엔지니어링 → 모델 추론 → 시그널 결정 → 리스크 체크 → 주문 실행 → 로깅</strong>의 단방향 흐름입니다. 각 단계는 독립 모듈로 분리되어, 모델 교체나 리스크 규칙 수정이 하위 단계에 영향을 주지 않도록 설계되었습니다.</p>
+<p lang-en>The pipeline follows a one-way flow: <strong>ingest → feature engineering → model inference → signal decision → risk check → order execution → logging</strong>. Each stage is an independent module, so swapping the model or adjusting risk rules does not ripple into downstream stages.</p>
+<p lang-ko>모델 학습은 오프라인 배치 잡으로 수행되고, 운영 봇은 저장된 아티팩트를 로드해 추론만 담당합니다. 학습과 운영이 분리되어 있어 재학습 중에도 봇은 중단 없이 동작합니다.</p>
+<p lang-en>Training runs as an offline batch job; the live bot only loads saved artifacts and performs inference. The separation between training and execution lets the bot keep running even while models are being retrained.</p>
+
+<div class="callout warn">
+  <span class="icon">⚠️</span>
+  <p lang-ko>실계좌 운영 봇은 예측 품질만큼이나 장애 내성이 중요합니다. 네트워크 끊김, API 레이트리밋, 부분 체결 등 모든 예외 경로가 테스트되지 않으면 가동 금지.</p>
+  <p lang-en>For a live-account bot, fault tolerance matters as much as predictive quality. Do not run unless every edge path — network drops, API rate limits, partial fills — has been tested.</p>
+</div>
+
+<h2>
+  <span lang-ko>링크</span>
+  <span lang-en>Links</span>
+</h2>
+<ul lang-ko>
+  <li><span class="badge local">Private</span> &nbsp; 소스 저장소 — 비공개</li>
+  <li><span class="badge local">N/A</span> &nbsp; Live URL — 제공 안 함 (내부 운영 봇)</li>
+  <li><a href="/autotrade-guide/concept.html">관련 가이드 — 자동매매 개념</a></li>
+  <li><a href="/autotrade-guide/build-prompt.html">관련 가이드 — 구축 프롬프트</a></li>
+</ul>
+<ul lang-en>
+  <li><span class="badge local">Private</span> &nbsp; Source repository — not public</li>
+  <li><span class="badge local">N/A</span> &nbsp; Live URL — not published (internal bot)</li>
+  <li><a href="/autotrade-guide/concept.html">Related guide — Trading Concepts</a></li>
+  <li><a href="/autotrade-guide/build-prompt.html">Related guide — Build Prompt</a></li>
+</ul>
+
+<div class="doc-footer">
+  <span><a href="https://github.com/n5nsuf" target="_blank">Github info</a> &middot; <a href="/profile.html">Dev Profile</a></span>
+  <span>Tech Guides &amp; Projects &middot; 2026</span>
+</div>
+
+</div>
+
+<script>
+function setLang(lang) {
+  document.body.className = 'lang-' + lang;
+  document.getElementById('btn-ko').classList.toggle('active', lang === 'ko');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  try { localStorage.setItem('guide-lang', lang); } catch {}
+}
+(function() {
+  try { var s = localStorage.getItem('guide-lang'); if (s) setLang(s); } catch {}
+})();
+</script>
+</body>
+</html>
