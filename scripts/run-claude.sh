@@ -38,4 +38,6 @@ EOF
 FULL_PROMPT=$(printf '%s\n\n## Request\n%s\n' "$SYSTEM_CONTEXT" "$USER_PROMPT")
 
 # Headless one-shot. --dangerously-skip-permissions required for non-interactive runner.
-claude -p "$FULL_PROMPT" --dangerously-skip-permissions
+# Default to Sonnet — Opus reserved for manual escalation via CLAUDE_MODEL env.
+CLAUDE_MODEL="${CLAUDE_MODEL:-claude-sonnet-4-6}"
+claude -p "$FULL_PROMPT" --model "$CLAUDE_MODEL" --dangerously-skip-permissions
