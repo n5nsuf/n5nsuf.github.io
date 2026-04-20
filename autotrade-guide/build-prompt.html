@@ -109,7 +109,7 @@
   <div class="subtitle" lang-ko>AI 코딩 어시스턴트에 단계별로 입력하여 모의투자 자동매매 봇을 처음부터 구축</div>
   <div class="subtitle" lang-en>Build a paper-trading bot from scratch by feeding step-by-step prompts to an AI coding assistant</div>
   <div class="meta">
-    <span class="meta-tag">2026-04-16</span>
+    <span class="meta-tag">2026-04-20</span>
     <span class="meta-tag" lang-ko>구축 가이드</span>
     <span class="meta-tag" lang-en>Build Guide</span>
     <span class="meta-tag">KIS API</span>
@@ -130,6 +130,12 @@
   <span class="icon">&#128161;</span>
   <p lang-ko><strong>사용법:</strong> 이 문서의 프롬프트 블록(보라색 박스)을 AI 코딩 어시스턴트(Claude, Cursor 등)에 순서대로 붙여넣으세요. 각 단계를 완료한 후 다음 단계로 넘어갑니다.</p>
   <p lang-en><strong>How to use:</strong> Paste each prompt block (purple box) into your AI coding assistant (Claude, Cursor, etc.) in order. Complete each step before moving to the next.</p>
+</div>
+
+<div class="callout ok">
+  <span class="icon">&#128218;</span>
+  <p lang-ko><strong>코딩 원칙 (Step 1~8 공통 적용):</strong> 각 프롬프트 실행 전 AI에 다음 규칙을 먼저 선언하면 품질이 높아집니다. <em>"함수는 단일 책임, 레이어 단방향 의존(orchestrator→agent→service→client), async 우선, 외부 호출마다 timeout 명시, 에러는 조용히 삼키지 말고 log+반환."</em></p>
+  <p lang-en><strong>Coding principles (applied to Steps 1–8):</strong> Before running each prompt, declare these rules to your AI for higher quality output. <em>"Single responsibility per function, one-way layer dependency (orchestrator→agent→service→client), async-first, explicit timeout on every external call, never swallow errors silently — log and return."</em></p>
 </div>
 
 <!-- 사전 준비 -->
@@ -487,6 +493,130 @@ Railway 환경변수 설정:
   <p lang-en><strong>Deploy checklist:</strong> (1) All env vars configured, (2) Confirm normal startup in Railway logs, (3) Verify dashboard access, (4) Verify Telegram alerts.</p>
 </div>
 
+<!-- Step 9 -->
+<h2><span class="step-badge">Step 9</span> <span lang-ko>에이전트 구조로 리팩터링</span><span lang-en>Refactor to Agent Architecture</span></h2>
+
+<p lang-ko>Step 1~8로 만든 단일 스크립트를 독립적으로 수정·교체 가능한 에이전트 구조로 전환합니다. 이 단계부터 봇이 운영 수준의 견고함을 갖춥니다.</p>
+<p lang-en>Refactor the single-script bot from Steps 1–8 into an agent structure where each module can be modified and replaced independently. From this step, the bot gains production-level resilience.</p>
+
+<div class="prompt-block"><pre>현재 main.py / kis_api.py / strategy.py / risk.py / db.py를 에이전트 구조로 리팩터링해줘.
+
+목표: 각 모듈을 독립적으로 수정해도 다른 모듈에 영향을 주지 않는 구조.
+
+## 레이어 규칙
+- 호출 방향: orchestrator → agent → service → client → storage
+- 역방향 호출 금지. 레이어 건너뛰기 금지.
+
+## 1. FinanceAgent (finance_agent.py)
+잔고를 단일 소스로 관리 — KIS API 중복 호출 방지.
+
+class FinanceAgent:
+    def __init__(self, kis_client):
+        # kis_client 주입 (의존성 주입 — hard import 금지)
+        self._kis = kis_client
+        self._cache = {"cash": 0, "holdings": [], "_ts": 0.0}
+        self._pending = 0  # 매수 예약 중 금액
+        self._lock = threading.Lock()
+        TTL = 60  # 초
+
+    def get_balance(self) -> dict:
+        # TTL 초과 시 KIS 재조회, 캐시 반환
+
+    def get_available_cash(self) -> float:
+        # 가용 현금 = 캐시 현금 - pending
+
+    def cache_age(self) -> float:
+        # 마지막 갱신 후 경과 시간(초) — 외부에서 _cache 직접 접근 금지
+
+    def commit_buy(self, amount: int):
+        # 매수 직후 캐시 즉시 차감
+
+    def commit_sell(self, proceeds: int):
+        # 매도 완료 후 캐시 환원
+
+    def health(self) -> dict:
+        # {"cash": ..., "holdings": N, "age_s": ..., "pending": ...}
+
+## 2. TradingManager (trading_manager.py)
+전략 실행 + circuit breaker + 병렬 매수·매도.
+
+class TradingManager:
+    def __init__(self, kis_client, finance_agent):
+        # 의존성 주입
+        self._kis = kis_client
+        self._fa = finance_agent
+        self._health = {
+            "buy": {"fails": 0, "tripped": False},
+            "sell": {"fails": 0, "tripped": False},
+        }
+        CIRCUIT_THRESHOLD = 3
+
+    def start(self):
+        # 스케줄러 시작, DB 초기화
+
+    def run_cycle(self):
+        # ThreadPoolExecutor(max_workers=2)로 buy + sell 병렬 실행
+        # 각 future에 timeout=60 설정
+
+    def _run_buy_safe(self):
+        # circuit tripped이면 skip
+        # 성공 시 fails 리셋, 실패 시 _trip() 호출
+
+    def _run_sell_safe(self):
+        # sell은 포지션 보호 우선 — tripped이어도 강제 실행 후 리셋
+
+    def _trip(self, module: str, err: Exception):
+        # fails 증가, threshold 초과 시 tripped=True + Telegram 알림
+
+    def get_health(self) -> dict:
+        # 각 모듈 circuit 상태 반환
+
+    def smoke_test(self) -> dict:
+        # {"ok": bool, "checks": [{"name": ..., "ok": ..., "detail": ...}]}
+        # KIS 연결, DB 연결, 잔고 조회 가능 여부 2초 안에 확인
+
+    def shutdown(self):
+        # 스케줄러 종료, 자원 해제
+
+## 3. main.py 수정
+- FinanceAgent 먼저 초기화
+- TradingManager에 kis_client + finance_agent 주입
+- 시작 시 smoke_test() 실행 → 실패 항목 Telegram 알림
+- manager.start() → 스케줄러 진입
+
+## 에러 처리 규칙
+- except Exception: pass 금지
+- 에러 메시지에 원인 포함: f"balance fetch failed: status={resp.status}"
+- 외부 호출마다 try/except + log
+
+## dry_run 모드
+환경변수 DRY_RUN=true 시:
+- 실제 주문 대신 "DRY_RUN: would BUY 005930 1주" 로그 출력
+- 잔고 조회·가격 조회는 실제 실행 (로직 검증용)
+- Telegram은 "(dry_run)" 접두사 추가</pre></div>
+
+<div class="callout warn">
+  <span class="icon">&#9888;&#65039;</span>
+  <p lang-ko><strong>독립 수정 테스트:</strong> 리팩터링 완료 후 "FinanceAgent를 mock으로 교체해도 TradingManager 코드를 수정하지 않아도 되나?"를 확인하세요. 수정이 필요하다면 레이어 경계가 잘못된 것입니다.</p>
+  <p lang-en><strong>Independence test:</strong> After refactoring, verify: "Can I replace FinanceAgent with a mock without modifying TradingManager?" If not, the layer boundary is wrong.</p>
+</div>
+
+<div class="prompt-block"><pre>방금 만든 TradingManager의 smoke_test()를 실행해서 시스템 상태를 확인해줘.
+
+출력 형식:
+[smoke_test]
+  ✅ KIS connection — 응답 200
+  ✅ DB connection — trades 테이블 존재
+  ✅ balance fetch — 예수금 5,000,000원
+  ❌ telegram — 연결 실패: timeout
+
+전체 결과: 3/4 통과
+
+실패 항목이 있으면 Telegram으로 요약 전송 (Telegram 자체가 실패면 콘솔에만 출력).</pre></div>
+
+<div class="check-box" lang-ko><code>DRY_RUN=true python main.py</code> 실행 → 실제 주문 없이 전체 사이클 로그 출력되면 성공</div>
+<div class="check-box" lang-en>Run <code>DRY_RUN=true python main.py</code> → Success if full cycle logs print without real orders</div>
+
 <!-- 확장 아이디어 -->
 <h2 lang-ko>완성 후 확장 아이디어</h2>
 <h2 lang-en>Extension Ideas After Completion</h2>
@@ -526,6 +656,16 @@ Railway 환경변수 설정:
       <td lang-ko><strong>실전 전환</strong></td><td lang-en><strong>Go Live</strong></td>
       <td lang-ko>모의투자 검증 후 실전 URL/KEY로 교체</td>
       <td lang-en>After paper trading validation, switch to live URL/KEY</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>에이전트 아키텍처</strong></td><td lang-en><strong>Agent Architecture</strong></td>
+      <td lang-ko>Step 9 — 잔고 캐시(FinanceAgent) + circuit breaker + 병렬 실행으로 운영 수준 견고함 확보</td>
+      <td lang-en>Step 9 — Balance cache (FinanceAgent) + circuit breaker + parallel execution for production-grade resilience</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>모듈 독립화</strong></td><td lang-en><strong>Module Independence</strong></td>
+      <td lang-ko>smoke_test() + dry_run 모드 추가 → 각 모듈을 mock으로 교체 가능한 구조. 디버깅 시간 대폭 단축</td>
+      <td lang-en>Add smoke_test() + dry_run mode → each module swappable with a mock. Dramatically reduces debugging time</td>
     </tr>
   </tbody>
 </table></div>
@@ -596,7 +736,7 @@ TELEGRAM_CHAT_ID=123456789</pre></div>
 
 <div class="doc-footer">
   <span><a href="../" lang-ko>홈으로</a><a href="../" lang-en>Home</a> &middot; <a href="concept.html" lang-ko>개념 가이드</a><a href="concept.html" lang-en>Concept Guide</a></span>
-  <span>AutoTrade Build Prompt Guide &middot; 2026-04-16</span>
+  <span>AutoTrade Build Prompt Guide &middot; 2026-04-20</span>
 </div>
 
 </div>
