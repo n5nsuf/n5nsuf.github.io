@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quality Gate — AI Dev Quality Management</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --purple:#534AB7;--purple-l:#EEEDFE;--purple-d:#3C3489;
+    --teal:#0F6E56;--teal-l:#E1F5EE;
+    --amber:#BA7517;--amber-l:#FAEEDA;
+    --blue:#185FA5;--blue-l:#E6F1FB;
+    --coral:#993C1D;--coral-l:#FAECE7;
+    --red:#A32D2D;--red-l:#FCEBEB;
+    --gray:#444441;--gray-l:#F1EFE8;
+    --border:#D3D1C7;--text:#2C2C2A;--muted:#5F5E5A;--bg:#FAFAF8;
+    --slate:#64748B;--slate-l:#F1F5F9;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.8;color:var(--text);background:var(--bg)}
+  .page{max-width:860px;margin:0 auto;padding:48px 56px;background:white}
+  .doc-header{border-bottom:2px solid var(--coral);padding-bottom:24px;margin-bottom:36px}
+  .doc-header h1{font-size:28px;font-weight:700;color:var(--coral);line-height:1.3}
+  .doc-header .subtitle{font-size:15px;color:var(--muted);margin-top:6px}
+  .doc-header .meta{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:12px;flex-wrap:wrap}
+  .meta-tag{background:var(--coral-l);color:var(--coral);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500}
+  h2{font-size:17px;font-weight:700;color:var(--coral);padding:6px 0 6px 12px;border-left:3px solid var(--coral);margin-bottom:16px;margin-top:42px}
+  h3{font-size:14px;font-weight:700;color:var(--gray);margin:20px 0 10px}
+  p{margin-bottom:12px;color:var(--text);font-size:13.5px}
+  ul,ol{margin-bottom:12px;padding-left:20px;font-size:13.5px}
+  li{margin-bottom:4px}
+  table{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px}
+  thead tr{background:var(--coral)}
+  thead th{color:white;font-weight:600;padding:8px 12px;text-align:left;font-size:12px}
+  tbody tr:nth-child(even){background:var(--gray-l)}
+  tbody tr:hover{background:var(--coral-l)}
+  tbody td{padding:7px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  td code,p code,li code{background:var(--gray-l);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--purple-d)}
+  .callout{display:flex;gap:10px;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px}
+  .callout.warn{background:var(--amber-l);border-left:3px solid var(--amber)}
+  .callout.info{background:var(--blue-l);border-left:3px solid var(--blue)}
+  .callout.ok{background:var(--teal-l);border-left:3px solid var(--teal)}
+  .callout.coral{background:var(--coral-l);border-left:3px solid var(--coral)}
+  .callout .icon{font-size:16px;flex-shrink:0;margin-top:1px}
+  .callout p{margin:0;color:var(--gray)}
+
+  .doc-nav{display:flex;gap:16px;margin-bottom:28px;font-size:12.5px;flex-wrap:wrap}
+  .doc-nav a{color:var(--coral);text-decoration:none;padding:4px 12px;border-radius:20px;border:1px solid var(--border);transition:all .15s}
+  .doc-nav a:hover{background:var(--coral-l);border-color:var(--coral)}
+  .doc-nav a.current{background:var(--coral);color:white;border-color:var(--coral);pointer-events:none}
+
+  .prompt-block{background:var(--coral-l);border:1px solid #D4886A;border-radius:10px;padding:18px 20px;margin:14px 0 18px;position:relative;overflow-x:auto}
+  .prompt-block::before{content:'AI Prompt';position:absolute;top:0;right:0;background:var(--coral);color:white;font-size:10px;font-weight:600;padding:2px 10px;border-radius:0 9px 0 8px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px}
+  .prompt-block pre{background:none;border:none;padding:0;margin:0;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;color:#5C2210;white-space:pre-wrap;word-wrap:break-word}
+
+  .shell-block{background:var(--gray-l);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:14px 0 18px;position:relative;overflow-x:auto}
+  .shell-block::before{content:'Shell';position:absolute;top:0;right:0;background:var(--gray);color:white;font-size:10px;font-weight:600;padding:2px 10px;border-radius:0 9px 0 8px;font-family:'JetBrains Mono',monospace}
+  .shell-block pre{background:none;border:none;padding:0;margin:0;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;color:var(--gray);white-space:pre-wrap;word-wrap:break-word}
+
+  .check-box{background:var(--teal-l);border:1px solid #5DCAA5;border-radius:8px;padding:10px 16px;margin:12px 0 18px;font-size:13px;color:var(--teal);font-weight:500}
+  .check-box::before{content:'✓  ';font-weight:700}
+
+  .step-badge{display:inline-block;background:var(--coral);color:white;font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;margin-right:8px;font-family:'JetBrains Mono',monospace;vertical-align:middle}
+
+  .flow-diagram{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 0 24px;font-size:12px}
+  .flow-box{background:var(--coral-l);border:1px solid #D4886A;border-radius:8px;padding:8px 14px;font-weight:600;color:var(--coral);font-family:'JetBrains Mono',monospace;white-space:nowrap}
+  .flow-box.pass{background:var(--teal-l);border-color:#5DCAA5;color:var(--teal)}
+  .flow-box.fail{background:var(--red-l);border-color:#D4757A;color:var(--red)}
+  .flow-arrow{color:var(--muted);font-size:14px;font-weight:700}
+
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+  .doc-footer{border-top:1px solid var(--border);margin-top:48px;padding-top:16px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+  .doc-footer a{color:var(--coral);text-decoration:none}
+  .doc-footer a:hover{text-decoration:underline}
+
+  .nav-bar{position:sticky;top:0;z-index:100;background:rgba(250,250,248,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;justify-content:space-between;align-items:center}
+  .nav-home{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;padding:4px 14px;border-radius:20px;border:1px solid var(--border);transition:all .15s}
+  .nav-home:hover{background:var(--coral-l);border-color:var(--coral);color:var(--coral)}
+  .nav-lang{display:flex;gap:6px}
+  .lang-btn{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 14px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--muted);cursor:pointer;transition:all .15s}
+  .lang-btn.active{background:var(--coral);color:white;border-color:var(--coral)}
+  [lang-ko],[lang-en]{display:none}
+  body.lang-ko [lang-ko]{display:revert}
+  body.lang-en [lang-en]{display:revert}
+
+  @media(max-width:640px){
+    .page{padding:20px 16px 48px}.doc-header h1{font-size:21px}h2{font-size:15px;margin-top:32px}
+    .prompt-block{padding:14px 12px}.prompt-block pre{font-size:11px}
+    .doc-footer{flex-direction:column;gap:6px}.doc-nav{gap:8px}
+    .flow-diagram{gap:4px}.flow-box{font-size:11px;padding:6px 10px}
+  }
+  @media print{
+    body{background:white}.page{padding:20px 28px;max-width:100%}.nav-bar{display:none}
+    h2{page-break-after:avoid}table,.prompt-block{page-break-inside:avoid}
+    [lang-ko],[lang-en]{display:revert !important}
+  }
+</style>
+</head>
+<body class="lang-ko">
+
+<div class="nav-bar">
+  <a href="../" class="nav-home">← Home</a>
+  <div class="nav-lang">
+    <button class="lang-btn active" onclick="setLang('ko')" id="btn-ko">한국어</button>
+    <button class="lang-btn" onclick="setLang('en')" id="btn-en">English</button>
+  </div>
+</div>
+
+<div class="page">
+
+<div class="doc-header">
+  <h1 lang-ko>Quality Gate — AI 개발 품질 관리 프로세스</h1>
+  <h1 lang-en>Quality Gate — AI Dev Quality Management</h1>
+  <div class="subtitle" lang-ko>Autodebug + CI를 통합한 감사·자동패치·테스트·배포 검증 워크플로우 — AI 코딩 어시스턴트와 함께 실행</div>
+  <div class="subtitle" lang-en>Integrated Autodebug + CI workflow — audit, auto-patch, test, deploy verification with your AI coding assistant</div>
+  <div class="meta">
+    <span class="meta-tag">2026-04-20</span>
+    <span class="meta-tag" lang-ko>품질 관리</span>
+    <span class="meta-tag" lang-en>Quality Gate</span>
+    <span class="meta-tag">CI/CD</span>
+    <span class="meta-tag">Python</span>
+  </div>
+</div>
+
+<div class="doc-nav">
+  <a href="concept.html" lang-ko>개념</a>
+  <a href="concept.html" lang-en>Concept</a>
+  <a href="theory.html" lang-ko>학습 원리</a>
+  <a href="theory.html" lang-en>Theory</a>
+  <a href="build-prompt.html" lang-ko>구축 프롬프트</a>
+  <a href="build-prompt.html" lang-en>Build Prompt</a>
+  <a href="quality-gate.html" class="current" lang-ko>품질 게이트</a>
+  <a href="quality-gate.html" class="current" lang-en>Quality Gate</a>
+</div>
+
+<!-- 개요 -->
+<div class="callout info">
+  <span class="icon">&#128161;</span>
+  <p lang-ko><strong>사용법:</strong> 프롬프트 블록(주황 박스)을 AI 코딩 어시스턴트에 순서대로 붙여넣으세요. 각 단계는 독립적으로 실행할 수도 있고, Step 1→5 순서로 전체 파이프라인을 한 번에 돌릴 수도 있습니다.</p>
+  <p lang-en><strong>How to use:</strong> Paste each prompt block (orange box) into your AI coding assistant in order. Steps can be run independently or as a full pipeline from Step 1 through 5.</p>
+</div>
+
+<div class="callout coral">
+  <span class="icon">&#9881;</span>
+  <p lang-ko><strong>전체 흐름 — Autodebug + CI:</strong></p>
+  <p lang-en><strong>Full Flow — Autodebug + CI:</strong></p>
+</div>
+
+<div class="flow-diagram">
+  <div class="flow-box" lang-ko>Step 1<br>감사</div>
+  <div class="flow-box" lang-en>Step 1<br>Audit</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box" lang-ko>Step 2<br>자동 패치</div>
+  <div class="flow-box" lang-en>Step 2<br>Auto-Patch</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box" lang-ko>Step 3<br>테스트</div>
+  <div class="flow-box" lang-en>Step 3<br>Test</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box" lang-ko>Step 4<br>배포 검증</div>
+  <div class="flow-box" lang-en>Step 4<br>Deploy Check</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box pass" lang-ko>PASS ✓</div>
+  <div class="flow-box pass" lang-en>PASS ✓</div>
+  <div class="flow-box fail" style="display:none" lang-ko>FAIL → 재시작</div>
+  <div class="flow-box fail" style="display:none" lang-en>FAIL → Restart</div>
+</div>
+
+<!-- 사전 준비 -->
+<h2 lang-ko>사전 준비</h2>
+<h2 lang-en>Prerequisites</h2>
+
+<h3 lang-ko>필요 도구</h3>
+<h3 lang-en>Required Tools</h3>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th lang-ko>도구</th><th lang-en>Tool</th>
+    <th lang-ko>용도</th><th lang-en>Purpose</th>
+    <th lang-ko>설치</th><th lang-en>Install</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td>pytest</td>
+      <td lang-ko>단위·통합 테스트</td><td lang-en>Unit &amp; integration tests</td>
+      <td><code>pip install pytest pytest-cov</code></td>
+    </tr>
+    <tr>
+      <td>GitHub CLI</td>
+      <td lang-ko>CI 워크플로우 트리거·모니터</td><td lang-en>CI workflow trigger &amp; monitor</td>
+      <td><code>brew install gh</code></td>
+    </tr>
+    <tr>
+      <td lang-ko>AI 코딩 어시스턴트</td><td lang-en>AI Coding Assistant</td>
+      <td lang-ko>감사·패치 프롬프트 실행</td><td lang-en>Run audit &amp; patch prompts</td>
+      <td lang-ko>Claude Code, Cursor 등</td><td lang-en>Claude Code, Cursor, etc.</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<h3 lang-ko>프로젝트 최소 구조</h3>
+<h3 lang-en>Minimum Project Structure</h3>
+
+<div class="shell-block"><pre>
+project/
+├── core/           # 핵심 모듈
+├── tests/          # pytest 테스트
+│   ├── test_core.py
+│   └── conftest.py
+├── .github/
+│   └── workflows/
+│       └── ci.yml  # GitHub Actions CI
+└── requirements.txt
+</pre></div>
+
+<div class="callout warn">
+  <span class="icon">&#9888;</span>
+  <p lang-ko><code>tests/</code> 디렉터리와 최소 1개 이상의 테스트 파일이 없으면 Step 3이 동작하지 않습니다. 먼저 <a href="build-prompt.html" style="color:var(--amber)">구축 프롬프트</a>로 기본 봇을 만든 후 이 가이드를 실행하세요.</p>
+  <p lang-en>Without a <code>tests/</code> directory and at least one test file, Step 3 will not run. Complete the <a href="build-prompt.html" style="color:var(--amber)">Build Prompt</a> guide first, then run this quality gate.</p>
+</div>
+
+<!-- Step 1 -->
+<h2>
+  <span class="step-badge">Step 1</span>
+  <span lang-ko>코드 감사 (Audit)</span>
+  <span lang-en>Code Audit</span>
+</h2>
+
+<p lang-ko>전체 코드베이스를 스캔하여 CRITICAL 버그와 구조 위반을 탐지합니다. 패치 전 반드시 선행합니다.</p>
+<p lang-en>Scan the entire codebase for CRITICAL bugs and structural violations. Always run before patching.</p>
+
+<h3 lang-ko>감사 기준 (우선순위 순)</h3>
+<h3 lang-en>Audit Criteria (Priority Order)</h3>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th lang-ko>등급</th><th lang-en>Severity</th>
+    <th lang-ko>항목</th><th lang-en>Issue</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td style="color:var(--red);font-weight:700">CRITICAL</td>
+      <td lang-ko>예외 조용히 삼키기 (<code>except: pass</code>)</td>
+      <td lang-en>Silent exception swallow (<code>except: pass</code>)</td>
+    </tr>
+    <tr>
+      <td style="color:var(--red);font-weight:700">CRITICAL</td>
+      <td lang-ko>외부 호출 타임아웃 없음</td>
+      <td lang-en>Missing timeout on external calls</td>
+    </tr>
+    <tr>
+      <td style="color:var(--red);font-weight:700">CRITICAL</td>
+      <td lang-ko>타 모듈 내부 상태 직접 접근 (<code>_private</code>)</td>
+      <td lang-en>Direct access to other module's private state</td>
+    </tr>
+    <tr>
+      <td style="color:var(--amber);font-weight:700">HIGH</td>
+      <td lang-ko>순환 임포트</td>
+      <td lang-en>Circular imports</td>
+    </tr>
+    <tr>
+      <td style="color:var(--amber);font-weight:700">HIGH</td>
+      <td lang-ko>스레드 풀 미경계 (<code>max_workers</code> 없음)</td>
+      <td lang-en>Unbounded thread pool (no <code>max_workers</code>)</td>
+    </tr>
+    <tr>
+      <td style="color:var(--blue);font-weight:700">MEDIUM</td>
+      <td lang-ko>하드코딩 매직 넘버</td>
+      <td lang-en>Hardcoded magic numbers</td>
+    </tr>
+    <tr>
+      <td style="color:var(--blue);font-weight:700">MEDIUM</td>
+      <td lang-ko>레이어 방향 위반 (하위→상위 호출)</td>
+      <td lang-en>Layer direction violation (low-level calls high-level)</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<div class="prompt-block" lang-ko><pre>
+다음 코드베이스를 전체 감사해 주세요.
+
+[감사 대상 파일 또는 디렉터리 목록을 여기에 붙여넣거나, "현재 디렉터리 전체"라고 입력]
+
+감사 기준 (우선순위 순):
+1. CRITICAL: except/pass 또는 except Exception: pass — 에러를 조용히 삼키는 패턴
+2. CRITICAL: 외부 API·DB 호출에 timeout 없음
+3. CRITICAL: 타 모듈의 _private 속성에 직접 접근
+4. HIGH: 순환 임포트 (A→B→A)
+5. HIGH: ThreadPoolExecutor에 max_workers 미지정
+6. MEDIUM: 하드코딩 매직 넘버·문자열
+7. MEDIUM: 레이어 방향 위반 (service가 orchestrator를 직접 호출 등)
+
+출력 형식:
+- 파일명:줄번호 | 등급 | 문제 설명 | 권장 수정 방향
+- CRITICAL 항목 수, HIGH 항목 수, MEDIUM 항목 수 합산 요약
+- CRITICAL이 0이 될 때까지 Step 2를 반복합니다
+</pre></div>
+
+<div class="prompt-block" lang-en><pre>
+Please audit the following codebase completely.
+
+[Paste the list of files or directories to audit, or write "entire current directory"]
+
+Audit criteria (priority order):
+1. CRITICAL: except/pass or except Exception: pass — silent error swallowing
+2. CRITICAL: External API/DB calls with no timeout
+3. CRITICAL: Direct access to another module's _private attributes
+4. HIGH: Circular imports (A→B→A)
+5. HIGH: ThreadPoolExecutor without explicit max_workers
+6. MEDIUM: Hardcoded magic numbers or strings
+7. MEDIUM: Layer direction violation (e.g., service directly calling orchestrator)
+
+Output format:
+- filename:line | severity | problem description | recommended fix direction
+- Summary: count of CRITICAL, HIGH, MEDIUM items
+- Repeat Step 2 until CRITICAL count reaches 0
+</pre></div>
+
+<div class="check-box" lang-ko>Step 1 완료 기준: 감사 결과 리스트 출력 완료. CRITICAL 항목이 존재하면 Step 2로 진행.</div>
+<div class="check-box" lang-en>Step 1 done when: audit result list is generated. If CRITICAL items exist, proceed to Step 2.</div>
+
+<!-- Step 2 -->
+<h2>
+  <span class="step-badge">Step 2</span>
+  <span lang-ko>자동 패치 루프 (Autodebug)</span>
+  <span lang-en>Auto-Patch Loop (Autodebug)</span>
+</h2>
+
+<p lang-ko>Step 1 감사 결과를 기반으로 CRITICAL → HIGH 순으로 자동 패치합니다. 패치 후 재감사하여 CRITICAL이 0이 될 때까지 반복합니다. <strong>최대 5라운드.</strong></p>
+<p lang-en>Patch CRITICAL → HIGH issues found in Step 1, in priority order. Re-audit after each patch until CRITICAL count reaches 0. <strong>Maximum 5 rounds.</strong></p>
+
+<div class="prompt-block" lang-ko><pre>
+Step 1 감사 결과를 바탕으로 CRITICAL 항목부터 패치해 주세요.
+
+패치 순서: CRITICAL → HIGH → MEDIUM
+패치 규칙:
+- 한 번에 하나의 파일씩, 변경 전/후 코드를 명시
+- 기존 로직은 보존하고 최소한의 수정만 적용
+- except/pass → except Exception as e: logger.warning(f"[모듈명] 실패: {e}")
+- timeout 없음 → timeout=30 또는 timeout=60 명시 추가
+- _private 직접 접근 → 공개 메서드(예: cache_age(), get_balance()) 를 통해 접근
+- ThreadPoolExecutor → max_workers=N 명시 (N은 작업 수에 맞게)
+
+각 패치 후:
+1. 변경한 파일 목록 나열
+2. 해당 파일의 남은 CRITICAL/HIGH 수 업데이트
+3. CRITICAL이 남아있으면 계속 패치. 0이면 Step 3으로 이동.
+
+[Step 1 감사 결과 리스트를 여기에 붙여넣기]
+</pre></div>
+
+<div class="prompt-block" lang-en><pre>
+Based on the Step 1 audit results, patch CRITICAL items first.
+
+Patch order: CRITICAL → HIGH → MEDIUM
+Patch rules:
+- One file at a time, show before/after code explicitly
+- Preserve existing logic — apply minimum necessary changes
+- except/pass → except Exception as e: logger.warning(f"[module] failed: {e}")
+- Missing timeout → add timeout=30 or timeout=60 explicitly
+- _private direct access → access via public method (e.g., cache_age(), get_balance())
+- ThreadPoolExecutor → add explicit max_workers=N (N appropriate for task count)
+
+After each patch:
+1. List changed files
+2. Update remaining CRITICAL/HIGH count for that file
+3. If CRITICAL remains, keep patching. If 0, proceed to Step 3.
+
+[Paste Step 1 audit result list here]
+</pre></div>
+
+<div class="callout warn">
+  <span class="icon">&#9888;</span>
+  <p lang-ko>5라운드 후에도 CRITICAL이 남으면 해당 모듈을 격리(circuit breaker 추가 또는 임시 비활성화)하고 Step 3을 진행하세요. 무한 루프 금지.</p>
+  <p lang-en>If CRITICAL items remain after 5 rounds, isolate the affected module (add circuit breaker or temporarily disable) and proceed to Step 3. Never loop infinitely.</p>
+</div>
+
+<div class="check-box" lang-ko>Step 2 완료 기준: CRITICAL 항목 0개. 또는 5라운드 소진 후 모듈 격리 완료.</div>
+<div class="check-box" lang-en>Step 2 done when: CRITICAL count = 0. Or 5 rounds exhausted with affected modules isolated.</div>
+
+<!-- Step 3 -->
+<h2>
+  <span class="step-badge">Step 3</span>
+  <span lang-ko>테스트 실행 (CI)</span>
+  <span lang-en>Test Execution (CI)</span>
+</h2>
+
+<p lang-ko>로컬 pytest 실행 후 GitHub Actions CI를 트리거하여 실제 실행 결과를 확인합니다.</p>
+<p lang-en>Run pytest locally, then trigger GitHub Actions CI to verify results in a real environment.</p>
+
+<h3 lang-ko>로컬 테스트 명령</h3>
+<h3 lang-en>Local Test Commands</h3>
+
+<div class="shell-block"><pre>
+# 기본 실행
+pytest tests/ -v
+
+# 커버리지 포함
+pytest tests/ -v --cov=core --cov-report=term-missing
+
+# 특정 모듈만
+pytest tests/test_finance_agent.py -v
+</pre></div>
+
+<h3 lang-ko>CI 트리거 및 모니터</h3>
+<h3 lang-en>CI Trigger &amp; Monitor</h3>
+
+<div class="shell-block"><pre>
+# 워크플로우 수동 트리거
+gh workflow run ci.yml
+
+# 실시간 로그 확인
+gh run watch
+
+# 마지막 실행 결과 확인
+gh run list --limit 5
+</pre></div>
+
+<div class="prompt-block" lang-ko><pre>
+테스트가 실패했습니다. 아래 pytest 출력을 분석하고 수정해 주세요.
+
+규칙:
+- 테스트 코드가 아닌 실제 코드를 수정하세요 (테스트가 올바른 경우)
+- 테스트 기대값이 잘못된 경우에만 테스트를 수정하고, 이유를 명시하세요
+- 수정 후 동일한 pytest 명령으로 재실행 결과를 예상하여 보여주세요
+
+[pytest 출력 전체를 여기에 붙여넣기]
+</pre></div>
+
+<div class="prompt-block" lang-en><pre>
+Tests are failing. Analyze the pytest output below and fix the issues.
+
+Rules:
+- Modify the actual code, not the tests (if the tests are correct)
+- Only modify tests if the expected values are wrong — state the reason explicitly
+- After fixing, show the expected re-run result for the same pytest command
+
+[Paste full pytest output here]
+</pre></div>
+
+<div class="check-box" lang-ko>Step 3 완료 기준: pytest 전체 PASSED. GitHub Actions CI green.</div>
+<div class="check-box" lang-en>Step 3 done when: pytest all PASSED. GitHub Actions CI green.</div>
+
+<!-- Step 4 -->
+<h2>
+  <span class="step-badge">Step 4</span>
+  <span lang-ko>배포 검증</span>
+  <span lang-en>Deploy Verification</span>
+</h2>
+
+<p lang-ko>배포 후 헬스체크 엔드포인트와 핵심 기능을 실제로 호출하여 동작을 확인합니다.</p>
+<p lang-en>After deployment, verify behavior by hitting the health-check endpoint and key functions with real calls.</p>
+
+<h3 lang-ko>Railway 배포 확인</h3>
+<h3 lang-en>Railway Deploy Check</h3>
+
+<div class="shell-block"><pre>
+# 배포 상태 확인
+railway status
+
+# 최근 배포 로그
+railway logs --tail 50
+
+# 헬스체크 엔드포인트 호출
+curl -s https://your-app.railway.app/health | jq .
+</pre></div>
+
+<h3 lang-ko>Vercel 배포 확인</h3>
+<h3 lang-en>Vercel Deploy Check</h3>
+
+<div class="shell-block"><pre>
+# 최신 배포 목록 (Age 비교)
+vercel ls
+
+# 프로덕션 배포
+vercel --prod
+
+# 헬스체크
+curl -s https://your-app.vercel.app/api/health
+</pre></div>
+
+<div class="prompt-block" lang-ko><pre>
+배포 후 다음 체크리스트를 순서대로 검증해 주세요.
+
+1. 헬스체크 엔드포인트 응답 확인 (아래 명령 실행)
+   curl -s [헬스체크 URL] | 결과 분석
+
+2. 핵심 기능 smoke test
+   - [주요 API 엔드포인트 1] 실제 호출 → 응답 코드 + 응답 구조 확인
+   - [주요 API 엔드포인트 2] 실제 호출 → 응답 코드 + 응답 구조 확인
+
+3. 에러 경로 확인
+   - 잘못된 입력값으로 호출 시 적절한 에러 반환 여부
+
+4. 로그 이상 없는지 확인
+   railway logs --tail 30 또는 vercel logs
+
+각 항목에 대해 PASS / FAIL / SKIP (환경 없음) 으로 표시하세요.
+</pre></div>
+
+<div class="prompt-block" lang-en><pre>
+After deployment, verify the following checklist in order.
+
+1. Health-check endpoint response (run the command below)
+   curl -s [health check URL] | analyze result
+
+2. Core functionality smoke test
+   - [Key API endpoint 1] — real call → verify response code + response structure
+   - [Key API endpoint 2] — real call → verify response code + response structure
+
+3. Error path check
+   - Confirm that invalid input returns appropriate error response
+
+4. Check logs for anomalies
+   railway logs --tail 30 or vercel logs
+
+Mark each item as PASS / FAIL / SKIP (no env).
+</pre></div>
+
+<div class="check-box" lang-ko>Step 4 완료 기준: 헬스체크 PASS. 핵심 엔드포인트 응답 정상. 에러 경로 적절한 응답 반환.</div>
+<div class="check-box" lang-en>Step 4 done when: health-check PASS, core endpoints respond normally, error paths return appropriate responses.</div>
+
+<!-- Step 5 -->
+<h2>
+  <span class="step-badge">Step 5</span>
+  <span lang-ko>품질 리포트</span>
+  <span lang-en>Quality Report</span>
+</h2>
+
+<p lang-ko>전체 파이프라인 결과를 요약하여 PASS / FAIL 판정과 변경 목록을 출력합니다.</p>
+<p lang-en>Summarize the full pipeline result, output PASS / FAIL verdict and change list.</p>
+
+<div class="prompt-block" lang-ko><pre>
+지금까지의 Quality Gate 실행 결과를 요약하여 최종 리포트를 작성해 주세요.
+
+리포트 형식:
+────────────────────────────────────────
+Quality Gate Report — [날짜]
+────────────────────────────────────────
+Step 1 감사     : CRITICAL N개, HIGH N개, MEDIUM N개
+Step 2 패치     : 수정 파일 N개, 남은 CRITICAL N개
+Step 3 테스트   : pytest N passed / N failed, CI [green/red]
+Step 4 배포     : health PASS/FAIL, smoke PASS/FAIL
+
+최종 판정: [ PASS ✓ ] 또는 [ FAIL ✗ ]
+
+변경된 파일 목록:
+- 파일명 : 변경 내용 요약
+
+다음 액션:
+- PASS: 커밋 & 배포 진행 가능
+- FAIL: 미해결 항목 목록 + 권장 대응
+────────────────────────────────────────
+
+위 형식에 맞게 이번 세션의 실제 결과로 채워주세요.
+</pre></div>
+
+<div class="prompt-block" lang-en><pre>
+Summarize the Quality Gate execution results into a final report.
+
+Report format:
+────────────────────────────────────────
+Quality Gate Report — [date]
+────────────────────────────────────────
+Step 1 Audit    : CRITICAL N, HIGH N, MEDIUM N
+Step 2 Patch    : N files modified, N CRITICAL remaining
+Step 3 Test     : pytest N passed / N failed, CI [green/red]
+Step 4 Deploy   : health PASS/FAIL, smoke PASS/FAIL
+
+Final Verdict: [ PASS ✓ ] or [ FAIL ✗ ]
+
+Changed files:
+- filename : summary of change
+
+Next actions:
+- PASS: commit & deploy when ready
+- FAIL: list of unresolved items + recommended actions
+────────────────────────────────────────
+
+Fill in the format with the actual results from this session.
+</pre></div>
+
+<div class="check-box" lang-ko>Step 5 완료 기준: 최종 판정 PASS ✓ — 커밋 & 배포 진행 가능.</div>
+<div class="check-box" lang-en>Step 5 done when: final verdict PASS ✓ — ready to commit &amp; deploy.</div>
+
+<!-- 확장 아이디어 -->
+<h2 lang-ko>확장 아이디어</h2>
+<h2 lang-en>Extension Ideas</h2>
+
+<div class="table-wrap"><table>
+  <thead><tr>
+    <th lang-ko>아이디어</th><th lang-en>Idea</th>
+    <th lang-ko>설명</th><th lang-en>Description</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td lang-ko>자동 트리거</td><td lang-en>Auto Trigger</td>
+      <td lang-ko>파일 저장 시 Step 1→3 자동 실행 (PostToolUse hook)</td>
+      <td lang-en>Run Steps 1→3 automatically on file save via PostToolUse hook</td>
+    </tr>
+    <tr>
+      <td lang-ko>슬랙 알림</td><td lang-en>Slack Notification</td>
+      <td lang-ko>FAIL 판정 시 Slack webhook으로 자동 알림</td>
+      <td lang-en>Auto-notify via Slack webhook on FAIL verdict</td>
+    </tr>
+    <tr>
+      <td lang-ko>커버리지 게이트</td><td lang-en>Coverage Gate</td>
+      <td lang-ko>커버리지 80% 미만 시 FAIL 처리</td>
+      <td lang-en>Fail if coverage drops below 80%</td>
+    </tr>
+    <tr>
+      <td lang-ko>히스토리 로그</td><td lang-en>History Log</td>
+      <td lang-ko>리포트를 <code>quality-gate-log/YYYY-MM-DD.md</code>에 누적 저장</td>
+      <td lang-en>Append each report to <code>quality-gate-log/YYYY-MM-DD.md</code></td>
+    </tr>
+    <tr>
+      <td lang-ko>멀티 모듈 병렬 감사</td><td lang-en>Parallel Multi-module Audit</td>
+      <td lang-ko>모듈별 감사를 병렬 subagent로 실행하여 속도 향상</td>
+      <td lang-en>Run per-module audits as parallel subagents for speed</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<div class="doc-footer">
+  <span><a href="../">← Home</a> &middot; <a href="build-prompt.html" lang-ko>구축 프롬프트</a><a href="build-prompt.html" lang-en>Build Prompt</a></span>
+  <span>Quality Gate &middot; 2026-04-20</span>
+</div>
+
+</div>
+
+<script>
+function setLang(lang) {
+  document.body.className = 'lang-' + lang;
+  document.getElementById('btn-ko').classList.toggle('active', lang === 'ko');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  try { localStorage.setItem('guide-lang', lang); } catch {}
+}
+(function() {
+  try { var s = localStorage.getItem('guide-lang'); if (s) setLang(s); } catch {}
+})();
+</script>
+</body>
+</html>
