@@ -109,48 +109,62 @@
   <a href="build-prompt.html" lang-ko>구축 프롬프트</a><a href="build-prompt.html" lang-en>Build Prompt</a>
 </div>
 
-<h2 lang-ko>1. AI는 시장을 어떻게 학습하는가?</h2>
-<h2 lang-en>1. How AI Learns the Market</h2>
+<h2>
+  1. <span lang-ko>AI는 시장을 어떻게 학습하는가?</span>
+  <span lang-en>How AI Learns the Market</span>
+</h2>
 <p lang-ko>금융 시장의 데이터는 <strong>매우 낮은 신호대잡음비(Low Signal-to-Noise Ratio)</strong>와 <strong>비정상성(Non-stationarity)</strong>이라는 특징을 가집니다. AI는 과거의 패턴이 미래에도 반복될 것이라는 가정을 바탕으로 최적의 의사결정 경계를 찾아냅니다.</p>
 <p lang-en>Financial market data is characterized by a <strong>low signal-to-noise ratio</strong> and <strong>non-stationarity</strong>. AI finds optimal decision boundaries based on the assumption that past patterns will repeat in the future.</p>
 
 <div class="theory-grid">
   <div class="theory-card">
-    <h4 lang-ko>🔍 피처 엔지니어링</h4>
-    <h4 lang-en>🔍 Feature Engineering</h4>
+    <h4>
+      🔍 <span lang-ko>피처 엔지니어링</span>
+      <span lang-en>Feature Engineering</span>
+    </h4>
     <p lang-ko>원시 가격 데이터를 기술적 지표(RSI, MACD), 수급 데이터, 거시 경제 지표 등으로 변환합니다. 모델이 시장의 노이즈를 걸러내고 유의미한 신호를 학습할 수 있도록 가공하는 핵심 단계입니다.</p>
     <p lang-en>Transforms raw price data into technical indicators (RSI, MACD), supply/demand data, and macro indicators. This is a critical step to help the model filter market noise and learn meaningful signals.</p>
   </div>
   <div class="theory-card">
-    <h4 lang-ko>🧠 지도 학습</h4>
-    <h4 lang-en>🧠 Supervised Learning</h4>
+    <h4>
+      🧠 <span lang-ko>지도 학습</span>
+      <span lang-en>Supervised Learning</span>
+    </h4>
     <p lang-ko>과거 특정 시점의 데이터(X)와 일정 시간 경과 후의 실제 수익률(y)을 매핑하여 학습합니다. 어떤 기술적 지표 조합에서 가격이 상승하거나 하락할 확률이 높은지 통계적 패턴을 찾아냅니다.</p>
     <p lang-en>Learns by mapping past data points (X) to actual returns (y) after a certain period. It identifies statistical patterns to determine which indicator combinations correlate with price movements.</p>
   </div>
 </div>
 
-<h2 lang-ko>2. 하이브리드 모델의 원리 (LGBM + LSTM)</h2>
-<h2 lang-en>2. Hybrid Model Principles (LGBM + LSTM)</h2>
+<h2>
+  2. <span lang-ko>하이브리드 모델의 원리 (LGBM + LSTM)</span>
+  <span lang-en>Hybrid Model Principles (LGBM + LSTM)</span>
+</h2>
 <p lang-ko>단일 모델의 한계를 극복하기 위해 서로 다른 특성을 가진 두 가지 AI 모델을 결합하여 예측의 정밀도를 높입니다.</p>
 <p lang-en>To overcome the limitations of a single model, two AI models with different characteristics are combined to increase prediction precision.</p>
 
 <div class="theory-grid">
   <div class="theory-card">
-    <h4 lang-ko>📈 LightGBM (정적 패턴 포착)</h4>
-    <h4 lang-en>📈 LightGBM (Static Patterns)</h4>
+    <h4>
+      📈 <span lang-ko>LightGBM (정적 패턴 포착)</span>
+      <span lang-en>LightGBM (Static Patterns)</span>
+    </h4>
     <p lang-ko>의사결정 나무 기반의 부스팅 모델로, 수백 개의 지표들 사이의 비선형적 관계를 빠르게 찾아냅니다. 특히 특정 수치(예: RSI 30 이하)가 매수 신호로서 가지는 임계값(Threshold)을 포착하는 데 매우 강력하며, 학습 속도가 빨라 대규모 데이터 처리에 적합합니다.</p>
     <p lang-en>A boosting model based on decision trees that quickly finds non-linear relationships among hundreds of indicators. It is particularly powerful at capturing thresholds (e.g., RSI below 30) as buy signals and is suitable for large-scale data due to its fast learning speed.</p>
   </div>
   <div class="theory-card">
-    <h4 lang-ko>🔗 LSTM (시계열 흐름 파악)</h4>
-    <h4 lang-en>🔗 LSTM (Time-series Flow)</h4>
+    <h4>
+      🔗 <span lang-ko>LSTM (시계열 흐름 파악)</span>
+      <span lang-en>LSTM (Time-series Flow)</span>
+    </h4>
     <p lang-ko>데이터의 순서와 시간적 맥락을 기억하는 순환 신경망(RNN)의 일종입니다. 단순히 현재의 지표 수치뿐만 아니라, 최근 며칠간의 가격 흐름이 어떠했는지 '기억'하여 추세의 강도와 지속성을 판단합니다. 이는 시장의 급격한 변곡점을 감지하는 데 도움을 줍니다.</p>
     <p lang-en>A type of Recurrent Neural Network (RNN) that remembers the sequence and temporal context of data. It 'remembers' recent price flows to judge trend strength and persistence, helping to detect sudden market pivot points.</p>
   </div>
 </div>
 
-<h2 lang-ko>3. 이론적 배경</h2>
-<h2 lang-en>3. Theoretical Background</h2>
+<h2>
+  3. <span lang-ko>이론적 배경</span>
+  <span lang-en>Theoretical Background</span>
+</h2>
 
 <h3 lang-ko>효율적 시장 가설 (EMH)과 그 한계</h3>
 <h3 lang-en>Efficient Market Hypothesis (EMH) and its Limits</h3>
@@ -180,8 +194,10 @@
   </tbody>
 </table>
 
-<h2 lang-ko>4. 검증 및 최적화 방법론</h2>
-<h2 lang-en>4. Validation & Optimization Methodology</h2>
+<h2>
+  4. <span lang-ko>검증 및 최적화 방법론</span>
+  <span lang-en>Validation & Optimization Methodology</span>
+</h2>
 
 <ul lang-ko>
   <li><strong>Walk-forward Analysis:</strong> 데이터를 시간에 따라 이동시키며 학습과 검증을 반복하여, 모델이 최근 시장 상황에 적응하고 있는지 확인합니다.</li>

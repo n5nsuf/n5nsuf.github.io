@@ -148,16 +148,20 @@
 </div>
 
 <!-- 1. 자동매매란? -->
-<h2 lang-ko>1. 자동매매란?</h2>
-<h2 lang-en>1. What is Automated Trading?</h2>
+<h2>
+  1. <span lang-ko>자동매매란?</span>
+  <span lang-en>What is Automated Trading?</span>
+</h2>
 
 <p lang-ko>자동매매(Automated Trading)란 <strong>미리 정의된 규칙이나 알고리즘</strong>에 따라 매수/매도 주문을 자동으로 실행하는 시스템이다. 사람의 감정을 배제하고, 24시간 일관된 규칙으로 시장에 대응할 수 있다.</p>
 <p lang-en>Automated trading is a system that automatically executes buy/sell orders based on <strong>predefined rules or algorithms</strong>. It eliminates human emotion and responds to the market with consistent rules around the clock.</p>
 
 <div class="compare">
   <div class="compare-card" style="background:var(--gray-l)">
-    <h4 lang-ko>수동 매매</h4>
-    <h4 lang-en>Manual Trading</h4>
+    <h4>
+      <span lang-ko>수동 매매</span>
+      <span lang-en>Manual Trading</span>
+    </h4>
     <ul>
       <li lang-ko>차트를 직접 분석하고 판단</li>
       <li lang-en>Manually analyze charts and decide</li>
@@ -170,8 +174,10 @@
     </ul>
   </div>
   <div class="compare-card" style="background:var(--teal-l)">
-    <h4 lang-ko>자동매매</h4>
-    <h4 lang-en>Automated Trading</h4>
+    <h4>
+      <span lang-ko>자동매매</span>
+      <span lang-en>Automated Trading</span>
+    </h4>
     <ul>
       <li lang-ko>알고리즘이 분석과 실행을 담당</li>
       <li lang-en>Algorithm handles analysis and execution</li>
@@ -192,8 +198,10 @@
 </div>
 
 <!-- 2. 핵심 구성요소 -->
-<h2 lang-ko>2. 핵심 구성요소</h2>
-<h2 lang-en>2. Core Components</h2>
+<h2>
+  2. <span lang-ko>핵심 구성요소</span>
+  <span lang-en>Core Components</span>
+</h2>
 
 <p lang-ko>자동매매 시스템은 다섯 가지 핵심 모듈로 구성된다. 각 모듈이 독립적으로 동작하면서 서로 데이터를 주고받는 구조가 이상적이다.</p>
 <p lang-en>An automated trading system consists of five core modules. The ideal architecture has each module operating independently while exchanging data with others.</p>
@@ -201,44 +209,41 @@
 <div class="prin-grid">
   <div class="prin-card" style="border-color:var(--blue)">
     <div class="prin-icon">&#128279;</div>
-    <div class="prin-title" lang-ko>Broker API</div>
-    <div class="prin-title" lang-en>Broker API</div>
+    <div class="prin-title">Broker API</div>
     <div class="prin-desc" lang-ko>증권사 서버와 통신. 주문 전송, 잔고 조회, 시세 수신. KIS, 키움 등 증권사별 API 사용.</div>
     <div class="prin-desc" lang-en>Communicates with broker servers. Sends orders, queries balances, receives quotes. Uses broker-specific APIs like KIS, Kiwoom.</div>
   </div>
   <div class="prin-card" style="border-color:var(--purple)">
     <div class="prin-icon">&#129504;</div>
-    <div class="prin-title" lang-ko>Strategy Engine</div>
-    <div class="prin-title" lang-en>Strategy Engine</div>
+    <div class="prin-title">Strategy Engine</div>
     <div class="prin-desc" lang-ko>매매 판단의 핵심. 지표 계산, 신호 생성, 포지션 결정. 규칙 기반 또는 ML 모델.</div>
     <div class="prin-desc" lang-en>Core of trading decisions. Calculates indicators, generates signals, determines positions. Rule-based or ML model.</div>
   </div>
   <div class="prin-card" style="border-color:var(--teal)">
     <div class="prin-icon">&#128202;</div>
-    <div class="prin-title" lang-ko>Data Pipeline</div>
-    <div class="prin-title" lang-en>Data Pipeline</div>
+    <div class="prin-title">Data Pipeline</div>
     <div class="prin-desc" lang-ko>실시간/과거 시세 수집, 정제, 저장. 지표 계산을 위한 OHLCV 데이터 관리.</div>
     <div class="prin-desc" lang-en>Collects, cleans, and stores real-time/historical quotes. Manages OHLCV data for indicator calculation.</div>
   </div>
   <div class="prin-card" style="border-color:var(--amber)">
     <div class="prin-icon">&#128737;</div>
-    <div class="prin-title" lang-ko>Risk Management</div>
-    <div class="prin-title" lang-en>Risk Management</div>
+    <div class="prin-title">Risk Management</div>
     <div class="prin-desc" lang-ko>손실 한도, 포지션 크기, 일일 한도 관리. 전략보다 중요한 생존 모듈.</div>
     <div class="prin-desc" lang-en>Manages loss limits, position sizing, daily caps. The survival module -- more important than strategy.</div>
   </div>
   <div class="prin-card" style="border-color:var(--coral)">
     <div class="prin-icon">&#128225;</div>
-    <div class="prin-title" lang-ko>Monitoring</div>
-    <div class="prin-title" lang-en>Monitoring</div>
+    <div class="prin-title">Monitoring</div>
     <div class="prin-desc" lang-ko>시스템 상태, 매매 기록, 수익률 추적. 알림(Slack/Telegram), 대시보드, 로그.</div>
     <div class="prin-desc" lang-en>Tracks system status, trade records, returns. Alerts (Slack/Telegram), dashboards, logs.</div>
   </div>
 </div>
 
 <!-- 3. 매매 전략 유형 -->
-<h2 lang-ko>3. 매매 전략 유형</h2>
-<h2 lang-en>3. Strategy Types</h2>
+<h2>
+  3. <span lang-ko>매매 전략 유형</span>
+  <span lang-en>Strategy Types</span>
+</h2>
 
 <div class="table-wrap"><table>
   <thead><tr>
@@ -294,8 +299,10 @@
 </div>
 
 <!-- 4. 데이터 흐름 -->
-<h2 lang-ko>4. 데이터 흐름</h2>
-<h2 lang-en>4. Data Flow</h2>
+<h2>
+  4. <span lang-ko>데이터 흐름</span>
+  <span lang-en>Data Flow</span>
+</h2>
 
 <p lang-ko>자동매매 시스템의 데이터는 다섯 단계를 거쳐 흐른다. 각 단계는 명확한 입출력을 가지며, 파이프라인처럼 연결된다.</p>
 <p lang-en>Data flows through five stages in an automated trading system. Each stage has clear input/output and connects like a pipeline.</p>
@@ -340,8 +347,10 @@
 </div>
 
 <!-- 5. 리스크 관리 -->
-<h2 lang-ko>5. 리스크 관리</h2>
-<h2 lang-en>5. Risk Management</h2>
+<h2>
+  5. <span lang-ko>리스크 관리</span>
+  <span lang-en>Risk Management</span>
+</h2>
 
 <p lang-ko>수익을 내는 것보다 <strong>생존하는 것</strong>이 더 중요하다. 리스크 관리는 자동매매 시스템의 가장 핵심적인 모듈이다.</p>
 <p lang-en><strong>Survival</strong> matters more than profit. Risk management is the most critical module in any automated trading system.</p>
@@ -393,8 +402,10 @@
 </div>
 
 <!-- 6. 장기 vs 단타 -->
-<h2 lang-ko>6. 장기 투자 vs 단타 매매</h2>
-<h2 lang-en>6. Long-term vs Day Trading</h2>
+<h2>
+  6. <span lang-ko>장기 투자 vs 단타 매매</span>
+  <span lang-en>Long-term vs Day Trading</span>
+</h2>
 
 <div class="table-wrap"><table>
   <thead><tr>
@@ -443,8 +454,10 @@
 </div>
 
 <!-- 7. 기술 스택 -->
-<h2 lang-ko>7. 기술 스택</h2>
-<h2 lang-en>7. Tech Stack</h2>
+<h2>
+  7. <span lang-ko>기술 스택</span>
+  <span lang-en>Tech Stack</span>
+</h2>
 
 <div class="table-wrap"><table>
   <thead><tr>
@@ -499,8 +512,10 @@
 </table></div>
 
 <!-- 8. 주의사항 -->
-<h2 lang-ko>8. 주의사항</h2>
-<h2 lang-en>8. Cautions</h2>
+<h2>
+  8. <span lang-ko>주의사항</span>
+  <span lang-en>Cautions</span>
+</h2>
 
 <p lang-ko>자동매매 시스템을 구축하고 운영할 때 반드시 알아야 할 위험 요소들이다.</p>
 <p lang-en>These are the risk factors you must understand when building and operating an automated trading system.</p>
