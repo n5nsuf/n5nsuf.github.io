@@ -71,6 +71,12 @@ Every new page's `<style>` MUST include this block verbatim:
 
 Pick one accent per project page; use it for `doc-header` border, `h2`, meta-tags, and primary card color.
 
+**Color tone rules (MANDATORY)**:
+- Prefer **pastel / muted / soft** tones. Light backgrounds (`-l` tokens) should feel airy, not saturated.
+- **Avoid brown and red tones** — `coral` (#993C1D) and `red` (#A32D2D) are off-limits for new accent colors. Use them only for semantic warning/error callouts.
+- If a new accent color is needed beyond the palette above, choose a **soft, desaturated hue** — e.g., soft sage, muted lavender, pale gold. Never use vivid/neon or dark brownish-red hues.
+- Golden / pale gold tones are acceptable (amber is fine). Bright orange is acceptable only if it leans golden, not red.
+
 ---
 
 ## 4. Typography
