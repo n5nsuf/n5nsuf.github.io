@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CEO 트렌드 브리핑 목록</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root{
+    --purple:#534AB7;--purple-l:#EEEDFE;--purple-d:#3C3489;
+    --teal:#0F6E56;--teal-l:#E1F5EE;
+    --amber:#BA7517;--amber-l:#FAEEDA;
+    --blue:#185FA5;--blue-l:#E6F1FB;
+    --border:#D3D1C7;--text:#2C2C2A;--muted:#5F5E5A;--bg:#FAFAF8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.8;color:var(--text);background:var(--bg)}
+  .page{max-width:860px;margin:0 auto;padding:48px 56px;background:white}
+  .doc-header{border-bottom:2px solid var(--purple);padding-bottom:24px;margin-bottom:36px}
+  .doc-header h1{font-size:28px;font-weight:700;color:var(--purple);line-height:1.3}
+  .doc-header .subtitle{font-size:15px;color:var(--muted);margin-top:6px}
+  .meta-tag{background:var(--purple-l);color:var(--purple-d);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500}
+  .doc-header .meta{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:12px;flex-wrap:wrap}
+  .section-heading{font-size:15px;font-weight:700;color:var(--purple);padding:6px 0 6px 12px;border-left:3px solid var(--purple);margin:32px 0 16px}
+  .brief-list{list-style:none;display:flex;flex-direction:column;gap:12px}
+  .brief-item{border:1px solid var(--border);border-radius:10px;background:white;transition:all .2s}
+  .brief-item:hover{border-color:var(--purple);box-shadow:0 4px 16px rgba(83,74,183,.1);transform:translateY(-1px)}
+  .brief-item a{display:flex;align-items:center;gap:16px;padding:16px 20px;text-decoration:none;color:var(--text)}
+  .brief-date{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;color:var(--purple);min-width:110px}
+  .brief-label{font-size:13.5px;color:var(--text)}
+  .brief-label small{color:var(--muted);font-size:11px;margin-left:8px}
+  .empty-state{text-align:center;padding:48px 24px;color:var(--muted)}
+  .empty-state p{font-size:15px;margin-bottom:8px}
+  .empty-state small{font-size:12px}
+  .doc-footer{border-top:1px solid var(--border);margin-top:48px;padding-top:16px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+  .doc-footer a{color:var(--purple);text-decoration:none}
+  .doc-footer a:hover{text-decoration:underline}
+  @media(max-width:640px){
+    .page{padding:20px 16px 48px}.doc-header h1{font-size:21px}
+    .brief-item a{flex-direction:column;align-items:flex-start;gap:4px}
+    .doc-footer{flex-direction:column}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="doc-header">
+  <h1>📰 CEO 트렌드 브리핑</h1>
+  <div class="subtitle">매일 아침 한국 실시간 트렌드 기반 CEO 인사이트 브리핑</div>
+  <div class="meta">
+    <span class="meta-tag">CEO Room Writer</span>
+    <span class="meta-tag">GitHub Actions</span>
+  </div>
+</div>
+
+<div class="section-heading">브리핑 목록</div>
+
+<ul class="brief-list" id="brief-list">
+  <!-- 브리핑 항목은 workflow에서 자동 생성됩니다 -->
+  <li class="empty-state">
+    <p>아직 생성된 브리핑이 없습니다.</p>
+    <small>매일 평일 오전 8:30 KST에 자동으로 생성됩니다.</small>
+  </li>
+</ul>
+
+<div class="doc-footer">
+  <span>🤖 CEO Room Writer Agent · GitHub Actions · 자동 생성</span>
+  <a href="https://n5nsuf.github.io/">← 홈으로</a>
+</div>
+
+</div>
+</body>
+</html>
