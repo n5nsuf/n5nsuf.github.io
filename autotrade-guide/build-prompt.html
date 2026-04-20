@@ -233,7 +233,7 @@
 <p lang-ko>아래 프롬프트를 AI에 입력하세요:</p>
 <p lang-en>Paste the following prompt into your AI assistant:</p>
 
-<div class="prompt-block"><pre>Python 자동매매 봇 프로젝트를 만들어줘.
+<div class="prompt-block" lang-ko><pre>Python 자동매매 봇 프로젝트를 만들어줘.
 
 폴더 구조:
 autotrade/
@@ -283,6 +283,56 @@ APP_KEY=여기에_입력
 APP_SECRET=여기에_입력
 ACCOUNT_NO=여기에_입력</pre></div>
 
+<div class="prompt-block" lang-en><pre>Create a Python automated trading bot project.
+
+Folder structure:
+autotrade/
+├── main.py          # entry point
+├── kis_api.py       # KIS API client
+├── strategy.py      # trading strategy
+├── config.py        # configuration
+├── requirements.txt
+└── .env
+
+config.py:
+- Load APP_KEY, APP_SECRET, ACCOUNT_NO from .env
+- BASE_URL = "https://openapivts.koreainvestment.com:29443" (paper trading)
+
+Functions to implement in kis_api.py:
+1. get_token() → issue token via POST /oauth2/tokenP, cache in memory
+2. get_price(symbol) → fetch current price, return as number
+3. get_balance() → {cash: available cash, holdings: [{symbol, qty, avg_price}]}
+4. buy(symbol, qty) → market buy order (ord_dvsn="01")
+5. sell(symbol, qty) → market sell order
+
+Common headers for all API calls:
+{
+  "authorization": "Bearer {token}",
+  "appkey": APP_KEY,
+  "appsecret": APP_SECRET,
+  "tr_id": "{transaction_id}",
+  "custtype": "P",
+  "content-type": "application/json"
+}
+
+Balance query params:
+CANO={account_number}, ACNT_PRDT_CD="01", INQR_DVSN="01"
+
+main.py:
+- Test token issuance
+- Fetch current price of Samsung Electronics (005930)
+- Fetch balance
+- Print results
+
+requirements.txt:
+requests
+python-dotenv
+
+.env example:
+APP_KEY=enter_here
+APP_SECRET=enter_here
+ACCOUNT_NO=enter_here</pre></div>
+
 <div class="check-box" lang-ko><code>python main.py</code> 실행 &rarr; 삼성전자 현재가 + 잔고 출력되면 성공</div>
 <div class="check-box" lang-en>Run <code>python main.py</code> &rarr; Success if Samsung Electronics price + balance is printed</div>
 
@@ -292,7 +342,7 @@ ACCOUNT_NO=여기에_입력</pre></div>
 <p lang-ko>RSI(14일) 기반 전략을 구현합니다.</p>
 <p lang-en>Implement an RSI(14-day) based strategy.</p>
 
-<div class="prompt-block"><pre>strategy.py에 간단한 매매 전략을 만들어줘.
+<div class="prompt-block" lang-ko><pre>strategy.py에 간단한 매매 전략을 만들어줘.
 
 RSI(14일) 기반 전략:
 - RSI &lt; 30 → 매수 (과매도)
@@ -316,6 +366,30 @@ get_daily_prices(symbol, days=30):
   → tr_id: FHKST03010100
   → 종가 리스트 반환</pre></div>
 
+<div class="prompt-block" lang-en><pre>Create a simple trading strategy in strategy.py.
+
+RSI(14-day) based strategy:
+- RSI &lt; 30 → BUY (oversold)
+- RSI &gt; 70 → SELL (overbought)
+- Otherwise → HOLD
+
+Functions to implement:
+1. calc_rsi(closes: list, period=14) → float
+   - Wilder's RSI calculation
+   - Return 50.0 if insufficient data
+
+2. decide(symbol, closes, holdings) → "BUY" | "SELL" | "HOLD"
+   - Calculate RSI
+   - BUY: RSI &lt; 30 AND not currently holding
+   - SELL: RSI &gt; 70 AND currently holding
+   - Otherwise: HOLD
+
+Add to kis_api.py:
+get_daily_prices(symbol, days=30):
+  → GET /uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice
+  → tr_id: FHKST03010100
+  → return list of closing prices</pre></div>
+
 <div class="callout info">
   <span class="icon">&#128161;</span>
   <p lang-ko><strong>RSI 기초:</strong> RSI(Relative Strength Index)는 0~100 사이의 값으로, 30 이하는 과매도(매수 신호), 70 이상은 과매수(매도 신호)를 의미합니다.</p>
@@ -325,7 +399,7 @@ get_daily_prices(symbol, days=30):
 <!-- Step 3 -->
 <h2><span class="step-badge">Step 3</span> <span lang-ko>자동 실행 (스케줄러)</span><span lang-en>Auto Execution (Scheduler)</span></h2>
 
-<div class="prompt-block"><pre>main.py에 스케줄러를 추가해서 자동으로 매매하게 만들어줘.
+<div class="prompt-block" lang-ko><pre>main.py에 스케줄러를 추가해서 자동으로 매매하게 만들어줘.
 
 pip install apscheduler 추가.
 
@@ -348,6 +422,29 @@ pip install apscheduler 추가.
 [09:05] 005930 RSI=28.3 → BUY 1주 @ 72,300원
 [09:05] 035720 RSI=55.1 → HOLD</pre></div>
 
+<div class="prompt-block" lang-en><pre>Add a scheduler to main.py for automatic trading.
+
+Add: pip install apscheduler
+
+Behavior:
+1. Issue token on program start
+2. Run run_cycle() every 5 minutes on weekdays between 09:05–15:25 KST
+3. run_cycle():
+   a. Target symbol list (e.g. ["005930", "035720", "000660"])
+   b. Per symbol: fetch daily prices → calculate RSI → make trade decision
+   c. BUY → check balance, buy 1 share
+   d. SELL → sell if currently holding
+   e. Log result
+4. Skip execution outside market hours
+
+Market hours check:
+- Weekday (Mon–Fri) AND between 09:00–15:30 KST
+- Skip holiday check (educational purposes)
+
+Log format:
+[09:05] 005930 RSI=28.3 → BUY 1 share @ 72,300
+[09:05] 035720 RSI=55.1 → HOLD</pre></div>
+
 <div class="check-box" lang-ko>모의투자 시간(평일 09:00~15:30) 내 실행 &rarr; 로그 출력되면 성공</div>
 <div class="check-box" lang-en>Run during paper trading hours (weekdays 09:00-15:30) &rarr; Success if logs are printed</div>
 
@@ -357,7 +454,7 @@ pip install apscheduler 추가.
 <p lang-ko>수익보다 <strong>생존</strong>이 먼저입니다. 리스크 관리 모듈을 추가합니다.</p>
 <p lang-en><strong>Survival</strong> comes before profit. Add a risk management module.</p>
 
-<div class="prompt-block"><pre>리스크 관리 모듈을 추가해줘. risk.py 파일로.
+<div class="prompt-block" lang-ko><pre>리스크 관리 모듈을 추가해줘. risk.py 파일로.
 
 규칙:
 1. 최대 보유 종목 수: 5개
@@ -376,6 +473,25 @@ run_cycle()에 적용:
 - 매 사이클: 보유 종목 손절 체크
 - 일일 한도 초과 시: 사이클 스킵</pre></div>
 
+<div class="prompt-block" lang-en><pre>Add a risk management module as risk.py.
+
+Rules:
+1. Max positions held at once: 5
+2. Max investment per symbol: 20% of total assets
+3. Stop-loss: sell immediately if down -3% from entry price
+4. Daily loss limit: stop trading for the day if daily P&L reaches -5% of total assets
+
+Implement:
+- can_buy(cash, holdings, max_positions=5) → bool
+- calc_qty(price, cash, max_pct=0.2) → int (number of shares to buy)
+- check_stop_loss(holding, current_price, stop_pct=-0.03) → bool
+- check_daily_limit(daily_pnl, total_assets, limit_pct=-0.05) → bool
+
+Apply in run_cycle():
+- Before buying: can_buy + calc_qty
+- Each cycle: check stop-loss for all holdings
+- Skip cycle if daily limit exceeded</pre></div>
+
 <div class="callout warn">
   <span class="icon">&#9888;&#65039;</span>
   <p lang-ko><strong>필수 규칙:</strong> "한 번의 거래로 전체 자본의 2% 이상을 잃지 않는다." 이 단순한 규칙 하나만 지켜도 파산 확률이 극적으로 줄어듭니다.</p>
@@ -385,7 +501,7 @@ run_cycle()에 적용:
 <!-- Step 5 -->
 <h2><span class="step-badge">Step 5</span> <span lang-ko>데이터 저장 (DB)</span><span lang-en>Data Storage (DB)</span></h2>
 
-<div class="prompt-block"><pre>거래 기록을 PostgreSQL에 저장해줘.
+<div class="prompt-block" lang-ko><pre>거래 기록을 PostgreSQL에 저장해줘.
 
 Neon DB 사용 (무료):
 1. neon.tech 가입 → 프로젝트 생성 → Connection string 복사
@@ -408,6 +524,29 @@ run_cycle()에서:
 - 사이클 끝에 save_balance() 호출
 - 시작 시 init_tables() 호출</pre></div>
 
+<div class="prompt-block" lang-en><pre>Save trade records to PostgreSQL.
+
+Using Neon DB (free tier):
+1. Sign up at neon.tech → create project → copy Connection string
+2. Add DATABASE_URL to .env
+
+Add: pip install psycopg2-binary
+
+Implement in db.py:
+1. init_tables() — create tables:
+   trades: id, ts, symbol, action(BUY/SELL), qty, price, pnl_amt
+   balance_snapshot: id(1), cash, holdings(JSON), updated_at
+
+2. log_trade(symbol, action, qty, price, pnl_amt=0)
+3. save_balance(cash, holdings_list)
+4. get_today_trades() → today's trade history
+5. get_today_pnl() → today's total P&L
+
+In run_cycle():
+- Call log_trade() on every buy/sell
+- Call save_balance() at end of each cycle
+- Call init_tables() on startup</pre></div>
+
 <div class="callout ok">
   <span class="icon">&#9989;</span>
   <p lang-ko><strong>Neon DB:</strong> 무료 플랜으로도 충분합니다. 가입 후 Connection string을 <code>.env</code>의 <code>DATABASE_URL</code>에 추가하세요.</p>
@@ -417,7 +556,7 @@ run_cycle()에서:
 <!-- Step 6 -->
 <h2><span class="step-badge">Step 6</span> <span lang-ko>알림</span><span lang-en>Notifications</span></h2>
 
-<div class="prompt-block"><pre>Telegram 알림을 추가해줘.
+<div class="prompt-block" lang-ko><pre>Telegram 알림을 추가해줘.
 
 준비:
 1. @BotFather에서 봇 생성 → BOT_TOKEN
@@ -435,6 +574,24 @@ notify.py:
 - 봇 시작: "자동매매 시작 — 3종목"
 - 에러 발생: "오류: {메시지}"</pre></div>
 
+<div class="prompt-block" lang-en><pre>Add Telegram notifications.
+
+Setup:
+1. Create a bot via @BotFather → get BOT_TOKEN
+2. Send a message to the bot → use /getUpdates to find CHAT_ID
+3. Add to .env:
+   TELEGRAM_BOT_TOKEN=...
+   TELEGRAM_CHAT_ID=...
+
+notify.py:
+- send(message) → send message to Telegram
+
+Send notifications when:
+- Buy: "[BUY] 005930 Samsung 1 share @ 72,300"
+- Sell: "[SELL] 005930 Samsung 1 share @ 74,100 (+2.5%)"
+- Bot starts: "AutoTrade started — 3 symbols"
+- Error: "Error: {message}"</pre></div>
+
 <div class="callout info">
   <span class="icon">&#128161;</span>
   <p lang-ko><strong>Telegram Bot 만들기:</strong> Telegram에서 <code>@BotFather</code>를 검색하고 <code>/newbot</code> 명령어를 입력하면 됩니다. 봇 이름과 username을 지정하면 BOT_TOKEN이 발급됩니다.</p>
@@ -444,7 +601,7 @@ notify.py:
 <!-- Step 7 -->
 <h2><span class="step-badge">Step 7</span> <span lang-ko>모니터링 대시보드</span><span lang-en>Monitoring Dashboard</span></h2>
 
-<div class="prompt-block"><pre>간단한 웹 대시보드를 만들어줘. Python Flask 사용.
+<div class="prompt-block" lang-ko><pre>간단한 웹 대시보드를 만들어줘. Python Flask 사용.
 
 pip install flask 추가.
 
@@ -462,10 +619,28 @@ Flask 서버를 별도 스레드로 실행 (스케줄러와 병행):
 - main.py에서 threading으로 시작
 - 포트: 8080</pre></div>
 
+<div class="prompt-block" lang-en><pre>Create a simple web dashboard using Python Flask.
+
+Add: pip install flask
+
+dashboard.py:
+- GET / → HTML page (balance + today's trades + P&L)
+- GET /api/status → JSON (balance, positions, today's PnL)
+
+HTML page content (inline CSS, single file):
+- Account summary: cash, holdings value, total assets
+- Holdings table: symbol, qty, avg price, current price, return %
+- Today's trades: time, symbol, buy/sell, qty, price
+- Auto-refresh every 30 seconds
+
+Run Flask server in a separate thread (alongside the scheduler):
+- Start via threading in main.py
+- Port: 8080</pre></div>
+
 <!-- Step 8 -->
 <h2><span class="step-badge">Step 8</span> <span lang-ko>배포 (선택)</span><span lang-en>Deployment (Optional)</span></h2>
 
-<div class="prompt-block"><pre>Railway에 봇을 배포해줘.
+<div class="prompt-block" lang-ko><pre>Railway에 봇을 배포해줘.
 
 준비:
 1. railway.com 가입
@@ -487,6 +662,28 @@ Railway 환경변수 설정:
 - 대시보드 URL 접속
 - Telegram 알림 수신</pre></div>
 
+<div class="prompt-block" lang-en><pre>Deploy the bot to Railway.
+
+Setup:
+1. Sign up at railway.com
+2. Push the project to GitHub
+3. Connect the GitHub repo in Railway
+
+Required files:
+- Procfile: "web: python main.py"
+- runtime.txt: "python-3.11.x"
+
+Set Railway environment variables:
+- APP_KEY, APP_SECRET, ACCOUNT_NO
+- DATABASE_URL (Neon)
+- TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+- PORT=8080
+
+After deployment, verify:
+- Confirm "AutoTrade started" in Railway logs
+- Access the dashboard URL
+- Receive Telegram notification</pre></div>
+
 <div class="callout ok">
   <span class="icon">&#9989;</span>
   <p lang-ko><strong>배포 체크리스트:</strong> (1) 환경변수 전부 설정, (2) Railway 로그에서 정상 시작 확인, (3) 대시보드 접속 확인, (4) Telegram 알림 수신 확인.</p>
@@ -499,7 +696,7 @@ Railway 환경변수 설정:
 <p lang-ko>Step 1~8로 만든 단일 스크립트를 독립적으로 수정·교체 가능한 에이전트 구조로 전환합니다. 이 단계부터 봇이 운영 수준의 견고함을 갖춥니다.</p>
 <p lang-en>Refactor the single-script bot from Steps 1–8 into an agent structure where each module can be modified and replaced independently. From this step, the bot gains production-level resilience.</p>
 
-<div class="prompt-block"><pre>현재 main.py / kis_api.py / strategy.py / risk.py / db.py를 에이전트 구조로 리팩터링해줘.
+<div class="prompt-block" lang-ko><pre>현재 main.py / kis_api.py / strategy.py / risk.py / db.py를 에이전트 구조로 리팩터링해줘.
 
 목표: 각 모듈을 독립적으로 수정해도 다른 모듈에 영향을 주지 않는 구조.
 
@@ -595,13 +792,109 @@ class TradingManager:
 - 잔고 조회·가격 조회는 실제 실행 (로직 검증용)
 - Telegram은 "(dry_run)" 접두사 추가</pre></div>
 
+<div class="prompt-block" lang-en><pre>Refactor the current main.py / kis_api.py / strategy.py / risk.py / db.py into an agent architecture.
+
+Goal: modify any module independently without affecting the others.
+
+## Layer rules
+- Call direction: orchestrator → agent → service → client → storage
+- No reverse calls. No skipping layers.
+
+## 1. FinanceAgent (finance_agent.py)
+Single source of truth for balance — prevents duplicate KIS API calls.
+
+class FinanceAgent:
+    def __init__(self, kis_client):
+        # inject kis_client (dependency injection — no hard imports)
+        self._kis = kis_client
+        self._cache = {"cash": 0, "holdings": [], "_ts": 0.0}
+        self._pending = 0  # amount reserved for pending buys
+        self._lock = threading.Lock()
+        TTL = 60  # seconds
+
+    def get_balance(self) -> dict:
+        # refresh from KIS if TTL exceeded, return cache
+
+    def get_available_cash(self) -> float:
+        # available cash = cached cash - pending
+
+    def cache_age(self) -> float:
+        # seconds since last refresh — external code must not access _cache directly
+
+    def commit_buy(self, amount: int):
+        # immediately deduct from cache on buy
+
+    def commit_sell(self, proceeds: int):
+        # restore cache on sell completion
+
+    def health(self) -> dict:
+        # {"cash": ..., "holdings": N, "age_s": ..., "pending": ...}
+
+## 2. TradingManager (trading_manager.py)
+Strategy execution + circuit breaker + parallel buy/sell.
+
+class TradingManager:
+    def __init__(self, kis_client, finance_agent):
+        # dependency injection
+        self._kis = kis_client
+        self._fa = finance_agent
+        self._health = {
+            "buy": {"fails": 0, "tripped": False},
+            "sell": {"fails": 0, "tripped": False},
+        }
+        CIRCUIT_THRESHOLD = 3
+
+    def start(self):
+        # start scheduler, initialize DB
+
+    def run_cycle(self):
+        # run buy + sell in parallel via ThreadPoolExecutor(max_workers=2)
+        # set timeout=60 on each future
+
+    def _run_buy_safe(self):
+        # skip if circuit tripped
+        # reset fails on success, call _trip() on failure
+
+    def _run_sell_safe(self):
+        # sell prioritizes position protection — force-run even if tripped, then reset
+
+    def _trip(self, module: str, err: Exception):
+        # increment fails, set tripped=True + send Telegram alert at threshold
+
+    def get_health(self) -> dict:
+        # return circuit state for each module
+
+    def smoke_test(self) -> dict:
+        # {"ok": bool, "checks": [{"name": ..., "ok": ..., "detail": ...}]}
+        # verify KIS connection, DB connection, balance fetch within 2 seconds
+
+    def shutdown(self):
+        # stop scheduler, release resources
+
+## 3. Update main.py
+- Initialize FinanceAgent first
+- Inject kis_client + finance_agent into TradingManager
+- Run smoke_test() on startup → send failures to Telegram
+- manager.start() → enter scheduler loop
+
+## Error handling rules
+- No bare except Exception: pass
+- Include cause in error messages: f"balance fetch failed: status={resp.status}"
+- Wrap every external call with try/except + log
+
+## dry_run mode
+When DRY_RUN=true env var is set:
+- Log "DRY_RUN: would BUY 005930 1 share" instead of placing real orders
+- Balance/price fetches still execute (for logic verification)
+- Prefix Telegram messages with "(dry_run)"</pre></div>
+
 <div class="callout warn">
   <span class="icon">&#9888;&#65039;</span>
   <p lang-ko><strong>독립 수정 테스트:</strong> 리팩터링 완료 후 "FinanceAgent를 mock으로 교체해도 TradingManager 코드를 수정하지 않아도 되나?"를 확인하세요. 수정이 필요하다면 레이어 경계가 잘못된 것입니다.</p>
   <p lang-en><strong>Independence test:</strong> After refactoring, verify: "Can I replace FinanceAgent with a mock without modifying TradingManager?" If not, the layer boundary is wrong.</p>
 </div>
 
-<div class="prompt-block"><pre>방금 만든 TradingManager의 smoke_test()를 실행해서 시스템 상태를 확인해줘.
+<div class="prompt-block" lang-ko><pre>방금 만든 TradingManager의 smoke_test()를 실행해서 시스템 상태를 확인해줘.
 
 출력 형식:
 [smoke_test]
@@ -613,6 +906,19 @@ class TradingManager:
 전체 결과: 3/4 통과
 
 실패 항목이 있으면 Telegram으로 요약 전송 (Telegram 자체가 실패면 콘솔에만 출력).</pre></div>
+
+<div class="prompt-block" lang-en><pre>Run the smoke_test() on the TradingManager we just built to verify system health.
+
+Output format:
+[smoke_test]
+  ✅ KIS connection — status 200
+  ✅ DB connection — trades table exists
+  ✅ balance fetch — cash 5,000,000
+  ❌ telegram — connection failed: timeout
+
+Overall: 3/4 passed
+
+Send a summary to Telegram if any checks fail (if Telegram itself fails, print to console only).</pre></div>
 
 <div class="check-box" lang-ko><code>DRY_RUN=true python main.py</code> 실행 → 실제 주문 없이 전체 사이클 로그 출력되면 성공</div>
 <div class="check-box" lang-en>Run <code>DRY_RUN=true python main.py</code> → Success if full cycle logs print without real orders</div>
@@ -713,7 +1019,19 @@ class TradingManager:
 <h2 lang-ko>.env 전체 예시</h2>
 <h2 lang-en>.env Full Example</h2>
 
-<div class="env-block"><pre># KIS 모의투자 / KIS Paper Trading
+<div class="env-block" lang-ko><pre># KIS 모의투자
+APP_KEY=PSxxxxxxxxxxxxxxxxxx
+APP_SECRET=xxxxxxxxxxxxxxxxxxxx
+ACCOUNT_NO=50xxxxxx
+
+# PostgreSQL (Neon)
+DATABASE_URL=postgresql://user:pass@host/db?sslmode=require
+
+# Telegram
+TELEGRAM_BOT_TOKEN=123456:ABCxxxxx
+TELEGRAM_CHAT_ID=123456789</pre></div>
+
+<div class="env-block" lang-en><pre># KIS Paper Trading
 APP_KEY=PSxxxxxxxxxxxxxxxxxx
 APP_SECRET=xxxxxxxxxxxxxxxxxxxx
 ACCOUNT_NO=50xxxxxx
