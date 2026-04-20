@@ -58,229 +58,469 @@
 
   .callout{display:flex;gap:10px;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px}
   .callout.warn{background:var(--amber-l);border-left:3px solid var(--amber)}
-  .callout.info{background:var(--blue-l);border-left:3px solid var(--blue)}
-  .callout.ok{background:var(--teal-l);border-left:3px solid var(--teal)}
-  .callout .icon{font-size:16px;flex-shrink:0;margin-top:1px}
-  .callout p{margin:0;color:var(--gray)}
+  .callout.info{background:var(--teal-l);border-left:3px solid var(--teal)}
+  .callout p{margin:0;font-size:13px}
+  .callout .icon{font-size:16px;line-height:1.6;flex-shrink:0}
 
-  .badge{display:inline-block;padding:1px 8px;border-radius:20px;font-size:11px;font-weight:600}
+  .badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;padding:1px 7px;border-radius:20px;font-weight:500}
+  .badge.live{background:var(--teal-l);color:var(--teal-d)}
   .badge.local{background:var(--gray-l);color:var(--gray)}
-  .badge.ok{background:var(--teal-l);color:var(--teal)}
+  .badge.dt{background:var(--amber-l);color:var(--amber)}
+  .badge.kost{background:var(--purple-l);color:var(--purple-d)}
 
-  .doc-footer{border-top:1px solid var(--border);margin-top:48px;padding-top:16px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
-  .doc-footer a{color:var(--teal);text-decoration:none}
-  .doc-footer a:hover{text-decoration:underline}
+  .pipeline-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+  .pipeline-card{border:1px solid var(--border);border-radius:10px;padding:18px;background:var(--bg)}
+  .pipeline-card.dt{border-top:3px solid var(--amber)}
+  .pipeline-card.kost{border-top:3px solid var(--purple)}
+  .pipeline-card h4{font-size:13px;font-weight:700;margin-bottom:8px}
+  .pipeline-card h4.dt{color:var(--amber)}
+  .pipeline-card h4.kost{color:var(--purple-d)}
+  .pipeline-card ul{font-size:12.5px;margin:0;padding-left:16px}
+  .pipeline-card li{margin-bottom:3px}
 
-  @media(max-width:640px){
-    .page{padding:20px 16px 48px}
-    .doc-header h1{font-size:21px}
-    h2{font-size:15px;margin-top:32px}
-    .doc-footer{flex-direction:column;gap:6px}
-  }
-  @media print{
-    body{background:white}
-    .page{padding:20px 28px;max-width:100%}
-    .lang-bar,.nav-bar{display:none}
-    h2{page-break-after:avoid}
-    table{page-break-inside:avoid}
-    [lang-ko],[lang-en]{display:revert !important}
-  }
+  .schedule-row{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--border);font-size:12.5px}
+  .schedule-row:last-child{border:none}
+  .schedule-time{font-family:'JetBrains Mono',monospace;color:var(--teal-d);font-size:11.5px;min-width:56px;padding-top:2px}
+  .schedule-desc{color:var(--text)}
+
+  .doc-footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted)}
+
+  @media(max-width:640px){.page{padding:28px 20px}.pipeline-grid{grid-template-columns:1fr}}
+  @media print{h2{font-size:15px;margin-top:32px}.nav-bar{display:none}}
 </style>
 </head>
 <body class="lang-ko">
 
 <div class="nav-bar">
-  <a href="/" class="nav-home">← Home</a>
+  <a class="nav-home" href="/">← Home</a>
   <div class="nav-lang">
-    <button class="lang-btn active" onclick="setLang('ko')" id="btn-ko">한국어</button>
-    <button class="lang-btn" onclick="setLang('en')" id="btn-en">English</button>
+    <button class="lang-btn active" id="btn-ko" onclick="setLang('ko')">KO</button>
+    <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
   </div>
 </div>
 
 <div class="page">
 
 <div class="doc-header">
-  <h1 lang-ko>AutoTrade Bot</h1>
-  <h1 lang-en>AutoTrade Bot</h1>
-  <div class="subtitle" lang-ko>AI 기반 한국 주식 자동매매 봇 — LightGBM과 LSTM을 결합한 실전 운영 시스템</div>
-  <div class="subtitle" lang-en>AI-powered Korean equities auto-trading bot — a live system combining LightGBM and LSTM</div>
+  <h1>AutoTrade Bot</h1>
+  <div class="subtitle" lang-ko>한국 주식 AI 자동매매 — 단타 + 장기 듀얼 파이프라인, 실계좌 운영 중</div>
+  <div class="subtitle" lang-en>Korean equities AI auto-trading — dual pipeline (DayTrade + Long-term), live in production</div>
   <div class="meta">
-    <span class="meta-tag">2026-04-17</span>
-    <span class="meta-tag" lang-ko>프로젝트</span>
-    <span class="meta-tag" lang-en>Project</span>
+    <span class="meta-tag">2026-04-20</span>
     <span class="meta-tag" lang-ko>실전 운영 중</span>
     <span class="meta-tag" lang-en>Live in Production</span>
+    <span class="meta-tag">Railway · Vercel · PostgreSQL</span>
   </div>
 </div>
 
-<h2>
-  <span lang-ko>개요</span>
-  <span lang-en>Overview</span>
-</h2>
-<p lang-ko>한국투자증권(KIS) Open API를 통해 실계좌에서 운영 중인 AI 기반 주식 자동매매 봇입니다. LightGBM으로 단기 방향성을 예측하고, LSTM으로 시계열 패턴을 보조 판단하여 매수·매도 시그널을 산출합니다.</p>
-<p lang-en>A production auto-trading bot running on a live brokerage account via the Korea Investment &amp; Securities (KIS) Open API. LightGBM predicts short-term directionality and an LSTM model provides sequential pattern support, together producing buy/sell signals.</p>
-<p lang-ko>설계 목표는 예측 정확도 자체보다 <strong>리스크 관리와 안정적 운영</strong>입니다. 포지션 사이즈, 손절·익절 규칙, 장애 복구 로직이 모델과 동등한 비중으로 다뤄집니다.</p>
-<p lang-en>The design goal is not peak prediction accuracy but <strong>risk management and operational stability</strong>. Position sizing, stop-loss / take-profit rules, and fault-recovery logic are treated with the same weight as the model itself.</p>
+<!-- ── 개요 ── -->
+<h2><span lang-ko>개요</span><span lang-en>Overview</span></h2>
+<p lang-ko>한국투자증권(KIS) Open API를 통해 실계좌에서 운영 중인 AI 기반 주식 자동매매 시스템입니다. <strong>단타(DayTrade)</strong>와 <strong>장기(Kostolany)</strong> 두 개의 독립 파이프라인이 각자의 전략·예산·계좌로 병렬 운영됩니다.</p>
+<p lang-en>A production AI auto-trading system running on a live brokerage account via the Korea Investment &amp; Securities (KIS) Open API. Two independent pipelines — <strong>DayTrade</strong> and <strong>Kostolany (long-term)</strong> — run in parallel with separate strategies, budgets, and accounts.</p>
+<p lang-ko>예측 정확도보다 <strong>리스크 관리와 운영 안정성</strong>을 우선합니다. 손절·익절·일일 손실 한도, 강제청산, 장애 복구, DB/KIS 정합성 검증이 모두 자동화되어 있습니다.</p>
+<p lang-en>Risk management and operational stability take priority over prediction accuracy. Stop-loss, take-profit, daily loss limits, force-close, fault recovery, and DB/KIS reconciliation are all automated.</p>
 
 <div class="callout info">
   <span class="icon">🔒</span>
-  <p lang-ko>소스 저장소는 비공개(private)입니다. 라이브 URL은 제공되지 않습니다.</p>
-  <p lang-en>The source repository is private. No live URL is published.</p>
+  <p lang-ko>소스 저장소는 비공개입니다. 대시보드 URL은 인증 필요.</p>
+  <p lang-en>Source repository is private. Dashboard requires authentication.</p>
 </div>
 
-<h2>
-  <span lang-ko>스택</span>
-  <span lang-en>Stack</span>
-</h2>
+<!-- ── 파이프라인 ── -->
+<h2><span lang-ko>듀얼 파이프라인</span><span lang-en>Dual Pipeline</span></h2>
+
+<div class="pipeline-grid">
+  <div class="pipeline-card dt">
+    <h4 class="dt">⚡ DayTrade Pipeline <span class="badge dt">당일 청산</span></h4>
+    <ul lang-ko>
+      <li>매수 허용: 09:05–11:30, 13:00–13:45 KST</li>
+      <li>5분 사이클 — 후보 선정 → 매수 → 매도</li>
+      <li>종가마감 3단계: 15:10 최유리지정가 → 15:20 시장가 → 15:25 DB정합</li>
+      <li>신호: 변동성 돌파, 5분봉 브레이크아웃</li>
+      <li>SL −1.2% / TP +2.5% / 분할익절 +1.5%</li>
+      <li>Gemini 뉴스 감성분석 + ML 확률 게이트</li>
+      <li>별도 계좌·별도 APP KEY 격리</li>
+    </ul>
+    <ul lang-en>
+      <li>Buy windows: 09:05–11:30, 13:00–13:45 KST</li>
+      <li>5-min cycle — candidate select → buy → sell</li>
+      <li>3-phase close: 15:10 best-bid → 15:20 market → 15:25 reconcile</li>
+      <li>Signals: volatility breakout, 5-min breakout</li>
+      <li>SL −1.2% / TP +2.5% / partial TP +1.5%</li>
+      <li>Gemini news sentiment + ML probability gate</li>
+      <li>Isolated account &amp; APP KEY</li>
+    </ul>
+  </div>
+  <div class="pipeline-card kost">
+    <h4 class="kost">📈 Kostolany Pipeline <span class="badge kost">장기 보유</span></h4>
+    <ul lang-ko>
+      <li>월 1회 유니버스 선정 (PER·PBR·재무 기반)</li>
+      <li>월요일 08:30 주간 매수 체크</li>
+      <li>평일 16:00 일간 매도 체크</li>
+      <li>매크로 지표 매일 20:00 갱신</li>
+      <li>분기 1회 포트폴리오 재검토</li>
+      <li>펀더멘털 + 거시경제 지표 기반 판단</li>
+    </ul>
+    <ul lang-en>
+      <li>Monthly universe selection (PER/PBR/financials)</li>
+      <li>Weekly buy check every Monday 08:30</li>
+      <li>Daily sell check weekdays 16:00</li>
+      <li>Macro indicator refresh daily 20:00</li>
+      <li>Quarterly portfolio review</li>
+      <li>Fundamental + macro-driven decisions</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ── 모듈 구조 ── -->
+<h2><span lang-ko>모듈 구조</span><span lang-en>Module Structure</span></h2>
+
+<h3 lang-ko>단타 파이프라인 모듈</h3>
+<h3 lang-en>DayTrade Pipeline Modules</h3>
 <table>
   <thead>
     <tr>
-      <th lang-ko>기술</th><th lang-en>Tech</th>
-      <th lang-ko>역할</th><th lang-en>Purpose</th>
+      <th lang-ko>모듈</th><th lang-en>Module</th>
+      <th lang-ko>역할</th><th lang-en>Role</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><code>Python</code></td>
-      <td lang-ko>전체 파이프라인 — 수집, 피처, 학습, 체결 로직</td>
-      <td lang-en>End-to-end pipeline — ingest, features, training, order logic</td>
+      <td><code>daytrade/selector.py</code></td>
+      <td lang-ko>아침 후보 선정 — fpool 스캔 후 스코어 정렬</td>
+      <td lang-en>Morning candidate selection — fpool scan + score sort</td>
     </tr>
     <tr>
-      <td><code>LightGBM</code></td>
-      <td lang-ko>단기 수익률 방향성 예측 (분류/회귀)</td>
-      <td lang-en>Short-term return direction prediction (classification/regression)</td>
+      <td><code>daytrade/buy_agent.py</code></td>
+      <td lang-ko>매수 에이전트 — 진입 시그널 체크, 지정가 주문, 실체결가 확인</td>
+      <td lang-en>Buy agent — entry signal check, limit order, fill price verification</td>
     </tr>
     <tr>
-      <td><code>LSTM</code></td>
-      <td lang-ko>시계열 패턴 인식 및 보조 신호</td>
-      <td lang-en>Sequential pattern recognition and secondary signals</td>
+      <td><code>daytrade/sell_agent.py</code></td>
+      <td lang-ko>매도 에이전트 — TP/SL/분할익절/트레일링 스탑 체크</td>
+      <td lang-en>Sell agent — TP/SL/partial-TP/trailing stop checks</td>
     </tr>
     <tr>
-      <td><code>KIS API</code></td>
-      <td lang-ko>한국투자증권 Open API — 시세 조회 및 실주문</td>
-      <td lang-en>KIS Open API — market data and live order execution</td>
+      <td><code>daytrade/close_agent.py</code></td>
+      <td lang-ko>종가마감 에이전트 — 3단계 청산, 중복방지 lock, 시장가 폴백</td>
+      <td lang-en>EOD close agent — 3-phase liquidation, dedup lock, market-order fallback</td>
+    </tr>
+    <tr>
+      <td><code>daytrade/strategy.py</code></td>
+      <td lang-ko>진입·청산 시그널 계산 — ATR, RSI, 5분봉 브레이크아웃</td>
+      <td lang-en>Entry/exit signal logic — ATR, RSI, 5-min breakout</td>
+    </tr>
+    <tr>
+      <td><code>daytrade/risk.py</code></td>
+      <td lang-ko>일일 손실 한도, 포지션 사이즈, 매수 허용 여부 판단</td>
+      <td lang-en>Daily loss limit, position sizing, buy eligibility</td>
+    </tr>
+    <tr>
+      <td><code>daytrade/news_analyzer.py</code></td>
+      <td lang-ko>Gemini API 뉴스 감성분석 — 후보 스코어 조정 (±0.2)</td>
+      <td lang-en>Gemini news sentiment — candidate score adjustment (±0.2)</td>
+    </tr>
+    <tr>
+      <td><code>daytrade/ml_model.py</code></td>
+      <td lang-ko>단타 전용 ML — 진입 확률 게이트 (임계값 0.60)</td>
+      <td lang-en>DT-only ML — entry probability gate (threshold 0.60)</td>
+    </tr>
+    <tr>
+      <td><code>daytrade/analysis.py</code></td>
+      <td lang-ko>인디케이터 계산 — MA, ATR, RSI, 볼린저밴드</td>
+      <td lang-en>Indicator builder — MA, ATR, RSI, Bollinger Bands</td>
+    </tr>
+    <tr>
+      <td><code>daytrade/kis_dt.py</code></td>
+      <td lang-ko>DT 전용 KIS 클라이언트 — 별도 계좌 격리, 토큰 독립</td>
+      <td lang-en>DT-only KIS client — isolated account, independent token</td>
     </tr>
   </tbody>
 </table>
 
-<h2>
-  <span lang-ko>주요 기능</span>
-  <span lang-en>Features</span>
-</h2>
-<ul lang-ko>
-  <li>KIS Open API 기반 실시간 시세 수집 및 실계좌 주문 실행</li>
-  <li>LightGBM + LSTM 하이브리드 모델로 매수·매도 시그널 산출</li>
-  <li>종목별 포지션 사이즈 계산 및 분산 배분</li>
-  <li>손절(stop-loss), 익절(take-profit), 일일 최대 손실 한도 자동 적용</li>
-  <li>장 시작·마감 스케줄러 및 비정상 종료 시 포지션 복구 로직</li>
-  <li>체결·손익·에러 로그의 구조화된 기록으로 사후 분석 가능</li>
-</ul>
-<ul lang-en>
-  <li>Real-time quote ingestion and live-account order execution via KIS Open API</li>
-  <li>Hybrid LightGBM + LSTM signal engine for buy/sell decisions</li>
-  <li>Per-ticker position sizing and diversified allocation</li>
-  <li>Automated stop-loss, take-profit, and daily max-loss guardrails</li>
-  <li>Market open/close scheduler with position recovery after abnormal shutdowns</li>
-  <li>Structured logs for fills, P&amp;L, and errors to enable post-hoc analysis</li>
-</ul>
+<h3 lang-ko>공통 인프라 모듈</h3>
+<h3 lang-en>Shared Infrastructure Modules</h3>
+<table>
+  <thead>
+    <tr>
+      <th lang-ko>모듈</th><th lang-en>Module</th>
+      <th lang-ko>역할</th><th lang-en>Role</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>agents/guard_agent.py</code></td>
+      <td lang-ko>장애 모니터링 — 2분 간격, KIS 토큰 갱신, API 헬스체크</td>
+      <td lang-en>Fault monitoring — 2-min interval, KIS token refresh, API health</td>
+    </tr>
+    <tr>
+      <td><code>core/ledger.py</code></td>
+      <td lang-ko>체결 기록 + KIS 실거래 대조 — 슬리피지·미체결 감지</td>
+      <td lang-en>Fill ledger + KIS reconciliation — detects slippage and unfilled orders</td>
+    </tr>
+    <tr>
+      <td><code>core/ws_manager.py</code></td>
+      <td lang-ko>WebSocket 실시간 시세 — REST 폴링 폴백</td>
+      <td lang-en>WebSocket real-time prices — REST polling fallback</td>
+    </tr>
+    <tr>
+      <td><code>kis_client/</code></td>
+      <td lang-ko>KIS API 클라이언트 패키지 — 토큰·dedup·레이트리밋 전담</td>
+      <td lang-en>KIS API client package — token management, dedup, rate limiting</td>
+    </tr>
+    <tr>
+      <td><code>models/gemini_analyst.py</code></td>
+      <td lang-ko>Gemini Flash API — 뉴스 감성분석, 일일 사용량 추적·DB 플러시</td>
+      <td lang-en>Gemini Flash API — news sentiment, daily usage tracking + DB flush</td>
+    </tr>
+    <tr>
+      <td><code>data/db.py</code></td>
+      <td lang-ko>PostgreSQL CRUD — 종목·캔들·포지션·거래내역·설정</td>
+      <td lang-en>PostgreSQL CRUD — symbols, candles, positions, trades, config</td>
+    </tr>
+    <tr>
+      <td><code>utils/market_hours.py</code></td>
+      <td lang-ko>KRX 개장 여부 — 2026 공휴일 포함</td>
+      <td lang-en>KRX market hours — including 2026 public holidays</td>
+    </tr>
+  </tbody>
+</table>
 
-<h2>
-  <span lang-ko>아키텍처</span>
-  <span lang-en>Architecture</span>
-</h2>
-<div class="diagram-wrap" style="margin: 16px 0 24px; border: 1px solid var(--border); border-radius: 10px; padding: 24px 16px 16px; background: white; overflow: hidden;">
-  <svg width="100%" viewBox="0 0 800 140" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round"/>
-      </marker>
-    </defs>
-    <!-- Nodes -->
-    <rect x="10" y="45" width="100" height="50" rx="8" fill="var(--gray-l)" stroke="var(--border)"/>
-    <text x="60" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="var(--gray)">KIS API</text>
-    <text x="60" y="85" text-anchor="middle" font-size="9" fill="var(--muted)">Market Data</text>
+<!-- ── 일일 스케줄 ── -->
+<h2><span lang-ko>일일 운영 스케줄 (KST)</span><span lang-en>Daily Schedule (KST)</span></h2>
 
-    <line x1="110" y1="70" x2="135" y2="70" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-    <rect x="140" y="45" width="110" height="50" rx="8" fill="var(--teal-l)" stroke="var(--teal)" stroke-opacity="0.3"/>
-    <text x="195" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="var(--teal)">Ingestion</text>
-    <text x="195" y="85" text-anchor="middle" font-size="9" fill="var(--teal-d)">Data Pipeline</text>
-
-    <line x1="250" y1="70" x2="275" y2="70" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-    <rect x="280" y="45" width="130" height="50" rx="8" fill="var(--teal-l)" stroke="var(--teal)" stroke-opacity="0.3"/>
-    <text x="345" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="var(--teal)">AI Model</text>
-    <text x="345" y="85" text-anchor="middle" font-size="9" fill="var(--teal-d)">LGBM + LSTM</text>
-
-    <line x1="410" y1="70" x2="435" y2="70" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-    <rect x="440" y="45" width="110" height="50" rx="8" fill="var(--teal-l)" stroke="var(--teal)" stroke-opacity="0.3"/>
-    <text x="495" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="var(--teal)">Risk Check</text>
-    <text x="495" y="85" text-anchor="middle" font-size="9" fill="var(--teal-d)">Stop-loss/Sizing</text>
-
-    <line x1="550" y1="70" x2="575" y2="70" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-    <rect x="580" y="45" width="100" height="50" rx="8" fill="var(--teal-l)" stroke="var(--teal)" stroke-opacity="0.3"/>
-    <text x="630" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="var(--teal)">Execution</text>
-    <text x="630" y="85" text-anchor="middle" font-size="9" fill="var(--teal-d)">Order Logic</text>
-
-    <line x1="680" y1="70" x2="705" y2="70" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-    <rect x="710" y="45" width="80" height="50" rx="8" fill="var(--gray-l)" stroke="var(--border)"/>
-    <text x="750" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="var(--gray)">KIS API</text>
-    <text x="750" y="85" text-anchor="middle" font-size="9" fill="var(--muted)">Order Fill</text>
-  </svg>
-  <div style="font-size: 11.5px; color: var(--muted); text-align: center; margin-top: 10px; font-style: italic;">
-    <span lang-ko>데이터 수집부터 체결까지의 핵심 파이프라인</span>
-    <span lang-en>Core pipeline from data ingestion to execution</span>
+<div style="border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:20px">
+  <div class="schedule-row">
+    <span class="schedule-time">08:55</span>
+    <span class="schedule-desc" lang-ko>DT 아침 종목 선정 — fpool 스캔, RSI 프리워밍, WS 구독 시작</span>
+    <span class="schedule-desc" lang-en>DT morning selection — fpool scan, RSI pre-warm, WS subscribe</span>
+  </div>
+  <div class="schedule-row">
+    <span class="schedule-time">09:05~</span>
+    <span class="schedule-desc" lang-ko>DT 5분 사이클 시작 — buy_agent + sell_agent 교대 실행</span>
+    <span class="schedule-desc" lang-en>DT 5-min cycles begin — buy_agent + sell_agent alternating</span>
+  </div>
+  <div class="schedule-row">
+    <span class="schedule-time">15:05</span>
+    <span class="schedule-desc" lang-ko>마지막 일반 사이클 (이후 종가마감 모듈 전용 구간)</span>
+    <span class="schedule-desc" lang-en>Last regular cycle (close agent takes over after this)</span>
+  </div>
+  <div class="schedule-row">
+    <span class="schedule-time">15:10</span>
+    <span class="schedule-desc" lang-ko><strong>Phase 1</strong> — 최유리지정가 강제청산, 체결 검증</span>
+    <span class="schedule-desc" lang-en><strong>Phase 1</strong> — best-bid force close with fill verification</span>
+  </div>
+  <div class="schedule-row">
+    <span class="schedule-time">15:20</span>
+    <span class="schedule-desc" lang-ko><strong>Phase 2</strong> — KIS 잔고 재조회, 시장가 sweep (폴백: 지정가×0.97)</span>
+    <span class="schedule-desc" lang-en><strong>Phase 2</strong> — KIS balance recheck, market-order sweep (fallback: limit×0.97)</span>
+  </div>
+  <div class="schedule-row">
+    <span class="schedule-time">15:25</span>
+    <span class="schedule-desc" lang-ko><strong>Phase 3</strong> — DB/KIS 대조, stale 포지션 정리, Telegram 알림</span>
+    <span class="schedule-desc" lang-en><strong>Phase 3</strong> — DB/KIS diff, stale position cleanup, Telegram alert</span>
+  </div>
+  <div class="schedule-row">
+    <span class="schedule-time">16:00</span>
+    <span class="schedule-desc" lang-ko>DT ML 모델 재학습 (당일 거래 데이터 반영)</span>
+    <span class="schedule-desc" lang-en>DT ML model retrain on today's trade data</span>
+  </div>
+  <div class="schedule-row">
+    <span class="schedule-time">매시 정각</span>
+    <span class="schedule-desc" lang-ko>KIS/DB 정합성 검증 (Reconcile)</span>
+    <span class="schedule-desc" lang-en>KIS/DB reconciliation every hour</span>
+  </div>
+  <div class="schedule-row">
+    <span class="schedule-time">일 22:00</span>
+    <span class="schedule-desc" lang-ko>DT 종목 풀(fpool) 재스캔 — KOSPI+KOSDAQ 전체</span>
+    <span class="schedule-desc" lang-en>DT fpool rescan — full KOSPI+KOSDAQ scan</span>
   </div>
 </div>
 
-<h2>
-  <span lang-ko>작동 구조 및 AI의 역할</span>
-  <span lang-en>Working Structure & AI's Role</span>
-</h2>
-<p lang-ko>시스템은 <strong>수집 → 피처 엔지니어링 → AI 추론 → 시그널 결정 → 리스크 체크 → 주문 실행</strong>의 파이프라인으로 작동합니다. 각 단계는 독립 모듈로 구성되어 장애 발생 시 해당 지점부터 복구가 가능합니다.</p>
-<p lang-en>The system operates through a pipeline: <strong>Ingestion → Feature Engineering → AI Inference → Signal Decision → Risk Check → Order Execution</strong>. Each stage is modularized to allow recovery from the point of failure.</p>
+<!-- ── 리스크 관리 ── -->
+<h2><span lang-ko>리스크 관리</span><span lang-en>Risk Management</span></h2>
+<table>
+  <thead>
+    <tr>
+      <th lang-ko>항목</th><th lang-en>Item</th>
+      <th lang-ko>설정값</th><th lang-en>Value</th>
+      <th lang-ko>설명</th><th lang-en>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td lang-ko>손절</td><td lang-en>Stop-Loss</td>
+      <td><code>−1.2%</code></td>
+      <td lang-ko>진입가 기준</td><td lang-en>From entry</td>
+    </tr>
+    <tr>
+      <td lang-ko>익절</td><td lang-en>Take-Profit</td>
+      <td><code>+2.5%</code></td>
+      <td lang-ko>전량 청산</td><td lang-en>Full exit</td>
+    </tr>
+    <tr>
+      <td lang-ko>분할 익절</td><td lang-en>Partial TP</td>
+      <td><code>+1.5%</code></td>
+      <td lang-ko>50% 매도 후 잔량 트레일링</td><td lang-en>50% exit, trailing on rest</td>
+    </tr>
+    <tr>
+      <td lang-ko>트레일링 스탑</td><td lang-en>Trailing Stop</td>
+      <td><code>−0.5%</code></td>
+      <td lang-ko>세션 고점 대비 낙폭</td><td lang-en>Drop from session high</td>
+    </tr>
+    <tr>
+      <td lang-ko>일일 손실 한도</td><td lang-en>Daily Loss Limit</td>
+      <td><code>−3%</code></td>
+      <td lang-ko>초과 시 신규 매수 차단</td><td lang-en>Block new buys on breach</td>
+    </tr>
+    <tr>
+      <td lang-ko>매수 슬리피지 상한</td><td lang-en>Buy Slippage Cap</td>
+      <td><code>+1%</code></td>
+      <td lang-ko>지정가 = 신호가 × 1.01, 미체결 시 스킵</td><td lang-en>Limit = signal × 1.01, skip if unfilled</td>
+    </tr>
+    <tr>
+      <td lang-ko>ML 확률 게이트</td><td lang-en>ML Probability Gate</td>
+      <td><code>0.60</code></td>
+      <td lang-ko>임계값 미만 신호 진입 차단</td><td lang-en>Block entry below threshold</td>
+    </tr>
+  </tbody>
+</table>
 
-<h3 lang-ko>AI의 역할</h3>
-<h3 lang-en>The Role of AI</h3>
-<ul lang-ko>
-  <li><strong>수익률 예측:</strong> LightGBM을 사용하여 수백 개의 기술적 지표와 수급 데이터를 바탕으로 차기 캔들의 방향성을 분류합니다.</li>
-  <li><strong>패턴 인식:</strong> LSTM 시계열 모델이 가격의 흐름과 변동성 패턴을 분석하여 모델의 판단에 가중치를 부여합니다.</li>
-  <li><strong>동적 임계값:</strong> 시장 상황에 따라 매수·매도 시그널의 강도를 조절하여 불필요한 거래를 억제합니다.</li>
-</ul>
-<ul lang-en>
-  <li><strong>Return Prediction:</strong> Uses LightGBM to classify the direction of the next candle based on hundreds of technical indicators and supply/demand data.</li>
-  <li><strong>Pattern Recognition:</strong> The LSTM time-series model analyzes price flow and volatility patterns to weight the model's decisions.</li>
-  <li><strong>Dynamic Thresholding:</strong> Adjusts the strength of buy/sell signals according to market conditions to suppress unnecessary trades.</li>
-</ul>
+<!-- ── 아키텍처 다이어그램 ── -->
+<h2><span lang-ko>시스템 아키텍처</span><span lang-en>System Architecture</span></h2>
+<div style="border:1px solid var(--border);border-radius:10px;padding:24px 16px 16px;background:white;overflow:hidden;margin-bottom:20px">
+  <svg width="100%" viewBox="0 0 820 200" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+        <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round"/>
+      </marker>
+    </defs>
+
+    <!-- KIS API -->
+    <rect x="10" y="75" width="80" height="50" rx="8" fill="var(--gray-l)" stroke="var(--border)"/>
+    <text x="50" y="98" text-anchor="middle" font-size="10" font-weight="700" fill="var(--gray)">KIS API</text>
+    <text x="50" y="112" text-anchor="middle" font-size="9" fill="var(--muted)">시세·주문</text>
+
+    <!-- WebSocket -->
+    <rect x="10" y="140" width="80" height="40" rx="8" fill="var(--gray-l)" stroke="var(--border)"/>
+    <text x="50" y="158" text-anchor="middle" font-size="9" font-weight="700" fill="var(--gray)">WebSocket</text>
+    <text x="50" y="170" text-anchor="middle" font-size="9" fill="var(--muted)">실시간 시세</text>
+
+    <line x1="90" y1="100" x2="120" y2="100" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arr)"/>
+    <line x1="90" y1="160" x2="120" y2="130" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- DT Pipeline -->
+    <rect x="125" y="10" width="160" height="175" rx="8" fill="var(--amber-l)" stroke="var(--amber)" stroke-opacity="0.4"/>
+    <text x="205" y="30" text-anchor="middle" font-size="10" font-weight="700" fill="var(--amber)">DayTrade Pipeline</text>
+    <text x="205" y="46" text-anchor="middle" font-size="9" fill="var(--amber)">selector</text>
+    <text x="205" y="60" text-anchor="middle" font-size="9" fill="var(--amber)">buy_agent</text>
+    <text x="205" y="74" text-anchor="middle" font-size="9" fill="var(--amber)">sell_agent</text>
+    <text x="205" y="88" text-anchor="middle" font-size="9" fill="var(--amber)">close_agent ×3</text>
+    <text x="205" y="105" text-anchor="middle" font-size="9" fill="var(--amber)">news_analyzer</text>
+    <text x="205" y="119" text-anchor="middle" font-size="9" fill="var(--amber)">ml_model</text>
+    <text x="205" y="133" text-anchor="middle" font-size="9" fill="var(--amber)">risk / strategy</text>
+    <text x="205" y="160" text-anchor="middle" font-size="8" fill="var(--amber)">별도 계좌 격리</text>
+    <text x="205" y="175" text-anchor="middle" font-size="8" fill="var(--amber)">5분 사이클</text>
+
+    <line x1="285" y1="100" x2="315" y2="100" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- Kostolany Pipeline -->
+    <rect x="320" y="10" width="160" height="130" rx="8" fill="var(--purple-l)" stroke="var(--purple)" stroke-opacity="0.4"/>
+    <text x="400" y="30" text-anchor="middle" font-size="10" font-weight="700" fill="var(--purple-d)">Kostolany Pipeline</text>
+    <text x="400" y="48" text-anchor="middle" font-size="9" fill="var(--purple-d)">selector (월1회)</text>
+    <text x="400" y="62" text-anchor="middle" font-size="9" fill="var(--purple-d)">weekly_buy_check</text>
+    <text x="400" y="76" text-anchor="middle" font-size="9" fill="var(--purple-d)">daily_sell_check</text>
+    <text x="400" y="90" text-anchor="middle" font-size="9" fill="var(--purple-d)">macro.refresh</text>
+    <text x="400" y="104" text-anchor="middle" font-size="9" fill="var(--purple-d)">fundamentals</text>
+    <text x="400" y="128" text-anchor="middle" font-size="8" fill="var(--purple-d)">장기 보유 전략</text>
+
+    <line x1="480" y1="75" x2="510" y2="75" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arr)"/>
+    <line x1="480" y1="120" x2="510" y2="120" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- Shared Infra -->
+    <rect x="515" y="10" width="140" height="175" rx="8" fill="var(--teal-l)" stroke="var(--teal)" stroke-opacity="0.4"/>
+    <text x="585" y="30" text-anchor="middle" font-size="10" font-weight="700" fill="var(--teal)">Shared Infra</text>
+    <text x="585" y="48" text-anchor="middle" font-size="9" fill="var(--teal-d)">GuardAgent (2분)</text>
+    <text x="585" y="62" text-anchor="middle" font-size="9" fill="var(--teal-d)">Reconcile (1시간)</text>
+    <text x="585" y="76" text-anchor="middle" font-size="9" fill="var(--teal-d)">kis_client pkg</text>
+    <text x="585" y="90" text-anchor="middle" font-size="9" fill="var(--teal-d)">gemini_analyst</text>
+    <text x="585" y="104" text-anchor="middle" font-size="9" fill="var(--teal-d)">data/db.py</text>
+    <text x="585" y="118" text-anchor="middle" font-size="9" fill="var(--teal-d)">market_hours</text>
+    <text x="585" y="135" text-anchor="middle" font-size="9" fill="var(--teal-d)">failsafe / notifier</text>
+    <text x="585" y="162" text-anchor="middle" font-size="8" fill="var(--teal-d)">Railway (Python)</text>
+    <text x="585" y="176" text-anchor="middle" font-size="8" fill="var(--teal-d)">PostgreSQL</text>
+
+    <line x1="655" y1="100" x2="685" y2="100" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- Dashboard -->
+    <rect x="690" y="60" width="120" height="80" rx="8" fill="var(--blue-l)" stroke="var(--blue)" stroke-opacity="0.4"/>
+    <text x="750" y="84" text-anchor="middle" font-size="10" font-weight="700" fill="var(--blue)">Dashboard</text>
+    <text x="750" y="100" text-anchor="middle" font-size="9" fill="var(--blue)">Next.js · Vercel</text>
+    <text x="750" y="116" text-anchor="middle" font-size="9" fill="var(--blue)">실시간 포지션</text>
+    <text x="750" y="130" text-anchor="middle" font-size="9" fill="var(--blue)">DT 컨트롤 패널</text>
+  </svg>
+  <div style="font-size:11.5px;color:var(--muted);text-align:center;margin-top:10px;font-style:italic">
+    <span lang-ko>듀얼 파이프라인 + 공유 인프라 + Vercel 대시보드</span>
+    <span lang-en>Dual pipeline + shared infra + Vercel dashboard</span>
+  </div>
+</div>
+
+<!-- ── 스택 ── -->
+<h2><span lang-ko>기술 스택</span><span lang-en>Tech Stack</span></h2>
+<table>
+  <thead>
+    <tr>
+      <th lang-ko>기술</th><th lang-en>Tech</th>
+      <th lang-ko>용도</th><th lang-en>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Python 3.11</code></td>
+      <td lang-ko>전체 봇 파이프라인</td><td lang-en>Full bot pipeline</td></tr>
+    <tr><td><code>APScheduler</code></td>
+      <td lang-ko>크론 스케줄러 — 각 파이프라인 독립 BackgroundScheduler</td>
+      <td lang-en>Cron scheduler — independent BackgroundScheduler per pipeline</td></tr>
+    <tr><td><code>KIS Open API</code></td>
+      <td lang-ko>시세 조회 + 실주문 (모의/실전 분리)</td>
+      <td lang-en>Market data + live orders (mock/live isolation)</td></tr>
+    <tr><td><code>Gemini Flash</code></td>
+      <td lang-ko>뉴스 감성분석, 일일 사용량 DB 추적</td>
+      <td lang-en>News sentiment analysis, daily usage tracking</td></tr>
+    <tr><td><code>LightGBM</code></td>
+      <td lang-ko>단타 ML — 진입 확률 예측 (매일 재학습)</td>
+      <td lang-en>DT ML — entry probability prediction (daily retrain)</td></tr>
+    <tr><td><code>PostgreSQL</code></td>
+      <td lang-ko>거래·포지션·후보·설정 영구 저장</td>
+      <td lang-en>Trades, positions, candidates, config persistent storage</td></tr>
+    <tr><td><code>Next.js 15 · Vercel</code></td>
+      <td lang-ko>실시간 대시보드 (인증 필요)</td>
+      <td lang-en>Real-time dashboard (authenticated)</td></tr>
+    <tr><td><code>Railway</code></td>
+      <td lang-ko>Python 봇 호스팅 — GitHub push 자동 배포</td>
+      <td lang-en>Python bot hosting — auto-deploy on GitHub push</td></tr>
+    <tr><td><code>Telegram Bot API</code></td>
+      <td lang-ko>거래 알림 + 장애 경고</td>
+      <td lang-en>Trade notifications + fault alerts</td></tr>
+  </tbody>
+</table>
 
 <div class="callout warn">
   <span class="icon">⚠️</span>
-  <p lang-ko>실계좌 운영 봇은 예측 품질만큼이나 장애 내성이 중요합니다. 네트워크 끊김, API 레이트리밋, 부분 체결 등 모든 예외 경로가 테스트되지 않으면 가동 금지.</p>
-  <p lang-en>For a live-account bot, fault tolerance matters as much as predictive quality. Do not run unless every edge path — network drops, API rate limits, partial fills — has been tested.</p>
+  <p lang-ko>실계좌 운영 봇은 예측 품질만큼 장애 내성이 중요합니다. 코드 배포 시 Python 문법 검증, import 폴백, 강제청산 이중화가 필수입니다.</p>
+  <p lang-en>For a live-account bot, fault tolerance matters as much as prediction quality. Python syntax validation, import fallback, and redundant force-close are essential before any deployment.</p>
 </div>
 
-<h2>
-  <span lang-ko>링크</span>
-  <span lang-en>Links</span>
-</h2>
-<ul lang-ko>
-  <li><span class="badge local">Private</span> &nbsp; 소스 저장소 — 비공개</li>
-  <li><span class="badge local">N/A</span> &nbsp; Live URL — 제공 안 함 (내부 운영 봇)</li>
-  <li><a href="/autotrade-guide/concept.html">관련 가이드 — 자동매매 개념</a></li>
-  <li><a href="/autotrade-guide/build-prompt.html">관련 가이드 — 구축 프롬프트</a></li>
-</ul>
-<ul lang-en>
-  <li><span class="badge local">Private</span> &nbsp; Source repository — not public</li>
-  <li><span class="badge local">N/A</span> &nbsp; Live URL — not published (internal bot)</li>
-  <li><a href="/autotrade-guide/concept.html">Related guide — Trading Concepts</a></li>
-  <li><a href="/autotrade-guide/build-prompt.html">Related guide — Build Prompt</a></li>
+<!-- ── 링크 ── -->
+<h2><span lang-ko>링크</span><span lang-en>Links</span></h2>
+<ul>
+  <li><span class="badge local">Private</span> &nbsp; <span lang-ko>소스 저장소 — 비공개</span><span lang-en>Source repository — private</span></li>
+  <li><span class="badge local">Auth</span> &nbsp; <span lang-ko>대시보드 — 인증 필요 (GitHub OAuth)</span><span lang-en>Dashboard — GitHub OAuth required</span></li>
+  <li><a href="/autotrade-guide/concept.html" lang-ko>관련 가이드 — 자동매매 개념</a><a href="/autotrade-guide/concept.html" lang-en>Related guide — Trading Concepts</a></li>
+  <li><a href="/autotrade-guide/build-prompt.html" lang-ko>관련 가이드 — 구축 프롬프트</a><a href="/autotrade-guide/build-prompt.html" lang-en>Related guide — Build Prompt</a></li>
 </ul>
 
 <div class="doc-footer">
-  <span><a href="https://github.com/n5nsuf" target="_blank">Github info</a> &middot; <a href="/profile.html">Dev Profile</a></span>
+  <span><a href="https://github.com/n5nsuf" target="_blank">Github</a> &middot; <a href="/profile.html">Dev Profile</a></span>
   <span>Tech Guides &amp; Projects &middot; 2026</span>
 </div>
 
