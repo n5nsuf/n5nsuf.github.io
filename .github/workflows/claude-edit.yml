@@ -43,6 +43,8 @@ jobs:
           printf '%s' "$PROMPT" > /tmp/claude-edit/prompt.txt
 
       - name: Run Claude Code
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: bash scripts/run-claude.sh /tmp/claude-edit/prompt.txt
 
       - name: Commit and push
