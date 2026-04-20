@@ -134,21 +134,23 @@
     <h4 class="dt">⚡ DayTrade Pipeline <span class="badge dt">당일 청산</span></h4>
     <ul lang-ko>
       <li>매수 허용: 09:05–11:30, 13:00–13:45 KST</li>
-      <li>5분 사이클 — 후보 선정 → 매수 → 매도</li>
+      <li>5분 사이클 — 후보 선정 → <strong>매수·매도 병렬</strong> 실행</li>
       <li>종가마감 3단계: 15:10 최유리지정가 → 15:20 시장가 → 15:25 DB정합</li>
       <li>신호: 변동성 돌파, 5분봉 브레이크아웃</li>
       <li>SL −1.2% / TP +2.5% / 분할익절 +1.5%</li>
       <li>Gemini 뉴스 감성분석 + ML 확률 게이트</li>
       <li>별도 계좌·별도 APP KEY 격리</li>
+      <li><strong>DTManager</strong> — circuit breaker (3회 실패 → 차단 + 알림)</li>
     </ul>
     <ul lang-en>
       <li>Buy windows: 09:05–11:30, 13:00–13:45 KST</li>
-      <li>5-min cycle — candidate select → buy → sell</li>
+      <li>5-min cycle — candidate select → <strong>parallel buy + sell</strong></li>
       <li>3-phase close: 15:10 best-bid → 15:20 market → 15:25 reconcile</li>
       <li>Signals: volatility breakout, 5-min breakout</li>
       <li>SL −1.2% / TP +2.5% / partial TP +1.5%</li>
       <li>Gemini news sentiment + ML probability gate</li>
       <li>Isolated account &amp; APP KEY</li>
+      <li><strong>DTManager</strong> — circuit breaker (3 fails → block + alert)</li>
     </ul>
   </div>
   <div class="pipeline-card kost">
@@ -160,6 +162,7 @@
       <li>매크로 지표 매일 20:00 갱신</li>
       <li>분기 1회 포트폴리오 재검토</li>
       <li>펀더멘털 + 거시경제 지표 기반 판단</li>
+      <li><strong>KostManager</strong> — circuit breaker + 파이프라인 싱글턴</li>
     </ul>
     <ul lang-en>
       <li>Monthly universe selection (PER/PBR/financials)</li>
@@ -168,6 +171,7 @@
       <li>Macro indicator refresh daily 20:00</li>
       <li>Quarterly portfolio review</li>
       <li>Fundamental + macro-driven decisions</li>
+      <li><strong>KostManager</strong> — circuit breaker + pipeline singleton</li>
     </ul>
   </div>
 </div>
@@ -283,6 +287,21 @@
       <td lang-ko>KRX 개장 여부 — 2026 공휴일 포함</td>
       <td lang-en>KRX market hours — including 2026 public holidays</td>
     </tr>
+    <tr>
+      <td><code>core/finance_agent.py</code></td>
+      <td lang-ko>통합 잔고 관리 — TTL 캐시, pending 예약, DT/Kost 손익 추적</td>
+      <td lang-en>Unified balance manager — TTL cache, pending reservation, DT/Kost P&amp;L tracking</td>
+    </tr>
+    <tr>
+      <td><code>daytrade/dt_manager.py</code></td>
+      <td lang-ko>DT 파이프라인 관리자 — circuit breaker, 매수·매도 병렬 실행, 강제청산 조율</td>
+      <td lang-en>DT pipeline manager — circuit breaker, parallel buy/sell execution, force-close coordination</td>
+    </tr>
+    <tr>
+      <td><code>core/kost_manager.py</code></td>
+      <td lang-ko>Kostolany 파이프라인 관리자 — circuit breaker, 파이프라인 싱글턴, EOD 리셋</td>
+      <td lang-en>Kostolany pipeline manager — circuit breaker, pipeline singleton, EOD reset</td>
+    </tr>
   </tbody>
 </table>
 
@@ -297,8 +316,8 @@
   </div>
   <div class="schedule-row">
     <span class="schedule-time">09:05~</span>
-    <span class="schedule-desc" lang-ko>DT 5분 사이클 시작 — buy_agent + sell_agent 교대 실행</span>
-    <span class="schedule-desc" lang-en>DT 5-min cycles begin — buy_agent + sell_agent alternating</span>
+    <span class="schedule-desc" lang-ko>DT 5분 사이클 시작 — buy_agent + sell_agent <strong>병렬</strong> 실행 (DTManager)</span>
+    <span class="schedule-desc" lang-en>DT 5-min cycles begin — buy_agent + sell_agent <strong>parallel</strong> (DTManager)</span>
   </div>
   <div class="schedule-row">
     <span class="schedule-time">15:05</span>
@@ -438,17 +457,18 @@
     <line x1="480" y1="120" x2="510" y2="120" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arr)"/>
 
     <!-- Shared Infra -->
-    <rect x="515" y="10" width="140" height="175" rx="8" fill="var(--teal-l)" stroke="var(--teal)" stroke-opacity="0.4"/>
+    <rect x="515" y="10" width="140" height="185" rx="8" fill="var(--teal-l)" stroke="var(--teal)" stroke-opacity="0.4"/>
     <text x="585" y="30" text-anchor="middle" font-size="10" font-weight="700" fill="var(--teal)">Shared Infra</text>
-    <text x="585" y="48" text-anchor="middle" font-size="9" fill="var(--teal-d)">GuardAgent (2분)</text>
-    <text x="585" y="62" text-anchor="middle" font-size="9" fill="var(--teal-d)">Reconcile (1시간)</text>
-    <text x="585" y="76" text-anchor="middle" font-size="9" fill="var(--teal-d)">kis_client pkg</text>
-    <text x="585" y="90" text-anchor="middle" font-size="9" fill="var(--teal-d)">gemini_analyst</text>
-    <text x="585" y="104" text-anchor="middle" font-size="9" fill="var(--teal-d)">data/db.py</text>
-    <text x="585" y="118" text-anchor="middle" font-size="9" fill="var(--teal-d)">market_hours</text>
-    <text x="585" y="135" text-anchor="middle" font-size="9" fill="var(--teal-d)">failsafe / notifier</text>
-    <text x="585" y="162" text-anchor="middle" font-size="8" fill="var(--teal-d)">Railway (Python)</text>
-    <text x="585" y="176" text-anchor="middle" font-size="8" fill="var(--teal-d)">PostgreSQL</text>
+    <text x="585" y="47" text-anchor="middle" font-size="9" fill="var(--teal-d)">FinanceAgent (잔고캐시)</text>
+    <text x="585" y="61" text-anchor="middle" font-size="9" fill="var(--teal-d)">GuardAgent (2분)</text>
+    <text x="585" y="75" text-anchor="middle" font-size="9" fill="var(--teal-d)">Reconcile (1시간)</text>
+    <text x="585" y="89" text-anchor="middle" font-size="9" fill="var(--teal-d)">kis_client pkg</text>
+    <text x="585" y="103" text-anchor="middle" font-size="9" fill="var(--teal-d)">gemini_analyst</text>
+    <text x="585" y="117" text-anchor="middle" font-size="9" fill="var(--teal-d)">data/db.py</text>
+    <text x="585" y="131" text-anchor="middle" font-size="9" fill="var(--teal-d)">market_hours</text>
+    <text x="585" y="145" text-anchor="middle" font-size="9" fill="var(--teal-d)">failsafe / notifier</text>
+    <text x="585" y="165" text-anchor="middle" font-size="8" fill="var(--teal-d)">Railway (Python)</text>
+    <text x="585" y="178" text-anchor="middle" font-size="8" fill="var(--teal-d)">PostgreSQL</text>
 
     <line x1="655" y1="100" x2="685" y2="100" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arr)"/>
 
