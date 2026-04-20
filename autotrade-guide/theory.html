@@ -118,31 +118,34 @@
   <div class="theory-card">
     <h4 lang-ko>🔍 피처 엔지니어링</h4>
     <h4 lang-en>🔍 Feature Engineering</h4>
-    <p lang-ko>원시 가격 데이터를 기술적 지표, 수급 데이터, 거시 지표 등으로 변환하여 모델이 학습하기 쉬운 형태로 가공합니다.</p>
-    <p lang-en>Raw price data is transformed into technical indicators, supply/demand data, and macro indicators to make it easier for the model to learn.</p>
+    <p lang-ko>원시 가격 데이터를 기술적 지표(RSI, MACD), 수급 데이터, 거시 경제 지표 등으로 변환합니다. 모델이 시장의 노이즈를 걸러내고 유의미한 신호를 학습할 수 있도록 가공하는 핵심 단계입니다.</p>
+    <p lang-en>Transforms raw price data into technical indicators (RSI, MACD), supply/demand data, and macro indicators. This is a critical step to help the model filter market noise and learn meaningful signals.</p>
   </div>
   <div class="theory-card">
-    <h4 lang-ko>🧠 지도 학습 (Supervised)</h4>
+    <h4 lang-ko>🧠 지도 학습</h4>
     <h4 lang-en>🧠 Supervised Learning</h4>
-    <p lang-ko>특정 시점의 데이터(X)와 일정 시간 후의 수익률(y)을 매핑하여, 어떤 상황에서 가격이 상승/하락하는지 학습합니다.</p>
-    <p lang-en>Maps data at a specific point (X) to returns after a certain time (y) to learn under which conditions prices rise or fall.</p>
+    <p lang-ko>과거 특정 시점의 데이터(X)와 일정 시간 경과 후의 실제 수익률(y)을 매핑하여 학습합니다. 어떤 기술적 지표 조합에서 가격이 상승하거나 하락할 확률이 높은지 통계적 패턴을 찾아냅니다.</p>
+    <p lang-en>Learns by mapping past data points (X) to actual returns (y) after a certain period. It identifies statistical patterns to determine which indicator combinations correlate with price movements.</p>
   </div>
 </div>
 
 <h2 lang-ko>2. 하이브리드 모델의 원리 (LGBM + LSTM)</h2>
 <h2 lang-en>2. Hybrid Model Principles (LGBM + LSTM)</h2>
-<p lang-ko>단일 모델의 한계를 극복하기 위해 서로 다른 특성을 가진 두 모델을 결합하여 사용합니다.</p>
-<p lang-en>To overcome the limitations of a single model, two models with different characteristics are combined.</p>
+<p lang-ko>단일 모델의 한계를 극복하기 위해 서로 다른 특성을 가진 두 가지 AI 모델을 결합하여 예측의 정밀도를 높입니다.</p>
+<p lang-en>To overcome the limitations of a single model, two AI models with different characteristics are combined to increase prediction precision.</p>
 
-<div class="callout info">
-  <span class="icon">💡</span>
-  <div lang-ko>
-    <p><strong>LightGBM (정적 패턴):</strong> 수백 개의 피처들 사이의 비선형적 관계와 임계값을 빠르게 찾아내는 데 강점이 있습니다.</p>
-    <p><strong>LSTM (동적 패턴):</strong> 가격의 흐름, 즉 시계열적 순서와 맥락을 기억하여 '추세'의 지속 여부를 판단하는 데 적합합니다.</p>
+<div class="theory-grid">
+  <div class="theory-card">
+    <h4 lang-ko>📈 LightGBM (정적 패턴 포착)</h4>
+    <h4 lang-en>📈 LightGBM (Static Patterns)</h4>
+    <p lang-ko>의사결정 나무 기반의 부스팅 모델로, 수백 개의 지표들 사이의 비선형적 관계를 빠르게 찾아냅니다. 특히 특정 수치(예: RSI 30 이하)가 매수 신호로서 가지는 임계값(Threshold)을 포착하는 데 매우 강력하며, 학습 속도가 빨라 대규모 데이터 처리에 적합합니다.</p>
+    <p lang-en>A boosting model based on decision trees that quickly finds non-linear relationships among hundreds of indicators. It is particularly powerful at capturing thresholds (e.g., RSI below 30) as buy signals and is suitable for large-scale data due to its fast learning speed.</p>
   </div>
-  <div lang-en>
-    <p><strong>LightGBM (Static Patterns):</strong> Excels at quickly finding non-linear relationships and thresholds among hundreds of features.</p>
-    <p><strong>LSTM (Dynamic Patterns):</strong> Suitable for judging the persistence of 'trends' by remembering the flow of price, i.e., sequential order and context.</p>
+  <div class="theory-card">
+    <h4 lang-ko>🔗 LSTM (시계열 흐름 파악)</h4>
+    <h4 lang-en>🔗 LSTM (Time-series Flow)</h4>
+    <p lang-ko>데이터의 순서와 시간적 맥락을 기억하는 순환 신경망(RNN)의 일종입니다. 단순히 현재의 지표 수치뿐만 아니라, 최근 며칠간의 가격 흐름이 어떠했는지 '기억'하여 추세의 강도와 지속성을 판단합니다. 이는 시장의 급격한 변곡점을 감지하는 데 도움을 줍니다.</p>
+    <p lang-en>A type of Recurrent Neural Network (RNN) that remembers the sequence and temporal context of data. It 'remembers' recent price flows to judge trend strength and persistence, helping to detect sudden market pivot points.</p>
   </div>
 </div>
 
