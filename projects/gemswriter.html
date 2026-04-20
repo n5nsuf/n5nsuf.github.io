@@ -11,7 +11,7 @@
     --purple:#534AB7;--purple-l:#EEEDFE;--purple-d:#3C3489;
     --teal:#0F6E56;--teal-l:#E1F5EE;--teal-d:#0D5A47;
     --amber:#BA7517;--amber-l:#FAEEDA;--amber-d:#8B570F;
-    --blue:#185FA5;--blue-l:#E6F1FB;
+    --blue:#185FA5;--blue-l:#E6F1FB;--blue-d:#124D85;
     --coral:#993C1D;--coral-l:#FAECE7;
     --red:#A32D2D;--red-l:#FCEBEB;
     --gray:#444441;--gray-l:#F1EFE8;
@@ -24,10 +24,10 @@
 
   .nav-bar{position:sticky;top:0;z-index:100;background:rgba(250,250,248,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;justify-content:space-between;align-items:center}
   .nav-home{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;padding:4px 14px;border-radius:20px;border:1px solid var(--border);transition:all .15s}
-  .nav-home:hover{background:var(--teal-l);border-color:var(--teal);color:var(--teal)}
+  .nav-home:hover{background:var(--purple-l);border-color:var(--purple);color:var(--purple)}
   .nav-lang{display:flex;gap:6px}
   .lang-btn{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 14px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--muted);cursor:pointer;transition:all .15s}
-  .lang-btn.active{background:var(--teal);color:white;border-color:var(--teal)}
+  .lang-btn.active{background:var(--purple);color:white;border-color:var(--purple)}
 
   [lang-ko],[lang-en]{display:none}
   body.lang-ko [lang-ko]{display:revert}
@@ -35,26 +35,26 @@
 
   .page{max-width:860px;margin:0 auto;padding:48px 56px;background:white}
 
-  .doc-header{border-bottom:2px solid var(--teal);padding-bottom:24px;margin-bottom:36px}
-  .doc-header h1{font-size:28px;font-weight:700;color:var(--teal);line-height:1.3}
+  .doc-header{border-bottom:2px solid var(--purple);padding-bottom:24px;margin-bottom:36px}
+  .doc-header h1{font-size:28px;font-weight:700;color:var(--purple);line-height:1.3}
   .doc-header .subtitle{font-size:15px;color:var(--muted);margin-top:6px}
   .doc-header .meta{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:12px;flex-wrap:wrap}
-  .meta-tag{background:var(--teal-l);color:var(--teal-d);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500}
+  .meta-tag{background:var(--purple-l);color:var(--purple-d);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500}
 
-  h2{font-size:17px;font-weight:700;color:var(--teal);padding:6px 0 6px 12px;border-left:3px solid var(--teal);margin-bottom:16px;margin-top:42px}
+  h2{font-size:17px;font-weight:700;color:var(--purple);padding:6px 0 6px 12px;border-left:3px solid var(--purple);margin-bottom:16px;margin-top:42px}
   h3{font-size:14px;font-weight:700;color:var(--gray);margin:20px 0 10px}
   p{margin-bottom:12px;color:var(--text);font-size:13.5px}
   ul,ol{margin-bottom:12px;padding-left:20px;font-size:13.5px}
   li{margin-bottom:4px}
-  a{color:var(--teal)}
+  a{color:var(--purple)}
 
   table{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px}
-  thead tr{background:var(--teal)}
+  thead tr{background:var(--purple)}
   thead th{color:white;font-weight:600;padding:8px 12px;text-align:left;font-size:12px}
   tbody tr:nth-child(even){background:var(--gray-l)}
-  tbody tr:hover{background:var(--teal-l)}
+  tbody tr:hover{background:var(--purple-l)}
   tbody td{padding:7px 12px;border-bottom:1px solid var(--border);vertical-align:top}
-  td code,p code{background:var(--gray-l);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--teal-d)}
+  td code,p code{background:var(--gray-l);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--purple-d)}
 
   .callout{display:flex;gap:10px;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px}
   .callout.warn{background:var(--amber-l);border-left:3px solid var(--amber)}
@@ -68,7 +68,7 @@
   .badge.ok{background:var(--teal-l);color:var(--teal)}
 
   .doc-footer{border-top:1px solid var(--border);margin-top:48px;padding-top:16px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
-  .doc-footer a{color:var(--teal);text-decoration:none}
+  .doc-footer a{color:var(--purple);text-decoration:none}
   .doc-footer a:hover{text-decoration:underline}
 
   @media(max-width:640px){
@@ -94,14 +94,14 @@
 <div class="doc-header">
   <h1 lang-ko>GemsWriter</h1>
   <h1 lang-en>GemsWriter</h1>
-  <div class="subtitle" lang-ko>Gemini Gems 기반 AI 자동 글쓰기 봇 — 매일 아침 전하는 자동화된 인사이트</div>
-  <div class="subtitle" lang-en>AI writing bot based on Gemini Gems — automated daily morning insights</div>
+  <div class="subtitle" lang-ko>AI 자동 연재 글쓰기 봇 — Gemini Gems의 지식과 Claude의 문체 결합</div>
+  <div class="subtitle" lang-en>Automated AI writing bot — Combining Gemini Gems knowledge with Claude's style</div>
   <div class="meta">
-    <span class="meta-tag">2026-04-17</span>
+    <span class="meta-tag">2026-04-20</span>
     <span class="meta-tag" lang-ko>프로젝트</span>
     <span class="meta-tag" lang-en>Project</span>
-    <span class="meta-tag" lang-ko>자동화</span>
-    <span class="meta-tag" lang-en>Automation</span>
+    <span class="meta-tag" lang-ko>에이전틱 AI</span>
+    <span class="meta-tag" lang-en>Agentic AI</span>
   </div>
 </div>
 
@@ -109,13 +109,13 @@
   <span lang-ko>개요</span>
   <span lang-en>Overview</span>
 </h2>
-<p lang-ko>GemsWriter는 Gemini Gems의 특화된 지식 체계와 Claude Haiku의 정교한 문장 생성 능력을 결합한 AI 글쓰기 봇입니다. 매주 평일 오전 08:30(KST)에 자동으로 실행되어 사전에 정의된 페르소나와 주제에 맞는 콘텐츠를 생성하고 텔레그램 채널로 발행합니다.</p>
-<p lang-en>GemsWriter is an AI writing bot that combines the specialized knowledge base of Gemini Gems with the sophisticated generation capabilities of Claude Haiku. It runs automatically every weekday at 08:30 KST, generating content aligned with predefined personas and themes, and publishing it to a Telegram channel.</p>
+<p lang-ko>GemsWriter는 Gemini Gems의 지향점과 Claude Haiku의 실용적인 생성 능력을 결합한 에이전틱 글쓰기 시스템입니다. 기존의 수동 발행 방식이나 노션(Notion) 의존성을 제거하고, 완전 자동화된 파이프라인을 통해 텔레그램으로 직접 양질의 콘텐츠를 배달합니다.</p>
+<p lang-en>GemsWriter is an agentic writing system that combines the specialized knowledge of Gemini Gems with the practical generation capabilities of Claude Haiku. By removing manual publishing and Notion dependencies, it delivers high-quality content directly to Telegram through a fully automated pipeline.</p>
 
 <div class="callout info">
   <span class="icon">🤖</span>
-  <p lang-ko>이 프로젝트는 다중 LLM 협업 패턴을 활용하여, 각 모델의 강점(Gemini의 지식 검색 및 Gems 지식, Claude의 문체 및 요약 능력)을 극대화합니다.</p>
-  <p lang-en>This project utilizes a multi-LLM collaboration pattern, maximizing each model's strengths: Gemini's knowledge retrieval/Gems context and Claude's stylistic/summarization capabilities.</p>
+  <p lang-ko>이 프로젝트는 지식 추출(Gemini)과 문장 가공(Claude)을 분리한 이중 에이전트 구조를 통해, 단일 모델이 범하기 쉬운 문맥 누락이나 단조로운 문체를 극복합니다.</p>
+  <p lang-en>By separating knowledge extraction (Gemini) and sentence refinement (Claude) into a dual-agent structure, this project overcomes context gaps and monotonous styles common in single-model outputs.</p>
 </div>
 
 <h2>
@@ -131,29 +131,29 @@
   </thead>
   <tbody>
     <tr>
-      <td><code>Node.js</code></td>
-      <td lang-ko>애플리케이션 런타임 및 로직 제어</td>
-      <td lang-en>Application runtime and logic control</td>
+      <td><code>Node.js / TypeScript</code></td>
+      <td lang-ko>시스템 로직 및 에이전트 오케스트레이션</td>
+      <td lang-en>System logic and agent orchestration</td>
     </tr>
     <tr>
-      <td><code>Claude Haiku</code></td>
-      <td lang-ko>최종 콘텐츠 문장 생성 및 스타일링</td>
-      <td lang-en>Final content generation and styling</td>
+      <td><code>Gemini 1.5 (Gems)</code></td>
+      <td lang-ko>특화 페르소나 기반 지식 추출 및 브레인스토밍</td>
+      <td lang-en>Persona-based knowledge extraction and brainstorming</td>
     </tr>
     <tr>
-      <td><code>Gemini</code></td>
-      <td lang-ko>Gems 기반 지식 추출 및 원천 데이터 제공</td>
-      <td lang-en>Gems-based knowledge extraction and source data</td>
-    </tr>
-    <tr>
-      <td><code>Telegram</code></td>
-      <td lang-ko>콘텐츠 발행 및 사용자 접점 채널</td>
-      <td lang-en>Content publishing and user interface channel</td>
+      <td><code>Claude 3 Haiku</code></td>
+      <td lang-ko>최종 문장 다듬기 및 텔레그램 포맷팅</td>
+      <td lang-en>Final sentence refinement and Telegram formatting</td>
     </tr>
     <tr>
       <td><code>GitHub Actions</code></td>
-      <td lang-ko>평일 08:30 KST 정기 실행 및 워크플로우 자동화</td>
-      <td lang-en>Scheduled runs at 08:30 KST and workflow automation</td>
+      <td lang-ko>서버리스 스케줄링 및 CI/CD 파이프라인</td>
+      <td lang-en>Serverless scheduling and CI/CD pipeline</td>
+    </tr>
+    <tr>
+      <td><code>Telegram Bot API</code></td>
+      <td lang-ko>최종 콘텐츠 배포 및 운영 알림</td>
+      <td lang-en>Content distribution and admin notifications</td>
     </tr>
   </tbody>
 </table>
@@ -163,83 +163,112 @@
   <span lang-en>Features</span>
 </h2>
 <ul lang-ko>
-  <li><strong>Gems 지식 활용:</strong> Gemini Gems에 구축된 특정 도메인 지식과 페르소나를 기반으로 깊이 있는 초안 생성</li>
-  <li><strong>하이브리드 생성:</strong> Gemini의 초안을 Claude Haiku가 다듬어 독자에게 친숙한 톤앤매너로 변환</li>
-  <li><strong>완전 자동화 스케줄링:</strong> GitHub Actions를 통해 추가 조작 없이 평일 아침 정해진 시간에 작동</li>
-  <li><strong>실시간 텔레그램 연동:</strong> 생성된 포스트를 즉시 텔레그램 채널로 전송하고 운영자 알림 발송</li>
+  <li><strong>Gems 컨텍스트 활용:</strong> Gemini Gems에 사전에 구축된 방대한 자료와 지침을 기반으로 전문성 있는 초안 생성</li>
+  <li><strong>페르소나 이중화:</strong> 지식 전문가(Gemini)와 전문 작가(Claude) 에이전트가 협업하여 내용과 가독성을 동시에 확보</li>
+  <li><strong>완전 무인 운영:</strong> 매일 아침 정해진 시간에 자동으로 작동하며, 별도의 관리 페이지 없이도 안정적인 연재 유지</li>
+  <li><strong>최적화된 포맷팅:</strong> 텔레그램의 마크다운 특성을 활용하여 가독성 높은 모바일 레이아웃 자동 생성</li>
 </ul>
 <ul lang-en>
-  <li><strong>Gems Knowledge:</strong> Generates in-depth drafts based on specific domain knowledge and personas built in Gemini Gems</li>
-  <li><strong>Hybrid Generation:</strong> Claude Haiku refines Gemini's drafts into a reader-friendly tone and manner</li>
-  <li><strong>Fully Automated Scheduling:</strong> Operates at set times on weekday mornings via GitHub Actions with zero manual intervention</li>
-  <li><strong>Real-time Telegram Integration:</strong> Immediately sends generated posts to Telegram channels and triggers admin notifications</li>
+  <li><strong>Gems Context:</strong> Generates expert-level drafts based on extensive data and instructions pre-built in Gemini Gems</li>
+  <li><strong>Dual Persona:</strong> Collaboration between a knowledge expert (Gemini) and a professional writer (Claude) ensures both depth and readability</li>
+  <li><strong>Unattended Operation:</strong> Automatically runs at set times every morning, maintaining stable publication without manual intervention</li>
+  <li><strong>Optimized Formatting:</strong> Automatically generates highly readable mobile layouts using Telegram's Markdown features</li>
 </ul>
 
 <h2>
-  <span lang-ko>아키텍처</span>
-  <span lang-en>Architecture</span>
+  <span lang-ko>작동 구조 및 에이전틱 AI 도입</span>
+  <span lang-en>Operational Structure & Agentic AI Integration</span>
 </h2>
-<div class="diagram-wrap" style="margin: 16px 0 24px; border: 1px solid var(--border); border-radius: 10px; padding: 24px 16px 16px; background: white; overflow: hidden;">
-  <svg width="100%" viewBox="0 0 800 160" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round"/>
-      </marker>
-    </defs>
-    <!-- Nodes -->
-    <rect x="10" y="55" width="130" height="50" rx="8" fill="var(--gray-l)" stroke="var(--border)"/>
-    <text x="75" y="82" text-anchor="middle" font-size="11" font-weight="700" fill="var(--gray)">GitHub Actions</text>
-    <text x="75" y="95" text-anchor="middle" font-size="9" fill="var(--muted)">Cron Trigger (08:30)</text>
+<p lang-ko>GemsWriter는 단순한 텍스트 변환기가 아닌, <strong>'지식 큐레이션 - 초안 작성 - 스타일 변환 - 검증'</strong>의 과정을 거치는 에이전틱 워크플로우를 따릅니다.</p>
+<p lang-en>GemsWriter follows an agentic workflow that proceeds through <strong>'Knowledge Curation - Drafting - Style Transformation - Validation'</strong> rather than being a simple text converter.</p>
 
-    <line x1="140" y1="80" x2="165" y2="80" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow2)"/>
+<h3 lang-ko>1. 에이전트 역할 분담</h3>
+<h3 lang-en>1. Agent Role Distribution</h3>
+<ul lang-ko>
+  <li><strong>Knowledge Agent (Gemini Gems):</strong> 특정 주제(예: AI 트렌드, 경제 지표)에 대해 Gems에 저장된 전문 지식을 바탕으로 핵심 인사이트를 도출합니다.</li>
+  <li><strong>Creative Writer (Claude Haiku):</strong> Gemini가 뽑아낸 '날것의 정보'를 설정된 작가 페르소나(친절한 멘토, 냉철한 분석가 등)의 말투로 재구성합니다.</li>
+  <li><strong>Formatting Agent:</strong> 텔레그램 API 사양에 맞춰 이모지 배치, 강조 구문 적용, 글자수 제한 등을 체크하며 최종 메시지를 완성합니다.</li>
+</ul>
+<ul lang-en>
+  <li><strong>Knowledge Agent (Gemini Gems):</strong> Derives key insights on specific topics (e.g., AI trends, economic indicators) based on expertise stored in Gems.</li>
+  <li><strong>Creative Writer (Claude Haiku):</strong> Reconstructs the 'raw information' from Gemini into the voice of a set author persona (e.g., friendly mentor, cool analyst).</li>
+  <li><strong>Formatting Agent:</strong> Completes the final message by checking emoji placement, bolding syntax, and character limits according to Telegram API specs.</li>
+</ul>
 
-    <rect x="170" y="55" width="140" height="50" rx="8" fill="var(--blue-l)" stroke="var(--blue)" stroke-opacity="0.3"/>
-    <text x="240" y="82" text-anchor="middle" font-size="11" font-weight="700" fill="var(--blue)">Gemini (Gems)</text>
-    <text x="240" y="95" text-anchor="middle" font-size="9" fill="var(--blue)">Knowledge & Draft</text>
+<h3 lang-ko>2. 아키텍처 구조도</span><span lang-en>2. Architecture Diagram</h3>
+<div style="background:var(--slate-l);padding:32px;border-radius:12px;margin-bottom:24px;display:flex;justify-content:center">
+<svg width="600" height="240" viewBox="0 0 600 240" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto">
+  <!-- Nodes -->
+  <rect x="40" y="90" width="100" height="60" rx="8" fill="white" stroke="var(--border)" stroke-width="1.5" />
+  <text x="90" y="120" text-anchor="middle" fill="var(--text)" font-family="JetBrains Mono" font-size="11" font-weight="700">GitHub</text>
+  <text x="90" y="135" text-anchor="middle" fill="var(--muted)" font-family="Noto Sans KR" font-size="9">Actions (Cron)</text>
 
-    <line x1="310" y1="80" x2="335" y2="80" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow2)"/>
+  <rect x="180" y="90" width="120" height="60" rx="8" fill="white" stroke="var(--blue)" stroke-width="1.5" />
+  <text x="240" y="120" text-anchor="middle" fill="var(--blue)" font-family="JetBrains Mono" font-size="11" font-weight="700">Gemini Gems</text>
+  <text x="240" y="135" text-anchor="middle" fill="var(--blue-d)" font-family="Noto Sans KR" font-size="9">Knowledge Agent</text>
 
-    <rect x="340" y="55" width="140" height="50" rx="8" fill="var(--purple-l)" stroke="var(--purple)" stroke-opacity="0.3"/>
-    <text x="410" y="82" text-anchor="middle" font-size="11" font-weight="700" fill="var(--purple)">Claude Haiku</text>
-    <text x="410" y="95" text-anchor="middle" font-size="9" fill="var(--purple-d)">Style & Persona</text>
+  <rect x="340" y="90" width="120" height="60" rx="8" fill="white" stroke="var(--purple)" stroke-width="1.5" />
+  <text x="400" y="120" text-anchor="middle" fill="var(--purple)" font-family="JetBrains Mono" font-size="11" font-weight="700">Claude Haiku</text>
+  <text x="400" y="135" text-anchor="middle" fill="var(--purple-d)" font-family="Noto Sans KR" font-size="9">Creative Writer</text>
 
-    <line x1="480" y1="80" x2="505" y2="80" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow2)"/>
+  <rect x="500" y="90" width="80" height="60" rx="8" fill="var(--teal)" />
+  <text x="540" y="120" text-anchor="middle" fill="white" font-family="JetBrains Mono" font-size="11" font-weight="700">Telegram</text>
+  <text x="540" y="135" text-anchor="middle" fill="var(--teal-l)" font-family="Noto Sans KR" font-size="9">Publishing</text>
 
-    <rect x="510" y="55" width="130" height="50" rx="8" fill="var(--teal-l)" stroke="var(--teal)" stroke-opacity="0.3"/>
-    <text x="575" y="82" text-anchor="middle" font-size="11" font-weight="700" fill="var(--teal)">Telegram Bot</text>
-    <text x="575" y="95" text-anchor="middle" font-size="9" fill="var(--teal-d)">Channel Publishing</text>
+  <!-- Arrows -->
+  <path d="M140 120H180" stroke="var(--border)" stroke-width="2" marker-end="url(#arrow-head)" />
+  <path d="M300 120H340" stroke="var(--blue)" stroke-width="2" marker-end="url(#arrow-head-blue)" />
+  <path d="M460 120H500" stroke="var(--purple)" stroke-width="2" marker-end="url(#arrow-head-purple)" />
 
-    <line x1="640" y1="80" x2="665" y2="80" stroke="var(--border)" stroke-width="1.5" marker-end="url(#arrow2)"/>
-
-    <rect x="670" y="55" width="120" height="50" rx="8" fill="var(--gray-l)" stroke="var(--border)"/>
-    <text x="730" y="82" text-anchor="middle" font-size="11" font-weight="700" fill="var(--gray)">Users</text>
-    <text x="730" y="95" text-anchor="middle" font-size="9" fill="var(--muted)">Mobile/Desktop</text>
-  </svg>
-  <div style="font-size: 11.5px; color: var(--muted); text-align: center; margin-top: 10px; font-style: italic;">
-    <span lang-ko>스케줄링 기반 하이브리드 LLM 콘텐츠 생성 워크플로우</span>
-    <span lang-en>Scheduling-based hybrid LLM content generation workflow</span>
-  </div>
+  <!-- Markers -->
+  <defs>
+    <marker id="arrow-head" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0 0L6 3L0 6Z" fill="var(--border)" />
+    </marker>
+    <marker id="arrow-head-blue" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0 0L6 3L0 6Z" fill="var(--blue)" />
+    </marker>
+    <marker id="arrow-head-purple" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0 0L6 3L0 6Z" fill="var(--purple)" />
+    </marker>
+  </defs>
+</svg>
 </div>
 
 <h2>
-  <span lang-ko>작동 구조 및 AI의 역할</span>
-  <span lang-en>Working Structure & AI's Role</span>
+  <span lang-ko>링크</span>
+  <span lang-en>Links</span>
 </h2>
-<p lang-ko>시스템은 <strong>GitHub Actions 트리거 → Gemini 데이터 추출 → Claude 문장 가공 → 텔레그램 발행</strong>의 파이프라인으로 구성됩니다. 매일 정해진 시간에 서버리스 환경에서 구동되어 유지보수 비용을 최소화합니다.</p>
-<p lang-en>The system consists of a pipeline: <strong>GitHub Actions Trigger → Gemini Data Extraction → Claude Refinement → Telegram Publishing</strong>. It runs in a serverless environment at scheduled times to minimize maintenance costs.</p>
-
-<h3 lang-ko>AI의 역할</h3>
-<h3 lang-en>The Role of AI</h3>
 <ul lang-ko>
-  <li><strong>지식 큐레이션 (Gemini):</strong> Gemini Gems에 학습된 전문 지식을 바탕으로 특정 주제에 대한 핵심 인사이트와 로데이터를 추출합니다.</li>
-  <li><strong>문체 및 페르소나 적용 (Claude):</strong> Gemini가 생성한 초안을 바탕으로, 설정된 작가 페르소나에 맞춰 독창적이고 매끄러운 문장으로 재구성합니다.</li>
-  <li><strong>품질 검수:</strong> 생성된 콘텐츠가 채널의 가이드라인과 길이를 준수하는지 스스로 판단하여 보정합니다.</li>
+  <li><a href="https://t.me/" target="_blank">Live — Telegram 채널 (구독)</a></li>
+  <li><span class="badge local">Private</span> &nbsp; GitHub — Seeuferil/GemsWriter</li>
 </ul>
 <ul lang-en>
-  <li><strong>Knowledge Curation (Gemini):</strong> Extracts key insights and raw data on specific topics based on expertise trained in Gemini Gems.</li>
-  <li><strong>Style & Persona Application (Claude):</strong> Reconstructs Gemini's draft into creative and smooth sentences aligned with the set author persona.</li>
-  <li><strong>Quality Control:</strong> Self-evaluates and adjusts generated content to ensure it follows channel guidelines and length requirements.</li>
+  <li><a href="https://t.me/" target="_blank">Live — Telegram Channel (Subscribe)</a></li>
+  <li><span class="badge local">Private</span> &nbsp; GitHub — Seeuferil/GemsWriter</li>
 </ul>
+
+<div class="doc-footer">
+  <span><a href="https://github.com/n5nsuf" target="_blank">Github info</a> &middot; <a href="/profile.html">Dev Profile</a></span>
+  <span>Tech Guides &amp; Projects &middot; 2026</span>
+</div>
+
+</div>
+
+<script>
+function setLang(lang) {
+  document.body.className = 'lang-' + lang;
+  document.getElementById('btn-ko').classList.toggle('active', lang === 'ko');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  try { localStorage.setItem('guide-lang', lang); } catch {}
+}
+(function() {
+  try { var s = localStorage.getItem('guide-lang'); if (s) setLang(s); } catch {}
+})();
+</script>
+</body>
+</html>
+
 
 <h2>
   <span lang-ko>링크</span>
