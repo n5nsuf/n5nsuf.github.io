@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>증권 분석 — HCB</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f7f4; --surface: #ffffff; --surface-hover: #f2f0eb;
+    --border: #e2dfd6; --border-strong: #c8c4b8;
+    --text: #111111; --muted: #999; --muted-dark: #666;
+    --accent: #2563eb; --accent-soft: #eff4ff;
+    --accent2: #0891b2; --green: #16a34a; --green-soft: #f0fdf4;
+    --amber: #d97706; --amber-soft: #fffbeb;
+    --mono: 'DM Mono', monospace; --sans: 'Syne', sans-serif;
+    --radius: 6px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: var(--mono); font-size: 14px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 840px; margin: 0 auto; padding: 64px 40px 120px; }
+
+  /* Header */
+  .back { font-size: 12px; color: var(--muted-dark); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 40px; }
+  .back:hover { color: var(--accent); }
+  .page-tag { display: inline-block; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); border: 1px solid #bfcffd; padding: 3px 10px; border-radius: 3px; margin-bottom: 20px; }
+  h1 { font-family: var(--sans); font-size: clamp(32px, 5vw, 52px); font-weight: 800; line-height: 1.05; letter-spacing: -.03em; margin-bottom: 16px; }
+  h1 span { color: var(--accent); }
+  .intro { font-size: 13px; color: var(--muted-dark); max-width: 560px; line-height: 1.8; margin-bottom: 56px; }
+
+  /* Section */
+  .section { margin-bottom: 56px; }
+  .section-label { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 24px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+
+  /* Principle cards */
+  .principles { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 600px) { .principles { grid-template-columns: 1fr; } }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+  .card-icon { font-size: 20px; margin-bottom: 10px; }
+  .card-title { font-family: var(--sans); font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .card-desc { font-size: 12px; color: var(--muted-dark); line-height: 1.75; }
+  .card.accent { border-color: #bfcffd; background: var(--accent-soft); }
+  .card.green { border-color: #bbf7d0; background: var(--green-soft); }
+
+  /* Egg model */
+  .egg-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 24px; }
+  .egg-title { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
+  .egg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 400px; margin: 0 auto; }
+  .phase { text-align: center; padding: 10px 8px; border-radius: var(--radius); font-size: 11px; line-height: 1.4; }
+  .phase .code { font-weight: 500; font-size: 13px; display: block; margin-bottom: 2px; }
+  .phase.a1 { background: #dbeafe; color: #1d4ed8; }
+  .phase.a2 { background: #eff6ff; color: #3b82f6; }
+  .phase.a3 { background: #fef3c7; color: #b45309; }
+  .phase.b1 { background: #fce7f3; color: #9d174d; }
+  .phase.b2 { background: #fee2e2; color: #b91c1c; }
+  .phase.b3 { background: #d1fae5; color: #065f46; }
+  .egg-arrow { grid-column: 1 / -1; text-align: center; font-size: 11px; color: var(--muted); margin: 4px 0; }
+  .buy-tag { display: inline-block; background: #dcfce7; color: #166534; font-size: 10px; padding: 2px 7px; border-radius: 3px; margin-left: 6px; }
+
+  /* Combined strategy */
+  .strategy-box { background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 600px) { .strategy-box { grid-template-columns: 1fr; } }
+  .strat-half .strat-label { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .strat-half .strat-title { font-family: var(--sans); font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--accent); }
+  .strat-half ul { list-style: none; font-size: 12px; color: var(--muted-dark); line-height: 2; }
+  .strat-half ul li::before { content: "→ "; color: var(--accent); }
+  .strat-divider { border: none; border-left: 1px dashed var(--border-strong); }
+
+  /* Archive */
+  .year-item { border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 8px; overflow: hidden; }
+  .year-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; background: var(--surface); user-select: none; transition: background .15s; }
+  .year-header:hover { background: var(--surface-hover); }
+  .year-label { font-family: var(--sans); font-weight: 700; font-size: 15px; }
+  .year-count { font-size: 11px; color: var(--muted); }
+  .year-chevron { font-size: 11px; color: var(--muted); transition: transform .2s; }
+  .year-item.open .year-chevron { transform: rotate(180deg); }
+  .month-grid { display: none; padding: 12px 18px 16px; border-top: 1px solid var(--border); background: var(--surface); grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .year-item.open .month-grid { display: grid; }
+  @media (max-width: 500px) { .month-grid { grid-template-columns: repeat(3, 1fr); } }
+  .month-btn { padding: 8px 10px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg); font-family: var(--mono); font-size: 12px; cursor: pointer; text-align: center; color: var(--muted-dark); transition: all .15s; text-decoration: none; display: block; }
+  .month-btn:hover, .month-btn.has-data { background: var(--accent-soft); color: var(--accent); border-color: #bfcffd; }
+  .month-btn.empty { opacity: .4; pointer-events: none; }
+  .archive-empty { font-size: 13px; color: var(--muted); padding: 24px 0; text-align: center; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back" href="../">← Portfolio</a>
+
+  <div class="page-tag">Stock Analysis</div>
+  <h1>증권 분석<span>.</span></h1>
+  <p class="intro">
+    코스탈라니의 시장 심리 사이클과 워렌 버핏의 가치투자 원칙을 결합한 장기 투자 전략.<br>
+    버핏이 <em>무엇을</em> 살지 결정하고, 코스탈라니가 <em>언제</em> 살지 결정한다.<br>
+    매일 아침 AI가 분석한 최우선 후보 리포트를 기록합니다.
+  </p>
+
+  <!-- Kostolany -->
+  <div class="section">
+    <div class="section-label">André Kostolany — 코스탈라니 원칙</div>
+
+    <div class="egg-wrap">
+      <div class="egg-title">달걀 모델 (Egg Model) — 시장 심리 6단계</div>
+      <div class="egg">
+        <div class="phase a1"><span class="code">A1</span>매집<span class="buy-tag">BUY</span></div>
+        <div class="phase a2"><span class="code">A2</span>상승</div>
+        <div class="phase a3"><span class="code">A3</span>광기</div>
+        <div class="phase b1"><span class="code">B1</span>이탈</div>
+        <div class="phase b2"><span class="code">B2</span>하락</div>
+        <div class="phase b3"><span class="code">B3</span>투항<span class="buy-tag">BUY</span></div>
+      </div>
+      <div class="egg-arrow">↑ A1·B3 구간에서만 매수 — 공포가 극대일 때 탐욕스러워라</div>
+    </div>
+
+    <div class="principles">
+      <div class="card">
+        <div class="card-icon">💰</div>
+        <div class="card-title">돈의 흐름이 전부다</div>
+        <div class="card-desc">금리 하락 → 채권 매력 감소 → 자금이 주식으로 이동. CD 91일 금리 방향이 매수 환경을 결정한다.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">😴</div>
+        <div class="card-title">주식 사고 수면제 먹어라</div>
+        <div class="card-desc">단기 노이즈에 반응하지 말 것. B3 투항 국면에서 매수한 뒤, 다음 사이클까지 기다리는 것이 전략이다.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🐕</div>
+        <div class="card-title">주인과 개 비유</div>
+        <div class="card-desc">주가(개)는 내재가치(주인) 주변을 앞뒤로 달린다. 결국 주인 곁으로 돌아온다 — 내재가치 회귀 원칙.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <div class="card-title">소신파 vs 대중</div>
+        <div class="card-desc">외국인·기관의 순매도 + 거래량 폭발 = B3 진입 신호. 대중이 던질 때 소신파가 줍는다.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buffett -->
+  <div class="section">
+    <div class="section-label">Warren Buffett — 버핏 원칙</div>
+    <div class="principles">
+      <div class="card green">
+        <div class="card-icon">🏰</div>
+        <div class="card-title">경제적 해자 (Moat)</div>
+        <div class="card-desc">ROE 3년 평균 &gt; 15% + 낮은 부채 = 진짜 해자. 단일 연도 ROE는 자사주 매입 등으로 왜곡 가능.</div>
+      </div>
+      <div class="card green">
+        <div class="card-icon">🛡️</div>
+        <div class="card-title">안전 마진 (MoS)</div>
+        <div class="card-desc">그레이엄 내재가치 대비 20%+ 할인. 틀려도 살아남는 여유. MoS가 없으면 아무리 좋은 기업도 패스.</div>
+      </div>
+      <div class="card green">
+        <div class="card-icon">📈</div>
+        <div class="card-title">성장 일관성</div>
+        <div class="card-desc">3년 매출 CAGR ≥ 5% + ROE 변동성(σ/μ) 낮을수록 해자 강함. 일관성이 단순 수치보다 중요하다.</div>
+      </div>
+      <div class="card green">
+        <div class="card-icon">💵</div>
+        <div class="card-title">FCF 양수</div>
+        <div class="card-desc">영업현금흐름 - CAPEX &gt; 0. 회계 이익이 아닌 실질 현금을 창출하는 기업만 포트폴리오에 포함.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Combined Strategy -->
+  <div class="section">
+    <div class="section-label">통합 전략 — Buffett × Kostolany</div>
+    <div class="strategy-box">
+      <div class="strat-half">
+        <div class="strat-label">버핏 = WHAT</div>
+        <div class="strat-title">무엇을 살지</div>
+        <ul>
+          <li>ROE 3년 평균 &gt; 12%</li>
+          <li>순이익률 &gt; 10%</li>
+          <li>안전 마진 &gt; 20%</li>
+          <li>부채비율 &lt; 100%</li>
+          <li>매출 CAGR &gt; 5%</li>
+          <li>FCF 양수</li>
+        </ul>
+      </div>
+      <div class="strat-divider"></div>
+      <div class="strat-half">
+        <div class="strat-label">코스탈라니 = WHEN</div>
+        <div class="strat-title">언제 살지</div>
+        <ul>
+          <li>KOSPI Phase: A1 or B3</li>
+          <li>A3 광기 국면 매수 차단</li>
+          <li>금리 상승 시 B3만 허용</li>
+          <li>투항 매도 시 즉시 평가</li>
+          <li>포지션 최대 5개 유지</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Archive -->
+  <div class="section">
+    <div class="section-label">일일 분석 리포트 — Daily Reports</div>
+    <div id="archive">
+      <div class="archive-empty">리포트 로딩 중...</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const BASE = location.pathname.replace(/\/index\.html$/, '').replace(/\/$/, '');
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+async function load() {
+  let data = [];
+  try {
+    const r = await fetch(BASE + '/manifest.json');
+    data = await r.json();
+  } catch(e) {}
+
+  const el = document.getElementById('archive');
+  if (!data.length) {
+    el.innerHTML = '<div class="archive-empty">아직 리포트가 없습니다.</div>';
+    return;
+  }
+
+  // Group by year → month
+  const byYear = {};
+  data.forEach(d => {
+    const [y, m] = d.date.split('-');
+    if (!byYear[y]) byYear[y] = {};
+    if (!byYear[y][m]) byYear[y][m] = [];
+    byYear[y][m].push(d);
+  });
+
+  const years = Object.keys(byYear).sort((a,b) => b - a);
+  el.innerHTML = years.map((yr, i) => {
+    const total = Object.values(byYear[yr]).reduce((s,a) => s + a.length, 0);
+    const months = Array.from({length:12}, (_,i) => {
+      const mm = String(i+1).padStart(2,'0');
+      const has = byYear[yr][mm];
+      const cls = has ? 'month-btn has-data' : 'month-btn empty';
+      const href = has ? `calendar.html?year=${yr}&month=${mm}` : '#';
+      return `<a class="${cls}" href="${href}">${MONTHS[i]}<br><span style="font-size:10px;color:var(--muted)">${has ? has.length+'건' : '—'}</span></a>`;
+    }).join('');
+    return `
+      <div class="year-item${i===0?' open':''}">
+        <div class="year-header" onclick="toggle(this)">
+          <span class="year-label">${yr}</span>
+          <span style="display:flex;align-items:center;gap:12px">
+            <span class="year-count">${total}건</span>
+            <span class="year-chevron">▼</span>
+          </span>
+        </div>
+        <div class="month-grid">${months}</div>
+      </div>`;
+  }).join('');
+}
+
+function toggle(h) {
+  h.closest('.year-item').classList.toggle('open');
+}
+
+load();
+</script>
+</body>
+</html>
