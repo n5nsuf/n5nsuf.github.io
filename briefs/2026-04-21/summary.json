@@ -1,0 +1,47 @@
+{
+  "version": "5.9",
+  "run_at_kst": "2026. 4. 21. AM 9:04:06",
+  "llm_used": "Gemini",
+  "dry_run": false,
+  "topics": [
+    {
+      "query": "자격증",
+      "category": "일반"
+    },
+    {
+      "query": "유영하",
+      "category": "일반"
+    },
+    {
+      "query": "엄지인",
+      "category": "금융"
+    },
+    {
+      "query": "무릎",
+      "category": "금융"
+    },
+    {
+      "query": "상급종합병원",
+      "category": "금융"
+    }
+  ],
+  "article_titles": [
+    "[일반] 자격증, 스펙을 넘어 '증명'의 시대로",
+    "[일반] 유영하, '보수적 입지' 강화하는 정치적 인물",
+    "[금융] 엄지인, '신뢰' 기반 아나운서의 새로운 투자 멘토링",
+    "[금융] 무릎, '건강 투자'의 핵심… 고령화 사회의 새로운 성장 동력",
+    "[금융] 상급종합병원, '지역 의료 허브'로서의 역할 재정립"
+  ],
+  "article_lengths": [
+    756,
+    686,
+    677,
+    723,
+    760
+  ],
+  "brief_file": "/home/runner/work/GemsWriter/GemsWriter/output/brief-2026-04-21.html",
+  "brief_url": "https://n5nsuf.github.io/briefs/2026-04-21.html",
+  "brief_date": "2026-04-21",
+  "api_calls_llm": 1,
+  "duration_sec": "20.9"
+}
