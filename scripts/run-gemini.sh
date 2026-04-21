@@ -14,9 +14,9 @@ if [[ ! -f "$PROMPT_FILE" ]]; then
   exit 1
 fi
 
-# Restrict to /tmp to prevent path traversal
+# Restrict to /tmp to prevent path traversal (macOS: /tmp → /private/tmp)
 REAL_PATH=$(realpath "$PROMPT_FILE")
-if [[ "$REAL_PATH" != /tmp/* ]]; then
+if [[ "$REAL_PATH" != /tmp/* && "$REAL_PATH" != /private/tmp/* ]]; then
   echo "prompt file must be under /tmp — got: $REAL_PATH" >&2
   exit 1
 fi
