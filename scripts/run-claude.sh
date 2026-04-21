@@ -12,6 +12,13 @@ if [[ ! -f "$PROMPT_FILE" ]]; then
   exit 1
 fi
 
+# Restrict to /tmp to prevent path traversal
+REAL_PATH=$(realpath "$PROMPT_FILE")
+if [[ "$REAL_PATH" != /tmp/* ]]; then
+  echo "prompt file must be under /tmp — got: $REAL_PATH" >&2
+  exit 1
+fi
+
 USER_PROMPT=$(cat "$PROMPT_FILE")
 
 # System context — Claude reads STYLE_GUIDE.md via its tools; we just remind it.

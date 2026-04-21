@@ -14,6 +14,13 @@ if [[ ! -f "$PROMPT_FILE" ]]; then
   exit 1
 fi
 
+# Restrict to /tmp to prevent path traversal
+REAL_PATH=$(realpath "$PROMPT_FILE")
+if [[ "$REAL_PATH" != /tmp/* ]]; then
+  echo "prompt file must be under /tmp — got: $REAL_PATH" >&2
+  exit 1
+fi
+
 if [[ -z "${GEMINI_API_KEY:-}" ]]; then
   echo "GEMINI_API_KEY is not set" >&2
   exit 1

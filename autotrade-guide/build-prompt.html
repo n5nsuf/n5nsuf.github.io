@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
 <title>AutoTrade Build Prompt Guide</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -281,7 +284,9 @@ python-dotenv
 .env 예시:
 APP_KEY=여기에_입력
 APP_SECRET=여기에_입력
-ACCOUNT_NO=여기에_입력</pre></div>
+ACCOUNT_NO=여기에_입력
+
+⚠️ 주의: .env 파일은 절대 git에 커밋하지 마세요. .gitignore에 .env를 반드시 추가하세요.</pre></div>
 
 <div class="prompt-block" lang-en><pre>Create a Python automated trading bot project.
 
@@ -331,7 +336,9 @@ python-dotenv
 .env example:
 APP_KEY=enter_here
 APP_SECRET=enter_here
-ACCOUNT_NO=enter_here</pre></div>
+ACCOUNT_NO=enter_here
+
+⚠️ Warning: Never commit .env to git. Add .env to .gitignore.</pre></div>
 
 <div class="check-box" lang-ko><code>python main.py</code> 실행 &rarr; 삼성전자 현재가 + 잔고 출력되면 성공</div>
 <div class="check-box" lang-en>Run <code>python main.py</code> &rarr; Success if Samsung Electronics price + balance is printed</div>

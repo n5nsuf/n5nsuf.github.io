@@ -83,17 +83,18 @@ jobs:
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           STATUS_FINAL: ${{ job.status }}
           CALLBACK_SECRET: ${{ secrets.CALLBACK_SECRET }}
+          CALLBACK_URL: ${{ secrets.CALLBACK_URL }}
         run: |
-          if [ -z "$CALLBACK_SECRET" ]; then
-            echo "CALLBACK_SECRET not set — skipping notify"
+          if [ -z "$CALLBACK_SECRET" ] || [ -z "$CALLBACK_URL" ]; then
+            echo "CALLBACK_SECRET or CALLBACK_URL not set — skipping notify"
             exit 0
           fi
           STATUS="success"
           if [ "$STATUS_FINAL" != "success" ]; then STATUS="failed"; fi
-          curl -sS -X POST https://devprofile-admin.vercel.app/api/callback \
+          curl -fsSL -X POST "$CALLBACK_URL" \
             -H "Authorization: Bearer $CALLBACK_SECRET" \
             -H "Content-Type: application/json" \
-            --data-binary @- <<EOF || echo "callback failed (non-fatal)"
+            --data-binary @- <<EOF
           {
             "job_id": "$JOB_ID",
             "status": "$STATUS",
@@ -101,7 +102,7 @@ jobs:
             "new_pages": "$NEW_PAGES",
             "workflow_url": "$RUN_URL"
           }
-          EOF
+          EOF || echo "callback failed — check CALLBACK_URL/CALLBACK_SECRET secrets"
 
       - name: Cleanup
         if: always()
