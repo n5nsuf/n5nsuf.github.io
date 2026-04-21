@@ -82,18 +82,12 @@ jobs:
           fi
           STATUS="success"
           if [ "$STATUS_FINAL" != "success" ]; then STATUS="failed"; fi
+          PAYLOAD=$(printf '{"job_id":"%s","status":"%s","commit_sha":"%s","new_pages":"%s","workflow_url":"%s"}' \
+            "$JOB_ID" "$STATUS" "$COMMIT_SHA" "$NEW_PAGES" "$RUN_URL")
           curl -fsSL -X POST "$CALLBACK_URL" \
             -H "Authorization: Bearer $CALLBACK_SECRET" \
             -H "Content-Type: application/json" \
-            --data-binary @- <<EOF
-          {
-            "job_id": "$JOB_ID",
-            "status": "$STATUS",
-            "commit_sha": "$COMMIT_SHA",
-            "new_pages": "$NEW_PAGES",
-            "workflow_url": "$RUN_URL"
-          }
-          EOF || echo "callback failed — check CALLBACK_URL/CALLBACK_SECRET secrets"
+            -d "$PAYLOAD" || echo "callback failed — check CALLBACK_URL/CALLBACK_SECRET secrets"
 
       - name: Cleanup
         if: always()
