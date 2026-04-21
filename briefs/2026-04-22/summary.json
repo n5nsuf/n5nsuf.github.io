@@ -1,0 +1,47 @@
+{
+  "version": "5.9",
+  "run_at_kst": "2026. 4. 22. AM 8:58:53",
+  "llm_used": "Gemini",
+  "dry_run": false,
+  "topics": [
+    {
+      "query": "5 월 4 일 임시 공휴일",
+      "category": "일반"
+    },
+    {
+      "query": "송승현",
+      "category": "일반"
+    },
+    {
+      "query": "낮잠",
+      "category": "금융"
+    },
+    {
+      "query": "배기성",
+      "category": "금융"
+    },
+    {
+      "query": "암",
+      "category": "금융"
+    }
+  ],
+  "article_titles": [
+    "[일반] 5월 4일 임시 공휴일, 엇갈린 기대감 속 최종 무산",
+    "[일반] FT아일랜드 송승현, 연예계 은퇴 후 '아빠'로 새 출발",
+    "[금융] 낮잠의 명암: 건강과 사망 위험 사이의 미묘한 균형",
+    "[금융] 가수 배기성, 2세 준비 중 '돌발성 난청' 진단…건강 적신호",
+    "[금융] 암, '암적 존재'라는 비유 너머, 질병의 실체와 예방"
+  ],
+  "article_lengths": [
+    560,
+    547,
+    613,
+    621,
+    628
+  ],
+  "brief_file": "/home/runner/work/GemsWriter/GemsWriter/output/brief-2026-04-21.html",
+  "brief_url": "https://n5nsuf.github.io/briefs/2026-04-21.html",
+  "brief_date": "2026-04-21",
+  "api_calls_llm": 1,
+  "duration_sec": "16.8"
+}
