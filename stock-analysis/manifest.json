@@ -7,5 +7,29 @@
     "kospi_phase": "A2",
     "summary": "더블유게임즈의 ROE 3년 평균은 16.21%로 안정적인 수준이며, 일관성 지표인 σ/μ는 0.213으로 비교적 안정적인 수준을 유지하고 있습니",
     "file": "reports/2026-04-23-192080.html"
+  },
+  {
+    "date": "2026-04-23",
+    "symbol": "HBAN",
+    "name": "HBAN",
+    "market": "US",
+    "exchange": "NASD",
+    "moat": "fin",
+    "buffett_score": 55.1,
+    "buffett_delta": -4.9,
+    "summary": "NASD:HBAN · moat=fin · buffett=55.1 · 미달 -4.9",
+    "file": "reports/2026-04-23-HBAN.html"
+  },
+  {
+    "date": "2026-04-23",
+    "symbol": "KHC",
+    "name": "KHC",
+    "market": "US",
+    "exchange": "NASD",
+    "moat": "brand",
+    "buffett_score": 72.4,
+    "buffett_delta": 12.4,
+    "summary": "NASD:KHC · moat=brand · buffett=72.4 · 합격 +12.4",
+    "file": "reports/2026-04-23-KHC.html"
   }
 ]
