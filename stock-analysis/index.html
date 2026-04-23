@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-<title>증권 분석 — Kostolany × Buffett</title>
+<title>US Equity · Buffett Daily</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
   :root {
@@ -25,10 +25,10 @@
   .page{max-width:860px;margin:0 auto;padding:48px 56px;background:white}
   .nav-bar{position:sticky;top:0;z-index:100;background:rgba(250,250,248,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;justify-content:space-between;align-items:center}
   .nav-home{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;padding:4px 14px;border-radius:20px;border:1px solid var(--border);transition:all .15s}
-  .nav-home:hover{background:var(--purple-l);border-color:var(--purple);color:var(--purple)}
+  .nav-home:hover{background:var(--teal-l);border-color:var(--teal);color:var(--teal)}
   .nav-lang{display:flex;gap:6px}
   .lang-btn{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 14px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--muted);cursor:pointer;transition:all .15s}
-  .lang-btn.active{background:var(--purple);color:white;border-color:var(--purple)}
+  .lang-btn.active{background:var(--teal);color:white;border-color:var(--teal)}
   [lang-ko],[lang-en]{display:none}
   body.lang-ko [lang-ko]{display:revert}
   body.lang-en [lang-en]{display:revert}
@@ -38,6 +38,8 @@
   .doc-header .subtitle{font-size:15px;color:var(--muted);margin-top:6px}
   .doc-header .meta{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:12px;flex-wrap:wrap}
   .meta-tag{background:var(--teal-l);color:var(--teal);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500}
+  .meta-tag.amber{background:var(--amber-l);color:var(--amber)}
+  .meta-tag.blue{background:var(--blue-l);color:var(--blue)}
 
   h2{font-size:17px;font-weight:700;color:var(--teal);padding:6px 0 6px 12px;border-left:3px solid var(--teal);margin-bottom:16px;margin-top:42px}
   h3{font-size:14px;font-weight:700;color:var(--gray);margin:20px 0 10px}
@@ -51,30 +53,19 @@
   .callout .icon{font-size:16px;flex-shrink:0;margin-top:1px}
   .callout p{margin:0;color:var(--gray)}
 
-  /* Principle cards */
+  /* Principle / sector cards */
   .prin-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
   .prin-card{border-radius:10px;padding:16px;border:1px solid var(--border);background:white}
   .prin-card.teal{background:var(--teal-l);border-color:rgba(15,110,86,.2)}
   .prin-card.blue{background:var(--blue-l);border-color:rgba(24,95,165,.2)}
+  .prin-card.amber{background:var(--amber-l);border-color:rgba(186,117,23,.25)}
+  .prin-card.slate{background:var(--slate-l);border-color:rgba(100,116,139,.25)}
   .prin-card .prin-icon{font-size:20px;margin-bottom:6px}
   .prin-card .prin-title{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--gray)}
   .prin-card .prin-desc{font-size:12px;color:var(--muted);line-height:1.65}
+  .prin-card .prin-code{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);margin-top:6px}
 
-  /* Egg model */
-  .egg-wrap{background:white;border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:16px}
-  .egg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:420px;margin:0 auto 12px}
-  .phase{text-align:center;padding:10px 8px;border-radius:8px;font-size:11px;line-height:1.4;font-family:'JetBrains Mono',monospace}
-  .phase .code{font-weight:700;font-size:13px;display:block;margin-bottom:2px}
-  .phase.a1{background:#DBEAFE;color:#1D4ED8}
-  .phase.a2{background:#EFF6FF;color:#3B82F6}
-  .phase.a3{background:#FEF3C7;color:#B45309}
-  .phase.b1{background:#FCE7F3;color:#9D174D}
-  .phase.b2{background:#FEE2E2;color:#B91C1C}
-  .phase.b3{background:var(--teal-l);color:var(--teal)}
-  .buy-badge{display:inline-block;background:#D1FAE5;color:#065F46;font-size:9px;font-family:'JetBrains Mono',monospace;padding:1px 5px;border-radius:3px;margin-left:4px;vertical-align:middle}
-  .egg-note{font-size:12px;color:var(--muted);text-align:center;padding-top:8px;border-top:1px solid var(--border)}
-
-  /* Combined strategy table */
+  /* Thresholds table */
   table{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px}
   thead tr{background:var(--teal)}
   thead th{color:white;font-weight:600;padding:8px 12px;text-align:left;font-size:12px}
@@ -99,15 +90,28 @@
   .month-btn.empty{opacity:.35;pointer-events:none}
   .archive-empty{font-size:13px;color:var(--muted);padding:32px 0;text-align:center}
 
+  /* Today's top-of-sector list */
+  .sector-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;background:white;text-decoration:none;color:inherit;transition:background .15s}
+  .sector-row:hover{background:var(--teal-l);border-color:rgba(15,110,86,.35)}
+  .sector-row .label{display:flex;gap:10px;align-items:baseline}
+  .sector-row .sector-tag{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;border-radius:10px;background:var(--slate-l);color:var(--slate)}
+  .sector-row .sym{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--teal);font-size:14px}
+  .sector-row .score{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .sector-row .delta{font-family:'JetBrains Mono',monospace;font-size:11px;padding:2px 8px;border-radius:10px;margin-left:8px}
+  .sector-row .delta.pass{background:var(--teal-l);color:var(--teal)}
+  .sector-row .delta.fail{background:var(--amber-l);color:var(--amber)}
+  #today-empty{font-size:13px;color:var(--muted);text-align:center;padding:16px 0}
+
   .doc-footer{border-top:1px solid var(--border);margin-top:48px;padding-top:16px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
   .doc-footer a{color:var(--teal);text-decoration:none}
   .doc-footer a:hover{text-decoration:underline}
 
   @media(max-width:640px){
     .page{padding:20px 16px 48px}.doc-header h1{font-size:21px}h2{font-size:15px;margin-top:32px}
-    .prin-grid{grid-template-columns:1fr}.egg{max-width:100%}
+    .prin-grid{grid-template-columns:1fr}
     .month-grid{grid-template-columns:repeat(3,1fr)}
     .doc-footer{flex-direction:column;gap:6px}
+    .sector-row{flex-wrap:wrap;gap:6px}
   }
   @media print{
     body{background:white}.page{padding:20px 28px;max-width:100%}.nav-bar{display:none}
@@ -129,141 +133,100 @@
 <div class="page">
 
 <div class="doc-header">
-  <h1 lang-ko>증권 분석</h1>
-  <h1 lang-en>Stock Analysis</h1>
-  <div class="subtitle" lang-ko>코스탈라니 시장 사이클 × 워렌 버핏 가치투자 — AI 일별 장기 후보 분석</div>
-  <div class="subtitle" lang-en>Kostolany market cycle × Warren Buffett value investing — AI-powered daily long-term candidate analysis</div>
+  <h1>US Equity · Buffett Daily</h1>
+  <div class="subtitle" lang-ko>미국 주식 · 섹터별 버핏 품질 스크리닝 — 매일 장마감 후 섹터 top 1 기록</div>
+  <div class="subtitle" lang-en>US equities · sector-aware Buffett quality screening — daily top-of-sector report after US close</div>
   <div class="meta">
-    <span class="meta-tag" lang-ko>장기투자</span>
-    <span class="meta-tag" lang-en>Long-Term</span>
-    <span class="meta-tag">AutoTrade Bot</span>
+    <span class="meta-tag">US Market</span>
+    <span class="meta-tag blue">NASD · NYSE</span>
+    <span class="meta-tag amber">AutoTrade Bot · 47371630</span>
   </div>
 </div>
 
 <div class="callout ok">
   <span class="icon">📌</span>
-  <p lang-ko>버핏이 <strong>무엇을</strong> 살지 결정하고, 코스탈라니가 <strong>언제</strong> 살지 결정한다. 매일 아침 봇이 선정한 최우선 후보 리포트를 기록합니다.</p>
-  <p lang-en>Buffett decides <strong>what</strong> to buy; Kostolany decides <strong>when</strong>. Each morning the bot logs a deep-dive report on the top candidate.</p>
+  <p lang-ko>섹터별 구조가 다른 기업을 같은 필터로 재단하면 왜곡된다. 본 리포트는 <strong>brand · financial · industrial · etf</strong> 4개 버킷으로 분리해 각각의 버핏 품질선을 적용합니다. 매일 US 장마감 직후(KST 06:00) 섹터별 top 1 종목 4건을 자동 게시합니다.</p>
+  <p lang-en>Applying a single Buffett filter across sectors distorts the verdict. This page separates candidates into four buckets — <strong>brand · financial · industrial · etf</strong> — each with its own quality bar. Every trading day after US close (06:00 KST) the bot publishes top-of-sector picks.</p>
 </div>
 
-<h2 lang-ko>코스탈라니 — 시장 심리 사이클</h2>
-<h2 lang-en>Kostolany — Market Psychology Cycle</h2>
+<h2 lang-ko>오늘의 섹터별 Top 1</h2>
+<h2 lang-en>Today's Top of Sector</h2>
 
-<p lang-ko>André Kostolany는 시장을 심리적 사이클로 설명했다. 내재가치와 주가의 괴리는 반드시 수렴한다.</p>
-<p lang-en>André Kostolany described markets as a psychological cycle. Divergence between intrinsic value and price always converges.</p>
-
-<div class="egg-wrap">
-  <div class="egg">
-    <div class="phase a1"><span class="code">A1</span><span lang-ko>매집</span><span lang-en>Accumulation</span><span class="buy-badge">BUY</span></div>
-    <div class="phase a2"><span class="code">A2</span><span lang-ko>상승</span><span lang-en>Rise</span></div>
-    <div class="phase a3"><span class="code">A3</span><span lang-ko>광기</span><span lang-en>Euphoria</span></div>
-    <div class="phase b1"><span class="code">B1</span><span lang-ko>이탈</span><span lang-en>Reversal</span></div>
-    <div class="phase b2"><span class="code">B2</span><span lang-ko>하락</span><span lang-en>Decline</span></div>
-    <div class="phase b3"><span class="code">B3</span><span lang-ko>투항</span><span lang-en>Capitulation</span><span class="buy-badge">BUY</span></div>
-  </div>
-  <div class="egg-note" lang-ko>A1 · B3 구간에서만 매수 — 공포가 극대일 때 탐욕스러워라</div>
-  <div class="egg-note" lang-en>Buy only in A1 · B3 — be greedy when fear is at its peak</div>
+<div id="today">
+  <div id="today-empty" lang-ko>오늘 아직 게시된 리포트가 없습니다. / 평일 06:00 KST 게시.</div>
+  <div id="today-empty" lang-en>No reports published today yet. Next post at 06:00 KST on trading days.</div>
 </div>
 
-<div class="prin-grid">
-  <div class="prin-card blue">
-    <div class="prin-icon">💰</div>
-    <div class="prin-title" lang-ko>돈의 흐름이 전부다</div>
-    <div class="prin-title" lang-en>Money Flow Is Everything</div>
-    <div class="prin-desc" lang-ko>금리 하락 → 채권 매력 감소 → 자금이 주식으로 이동. CD 91일 금리 방향이 매수 환경을 결정한다.</div>
-    <div class="prin-desc" lang-en>Rate cuts → bonds lose appeal → money flows to equities. The direction of the 91-day CD rate determines the buying environment.</div>
-  </div>
-  <div class="prin-card blue">
-    <div class="prin-icon">😴</div>
-    <div class="prin-title" lang-ko>주식 사고 수면제 먹어라</div>
-    <div class="prin-title" lang-en>Buy and Take a Sleeping Pill</div>
-    <div class="prin-desc" lang-ko>단기 노이즈에 반응하지 말 것. B3 투항 국면에서 매수한 뒤 다음 사이클까지 기다리는 것이 전략이다.</div>
-    <div class="prin-desc" lang-en>Don't react to short-term noise. Buy at B3 capitulation, then wait for the next cycle.</div>
-  </div>
-  <div class="prin-card blue">
-    <div class="prin-icon">🐕</div>
-    <div class="prin-title" lang-ko>주인과 개 비유</div>
-    <div class="prin-title" lang-en>Owner and Dog Analogy</div>
-    <div class="prin-desc" lang-ko>주가(개)는 내재가치(주인) 주변을 앞뒤로 달린다. 결국 주인 곁으로 돌아온다 — 내재가치 회귀 원칙.</div>
-    <div class="prin-desc" lang-en>Price (the dog) runs ahead and behind intrinsic value (the owner). It always returns — mean reversion to intrinsic value.</div>
-  </div>
-  <div class="prin-card blue">
-    <div class="prin-icon">🎯</div>
-    <div class="prin-title" lang-ko>소신파 vs 대중</div>
-    <div class="prin-title" lang-en>Stubborn vs Crowd</div>
-    <div class="prin-desc" lang-ko>외국인·기관 순매도 + 거래량 폭발 = B3 진입 신호. 대중이 던질 때 소신파가 줍는다.</div>
-    <div class="prin-desc" lang-en>Foreign/institutional selling + volume spike = B3 entry signal. The stubborn buy when the crowd sells.</div>
-  </div>
-</div>
+<h2 lang-ko>섹터 프로파일 — Buffett 품질선</h2>
+<h2 lang-en>Sector Profiles — Buffett Quality Bar</h2>
 
-<h2 lang-ko>워렌 버핏 — 가치투자 원칙</h2>
-<h2 lang-en>Warren Buffett — Value Investing Principles</h2>
-
-<p lang-ko>버핏의 핵심은 훌륭한 기업을 합리적 가격에 사는 것이다. 재무 품질이 기준치 이하면 타이밍과 무관하게 제외된다.</p>
-<p lang-en>Buffett's core idea is buying wonderful companies at a fair price. Any company below financial quality thresholds is excluded regardless of timing.</p>
+<p lang-ko>각 섹터는 고유의 PE/PB 구조와 ROE 기저를 갖는다. 브랜드 기업의 PE 35와 산업재의 PE 35는 의미가 완전히 다르다.</p>
+<p lang-en>Each sector has distinct PE/PB structure and ROE baseline. A PE of 35 for a brand is not the same as 35 for an industrial.</p>
 
 <div class="prin-grid">
   <div class="prin-card teal">
-    <div class="prin-icon">🏰</div>
-    <div class="prin-title" lang-ko>경제적 해자 (Moat)</div>
-    <div class="prin-title" lang-en>Economic Moat</div>
-    <div class="prin-desc" lang-ko>ROE 3년 평균 &gt; 12% + 낮은 변동성. 단일 연도 ROE는 자사주 매입 등으로 왜곡 가능하므로 3년 일관성을 본다.</div>
-    <div class="prin-desc" lang-en>3-year avg ROE &gt; 12% + low volatility. Single-year ROE can be distorted by buybacks; look for 3-year consistency.</div>
+    <div class="prin-icon">🏷️</div>
+    <div class="prin-title" lang-ko>Brand — Asset-light 소비재</div>
+    <div class="prin-title" lang-en>Brand — Asset-light consumer</div>
+    <div class="prin-desc" lang-ko>무형자산(브랜드 파워)이 해자. 낮은 CAPEX, 높은 ROE 유지 가능. 밸류에이션 프리미엄 허용.</div>
+    <div class="prin-desc" lang-en>Moat lives in intangible brand equity. Low CAPEX allows sustained high ROE. Valuation premium accepted.</div>
+    <div class="prin-code">PE ≤ 35 · PB ≤ 15 · ROE ≥ 15%</div>
   </div>
-  <div class="prin-card teal">
-    <div class="prin-icon">🛡️</div>
-    <div class="prin-title" lang-ko>안전 마진 (MoS)</div>
-    <div class="prin-title" lang-en>Margin of Safety</div>
-    <div class="prin-desc" lang-ko>그레이엄 내재가치 대비 20%+ 할인. 틀려도 살아남는 여유. MoS가 없으면 아무리 좋은 기업도 패스.</div>
-    <div class="prin-desc" lang-en>20%+ discount to Graham intrinsic value. Survive even when wrong. No MoS = no buy, regardless of quality.</div>
+  <div class="prin-card blue">
+    <div class="prin-icon">🏦</div>
+    <div class="prin-title" lang-ko>Financial — 은행·보험</div>
+    <div class="prin-title" lang-en>Financial — Banks · insurers</div>
+    <div class="prin-desc" lang-ko>자본집약. 책가치(PB) 기준 저평가 + ROE가 핵심. 낮은 PE가 가치의 증거가 아니라 베이스라인.</div>
+    <div class="prin-desc" lang-en>Capital intensive. Book value (PB) discount + ROE matter. Low PE is baseline, not a value signal.</div>
+    <div class="prin-code">PE ≤ 12 · PB ≤ 1.5 · ROE ≥ 10%</div>
   </div>
-  <div class="prin-card teal">
-    <div class="prin-icon">📈</div>
-    <div class="prin-title" lang-ko>성장 일관성</div>
-    <div class="prin-title" lang-en>Growth Consistency</div>
-    <div class="prin-desc" lang-ko>3년 매출 CAGR ≥ 5% + ROE 변동성(σ/μ) 낮을수록 해자 강함. 일관성이 단순 수치보다 중요하다.</div>
-    <div class="prin-desc" lang-en>3-year revenue CAGR ≥ 5% + low ROE volatility (σ/μ) signals a strong moat. Consistency beats raw numbers.</div>
+  <div class="prin-card amber">
+    <div class="prin-icon">🏭</div>
+    <div class="prin-title" lang-ko>Industrial — 제조·에너지·통신</div>
+    <div class="prin-title" lang-en>Industrial — Manufacturing · energy · telecom</div>
+    <div class="prin-desc" lang-ko>CAPEX 부담 → ROE 베이스라인 낮음. 사이클 영향 큰 대신 낮은 밸류에이션이 정상.</div>
+    <div class="prin-desc" lang-en>CAPEX burden caps ROE. Cyclical, so lower valuation is the norm, not a deal.</div>
+    <div class="prin-code">PE ≤ 20 · PB ≤ 3 · ROE ≥ 8%</div>
   </div>
-  <div class="prin-card teal">
-    <div class="prin-icon">💵</div>
-    <div class="prin-title" lang-ko>잉여현금흐름 (FCF)</div>
-    <div class="prin-title" lang-en>Free Cash Flow</div>
-    <div class="prin-desc" lang-ko>영업현금흐름 − CAPEX &gt; 0. 회계 이익이 아닌 실질 현금을 창출하는 기업만 포트폴리오에 포함.</div>
-    <div class="prin-desc" lang-en>Operating cash flow − CAPEX &gt; 0. Only companies generating real cash (not just accounting profit) qualify.</div>
+  <div class="prin-card slate">
+    <div class="prin-icon">📊</div>
+    <div class="prin-title" lang-ko>ETF — 인덱스·배당귀족</div>
+    <div class="prin-title" lang-en>ETF — Index · dividend aristocrats</div>
+    <div class="prin-desc" lang-ko>SCHD·VOO·QQQ 등. 펀더멘털 품질 체크 bypass — 구성종목이 이미 스크리닝된 포트폴리오.</div>
+    <div class="prin-desc" lang-en>SCHD · VOO · QQQ. Quality check bypassed — the basket itself is already screened.</div>
+    <div class="prin-code">quality_bypass = true</div>
   </div>
 </div>
 
-<h2 lang-ko>통합 전략 — Buffett × Kostolany</h2>
-<h2 lang-en>Combined Strategy — Buffett × Kostolany</h2>
+<h2 lang-ko>버핏 점수 (공통)</h2>
+<h2 lang-en>Buffett Score (common)</h2>
 
-<p lang-ko>두 기준을 모두 통과해야 매수 후보가 된다. 품질 필터와 타이밍 필터의 교집합.</p>
-<p lang-en>A candidate must pass both filters. The intersection of quality gating and timing gating.</p>
+<p lang-ko>섹터 품질선을 통과한 후보에 대해 공통 버핏 점수를 계산해 <strong>섹터 내 top 1</strong>을 선정합니다. 합격선 <code>buffett_score ≥ 60</code>. 리포트에는 합격선 대비 델타를 명시합니다.</p>
+<p lang-en>For each sector, candidates passing the quality bar are scored with a unified Buffett score. Top 1 per sector is selected. Pass line: <code>buffett_score ≥ 60</code>; reports show the delta against this threshold.</p>
 
 <table>
   <thead>
     <tr>
-      <th lang-ko>구분</th><th lang-en>Filter</th>
-      <th lang-ko>기준</th><th lang-en>Criterion</th>
-      <th lang-ko>도구</th><th lang-en>Tool</th>
+      <th lang-ko>구성요소</th><th lang-en>Component</th>
+      <th lang-ko>비중</th><th lang-en>Weight</th>
+      <th lang-ko>의미</th><th lang-en>Meaning</th>
     </tr>
   </thead>
   <tbody>
-    <tr><td lang-ko>ROE 3년 평균</td><td lang-en>3-yr avg ROE</td><td lang-ko>&gt; 12%</td><td lang-en>&gt; 12%</td><td>Buffett</td></tr>
-    <tr><td lang-ko>순이익률</td><td lang-en>Net margin</td><td lang-ko>&gt; 10%</td><td lang-en>&gt; 10%</td><td>Buffett</td></tr>
-    <tr><td lang-ko>안전 마진</td><td lang-en>Margin of Safety</td><td lang-ko>&gt; 20%</td><td lang-en>&gt; 20%</td><td>Buffett</td></tr>
-    <tr><td lang-ko>부채비율</td><td lang-en>Debt ratio</td><td lang-ko>&lt; 100%</td><td lang-en>&lt; 100%</td><td>Buffett</td></tr>
-    <tr><td lang-ko>매출 CAGR</td><td lang-en>Revenue CAGR</td><td lang-ko>≥ 5% (3년)</td><td lang-en>≥ 5% (3yr)</td><td>Buffett</td></tr>
-    <tr><td lang-ko>잉여현금흐름</td><td lang-en>FCF</td><td lang-ko>양수</td><td lang-en>Positive</td><td>Buffett</td></tr>
-    <tr><td lang-ko>KOSPI 국면</td><td lang-en>KOSPI Phase</td><td lang-ko>A1 또는 B3</td><td lang-en>A1 or B3</td><td>Kostolany</td></tr>
-    <tr><td lang-ko>금리 환경</td><td lang-en>Rate environment</td><td lang-ko>A3 광기 시 매수 차단</td><td lang-en>Block buys in A3 euphoria</td><td>Kostolany</td></tr>
+    <tr><td lang-ko>ROE 3년 평균</td><td lang-en>3-yr avg ROE</td><td>25%</td><td lang-ko>자본수익률 베이스라인</td><td lang-en>Base return on capital</td></tr>
+    <tr><td lang-ko>ROE 일관성 (σ/μ)</td><td lang-en>ROE consistency (σ/μ)</td><td>20%</td><td lang-ko>해자 안정성</td><td lang-en>Moat stability</td></tr>
+    <tr><td lang-ko>매출 CAGR (3년)</td><td lang-en>Revenue CAGR (3yr)</td><td>15%</td><td lang-ko>성장 지속성</td><td lang-en>Growth durability</td></tr>
+    <tr><td lang-ko>순이익률</td><td lang-en>Net margin</td><td>15%</td><td lang-ko>가격결정력</td><td lang-en>Pricing power</td></tr>
+    <tr><td lang-ko>안전마진 vs Graham</td><td lang-en>Margin of Safety vs Graham</td><td>15%</td><td lang-ko>가격 기반 쿠션</td><td lang-en>Price-based cushion</td></tr>
+    <tr><td lang-ko>부채비율 역수</td><td lang-en>Inverse debt ratio</td><td>10%</td><td lang-ko>재무 건전성</td><td lang-en>Balance-sheet strength</td></tr>
   </tbody>
 </table>
 
-<h2 lang-ko>일일 분석 리포트</h2>
-<h2 lang-en>Daily Analysis Reports</h2>
+<h2 lang-ko>일일 리포트 아카이브</h2>
+<h2 lang-en>Daily Reports Archive</h2>
 
-<p lang-ko>매 평일 아침 봇이 선정한 최우선 후보 종목의 재무 분석, 버핏 스코어카드, 코스탈라니 타이밍 진단을 기록합니다.</p>
-<p lang-en>Every weekday morning, the bot records a full report on the top candidate — financials, Buffett scorecard, and Kostolany timing analysis.</p>
+<p lang-ko>매 거래일 아침 게시된 섹터별 top 1 리포트. 월을 클릭하면 캘린더 뷰로 이동합니다.</p>
+<p lang-en>Top-of-sector reports posted each trading morning. Click a month to open the calendar view.</p>
 
 <div id="archive">
   <div class="archive-empty" lang-ko>리포트 로딩 중...</div>
@@ -272,7 +235,7 @@
 
 <div class="doc-footer">
   <span><a href="https://github.com/n5nsuf" target="_blank">Github</a> · <a href="../profile.html">Dev Profile</a></span>
-  <span>Tech Guides &amp; Projects · 2026</span>
+  <span>US Equity · Buffett · 2026</span>
 </div>
 
 </div>
@@ -290,6 +253,43 @@ function setLang(lang) {
 
 const BASE = location.pathname.replace(/\/index\.html$/, '').replace(/\/$/, '');
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const SECTOR_ORDER = ['brand','fin','ind','etf'];
+const SECTOR_LABEL = { brand:'Brand', fin:'Financial', ind:'Industrial', etf:'ETF' };
+
+function todayStr() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+
+function renderToday(data) {
+  const todayEl = document.getElementById('today');
+  const t = todayStr();
+  const picks = data.filter(d => d.date === t && d.market === 'US');
+  if (!picks.length) return;
+  const bySector = {};
+  picks.forEach(p => { if (p.moat && !bySector[p.moat]) bySector[p.moat] = p; });
+  const rows = SECTOR_ORDER
+    .filter(s => bySector[s])
+    .map(s => {
+      const p = bySector[s];
+      const d = typeof p.buffett_delta === 'number' ? p.buffett_delta : (p.buffett_score - 60);
+      const cls = d >= 0 ? 'pass' : 'fail';
+      const sign = d >= 0 ? '+' : '−';
+      const href = BASE + '/' + p.file;
+      return `<a class="sector-row" href="${href}">
+        <span class="label">
+          <span class="sector-tag">${SECTOR_LABEL[s] || s}</span>
+          <span class="sym">${p.symbol}</span>
+          <span class="score">buffett ${p.buffett_score.toFixed(1)} / 100</span>
+        </span>
+        <span class="delta ${cls}">합격선 ${sign}${Math.abs(d).toFixed(1)}</span>
+      </a>`;
+    }).join('');
+  if (rows) todayEl.innerHTML = rows;
+}
 
 async function load() {
   let data = [];
@@ -297,6 +297,8 @@ async function load() {
     const r = await fetch(BASE + '/manifest.json');
     data = await r.json();
   } catch(e) {}
+
+  renderToday(data);
 
   const el = document.getElementById('archive');
   if (!data.length) {

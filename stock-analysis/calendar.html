@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-<title>리포트 캘린더 — 증권 분석</title>
+<title>리포트 캘린더 — US Equity · Buffett</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
   :root {
@@ -82,7 +82,7 @@
 <body class="lang-ko">
 
 <div class="nav-bar">
-  <a href="index.html" class="nav-home">← 증권 분석</a>
+  <a href="index.html" class="nav-home">← US Equity · Buffett</a>
   <div class="nav-lang">
     <button class="lang-btn active" onclick="setLang('ko')" id="btn-ko">한국어</button>
     <button class="lang-btn" onclick="setLang('en')" id="btn-en">English</button>
@@ -207,7 +207,7 @@ async function load() {
       </div>
       <div class="report-right">
         ${r.buffett_score ? `<span class="badge-score">Buffett ${Math.round(r.buffett_score)}</span>` : ''}
-        ${r.kospi_phase ? `<span class="badge-phase">${r.kospi_phase}</span>` : ''}
+        ${r.moat ? `<span class="badge-phase">${r.moat}</span>` : (r.kospi_phase ? `<span class="badge-phase">${r.kospi_phase}</span>` : '')}
       </div>
     </a>`).join('');
 }
