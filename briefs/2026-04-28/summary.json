@@ -1,0 +1,47 @@
+{
+  "version": "5.9",
+  "run_at_kst": "2026. 4. 28. AM 9:11:30",
+  "llm_used": "Gemini",
+  "dry_run": false,
+  "topics": [
+    {
+      "query": "보증금",
+      "category": "일반"
+    },
+    {
+      "query": "반려견",
+      "category": "일반"
+    },
+    {
+      "query": "고효준",
+      "category": "금융"
+    },
+    {
+      "query": "공공기관",
+      "category": "금융"
+    },
+    {
+      "query": "왕즈이",
+      "category": "금융"
+    }
+  ],
+  "article_titles": [
+    "[일반] 보증금, '안심'에서 '안전'으로…주거 안정성의 진화",
+    "[일반] 반려견, '반려'를 넘어 '책임'으로…펫 산업의 지속 가능한 미래",
+    "[금융] 주제 3: 고효준",
+    "[금융] 주제 4: 공공기관",
+    "[금융] 왕즈이, 안세영 킬러의 반격? 챔피언의 운명은 '체력'과 '정신력'에 달렸다"
+  ],
+  "article_lengths": [
+    848,
+    905,
+    268,
+    252,
+    887
+  ],
+  "brief_file": "/home/runner/work/GemsWriter/GemsWriter/output/brief-2026-04-28.html",
+  "brief_url": "https://n5nsuf.github.io/briefs/2026-04-28.html",
+  "brief_date": "2026-04-28",
+  "api_calls_llm": 1,
+  "duration_sec": "28.7"
+}
