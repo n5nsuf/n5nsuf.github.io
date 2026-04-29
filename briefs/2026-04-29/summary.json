@@ -1,0 +1,47 @@
+{
+  "version": "5.9",
+  "run_at_kst": "2026. 4. 29. AM 9:12:58",
+  "llm_used": "Gemini",
+  "dry_run": false,
+  "topics": [
+    {
+      "query": "배준호",
+      "category": "일반"
+    },
+    {
+      "query": "쓸쓸하고 찬란하神 - 도깨비",
+      "category": "일반"
+    },
+    {
+      "query": "현아",
+      "category": "금융"
+    },
+    {
+      "query": "수익률",
+      "category": "금융"
+    },
+    {
+      "query": "주한 미군",
+      "category": "금융"
+    }
+  ],
+  "article_titles": [
+    "[일반] MZ세대 아이콘, 배준호: 젊은 축구 스타의 빛과 그림자",
+    "[일반] 도깨비의 귀환: 10년 만에 돌아온 판타지 로맨스의 저력",
+    "[금융] 현아, '머니 플렉스'를 넘어선 '가치 투자'의 아이콘으로",
+    "[금융] 불확실성 시대, '수익률'의 재정의와 새로운 투자 전략",
+    "[금융] 주한미군, 한반도 넘어 인도·태평양 안보의 핵심 축으로 부상"
+  ],
+  "article_lengths": [
+    912,
+    1053,
+    1007,
+    1030,
+    1088
+  ],
+  "brief_file": "/home/runner/work/GemsWriter/GemsWriter/output/brief-2026-04-29.html",
+  "brief_url": "https://n5nsuf.github.io/briefs/2026-04-29.html",
+  "brief_date": "2026-04-29",
+  "api_calls_llm": 1,
+  "duration_sec": "30.8"
+}
