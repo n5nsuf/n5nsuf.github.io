@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+
+<title>Structured Coding Rules — Agent-Oriented Style Guide | hanbe.click</title>
+<meta name="description" content="에이전트 지향 코드 작성 규칙. 모듈 설계, 동시성, 회복탄력성, 에러 처리, 관측성, 모듈 격리·시뮬레이션, Pre-Code 체크리스트.">
+<meta name="keywords" content="structured programming, agent-oriented, modular design, concurrency, resilience, observability, dry-run, smoke test">
+<meta name="author" content="HCB">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://hanbe.click/structured_programming.html">
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --purple:#534AB7;--purple-l:#EEEDFE;--purple-d:#3C3489;
+    --teal:#0F6E56;--teal-l:#E1F5EE;
+    --amber:#BA7517;--amber-l:#FAEEDA;
+    --blue:#185FA5;--blue-l:#E6F1FB;
+    --coral:#993C1D;--coral-l:#FAECE7;
+    --red:#A32D2D;--red-l:#FCEBEB;
+    --gray:#444441;--gray-l:#F1EFE8;
+    --border:#D3D1C7;--text:#2C2C2A;--muted:#5F5E5A;--bg:#FAFAF8;
+    --slate:#64748B;--slate-l:#F1F5F9;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.8;color:var(--text);background:var(--bg)}
+  code,.mono{font-family:'JetBrains Mono',monospace}
+
+  .nav-bar{position:sticky;top:0;z-index:100;background:rgba(250,250,248,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;justify-content:space-between;align-items:center}
+  .nav-home{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;padding:4px 14px;border-radius:20px;border:1px solid var(--border);transition:all .15s}
+  .nav-home:hover{background:var(--amber-l);border-color:var(--amber);color:var(--amber)}
+  .nav-lang{display:flex;gap:6px}
+  .lang-btn{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 14px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--muted);cursor:pointer;transition:all .15s}
+  .lang-btn.active{background:var(--amber);color:white;border-color:var(--amber)}
+
+  [lang-ko],[lang-en]{display:none}
+  body.lang-ko [lang-ko]{display:revert}
+  body.lang-en [lang-en]{display:revert}
+
+  .page{max-width:860px;margin:0 auto;padding:48px 56px;background:white}
+
+  .doc-header{border-bottom:2px solid var(--amber);padding-bottom:24px;margin-bottom:36px}
+  .doc-header h1{font-size:28px;font-weight:700;color:var(--amber);line-height:1.3}
+  .doc-header .subtitle{font-size:15px;color:var(--muted);margin-top:6px}
+  .doc-header .meta{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:12px;flex-wrap:wrap}
+  .meta-tag{background:var(--amber-l);color:var(--amber);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500}
+
+  section{margin-bottom:8px}
+  h2{font-size:17px;font-weight:700;color:var(--amber);padding:6px 0 6px 12px;border-left:3px solid var(--amber);margin-bottom:16px;margin-top:42px}
+  h3{font-size:14px;font-weight:700;color:var(--gray);margin:20px 0 10px}
+  p{margin-bottom:12px;color:var(--text);font-size:13.5px}
+  ul,ol{margin-bottom:12px;padding-left:20px;font-size:13.5px}
+  li{margin-bottom:4px}
+
+  table{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px}
+  thead tr{background:var(--amber)}
+  thead th{color:white;font-weight:600;padding:8px 12px;text-align:left;font-size:12px}
+  tbody tr:nth-child(even){background:var(--gray-l)}
+  tbody tr:hover{background:var(--amber-l)}
+  tbody td{padding:7px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  td code,p code,li code{background:var(--gray-l);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--amber)}
+
+  pre{background:#1E1E2E;color:#CDD6F4;border-radius:8px;padding:16px 18px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.65;overflow-x:auto;margin-bottom:16px}
+
+  .callout{display:flex;gap:10px;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px}
+  .callout.warn{background:var(--amber-l);border-left:3px solid var(--amber)}
+  .callout.info{background:var(--blue-l);border-left:3px solid var(--blue)}
+  .callout.ok{background:var(--teal-l);border-left:3px solid var(--teal)}
+  .callout .icon{font-size:16px;flex-shrink:0;margin-top:1px}
+  .callout p{margin:0;color:var(--gray)}
+
+  .badge{display:inline-block;padding:1px 8px;border-radius:20px;font-size:11px;font-weight:600}
+  .badge.local{background:var(--gray-l);color:var(--gray)}
+  .badge.cloud{background:var(--blue-l);color:var(--blue)}
+  .badge.ok{background:var(--teal-l);color:var(--teal)}
+
+  .doc-footer{border-top:1px solid var(--border);margin-top:48px;padding-top:16px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+  .doc-footer a{color:var(--amber);text-decoration:none}
+  .doc-footer a:hover{text-decoration:underline}
+
+  @media(max-width:640px){
+    .page{padding:20px 16px 48px}
+    .doc-header h1{font-size:21px}
+    h2{font-size:15px;margin-top:32px}
+    .doc-footer{flex-direction:column;gap:6px}
+    table{font-size:12px}
+    thead th,tbody td{padding:6px 8px}
+  }
+  @media print{
+    body{background:white}
+    .page{padding:20px 28px;max-width:100%}
+    .nav-bar{display:none}
+    h2{page-break-after:avoid}
+    table{page-break-inside:avoid}
+    [lang-ko],[lang-en]{display:revert !important}
+  }
+</style>
+</head>
+<body class="lang-ko">
+
+<div class="nav-bar">
+  <a href="/" class="nav-home">← Home</a>
+  <div class="nav-lang">
+    <button class="lang-btn active" onclick="setLang('ko')" id="btn-ko">한국어</button>
+    <button class="lang-btn" onclick="setLang('en')" id="btn-en">English</button>
+  </div>
+</div>
+
+<main class="page">
+
+<header class="doc-header">
+  <h1 lang-ko>Structured Coding Rules — 에이전트 지향 코드 작성 규칙</h1>
+  <h1 lang-en>Structured Coding Rules — Agent-Oriented Code Style</h1>
+  <div class="subtitle" lang-ko>모든 코드 생성에 적용되는 구조화·모듈화·관측성 규칙. 예외 없음.</div>
+  <div class="subtitle" lang-en>Rules for module structure, concurrency, resilience, and observability — applied to all code generation. No exceptions.</div>
+  <div class="meta">
+    <span class="meta-tag">2026-04-29</span>
+    <span class="meta-tag" lang-ko>Reference</span>
+    <span class="meta-tag" lang-en>Reference</span>
+    <span class="meta-tag" lang-ko>Memory 주입용</span>
+    <span class="meta-tag" lang-en>For Memory Injection</span>
+  </div>
+</header>
+
+<section>
+<h2>
+  <span lang-ko>이 문서의 목적</span>
+  <span lang-en>Purpose</span>
+</h2>
+<p lang-ko>
+LLM 또는 에이전트가 코드를 작성할 때 일관되게 따라야 할 구조 규칙입니다. 모듈 단일 책임, 레이어 방향, async-first 동시성, 회로 차단·타임아웃, fail-fast 에러 처리, dry-run 시뮬레이션, 구조화 로그까지 — Pre-Code 체크리스트(§10) 7항목으로 환원됩니다. 본문 전체를 복사해 메모리·시스템 프롬프트에 붙여 넣으면, 이후 모든 코드 생성이 이 규칙을 따른다고 가정할 수 있습니다.
+</p>
+<p lang-en>
+Structural rules to follow whenever an LLM or agent writes code. Single responsibility, layer direction, async-first concurrency, circuit breaker / timeout, fail-fast error handling, dry-run simulation, structured logging — all reducible to the seven items of the Pre-Code Checklist (§10). Copy this body into memory or the system prompt and treat all subsequent code generation as governed by it.
+</p>
+</section>
+
+<section>
+<h2>
+  <span lang-ko>1. 모듈 설계</span>
+  <span lang-en>1. Module Design</span>
+</h2>
+<table>
+  <thead><tr>
+    <th lang-ko>규칙</th><th lang-en>Rule</th>
+    <th lang-ko>세부 내용</th><th lang-en>Detail</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td lang-ko><strong>Single Responsibility</strong></td>
+      <td lang-en><strong>Single Responsibility</strong></td>
+      <td lang-ko>한 모듈 = 하나의 능력. 한 단위에 transport·logic·storage를 섞지 않는다.</td>
+      <td lang-en>One module = one capability. Never mix transport, logic, storage in the same unit.</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>Interface Contract</strong></td>
+      <td lang-en><strong>Interface Contract</strong></td>
+      <td lang-ko>구현 전에 입출력 타입을 정의한다. 호출자는 내부를 알지 않아야 한다.</td>
+      <td lang-en>Define input/output types before implementation. Caller must not know internals.</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>Dependency Direction</strong></td>
+      <td lang-en><strong>Dependency Direction</strong></td>
+      <td lang-ko>High-level → Low-level. 역방향 금지. 의존성은 주입(inject)하고 직접 import하지 않는다.</td>
+      <td lang-en>High-level → Low-level only. Never reverse. Inject dependencies; don't hard-import.</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>Bounded Size</strong></td>
+      <td lang-en><strong>Bounded Size</strong></td>
+      <td lang-ko>함수 ≤ 30줄, 파일 ≤ 300줄. 위반 시 분해 먼저.</td>
+      <td lang-en>Function ≤ 30 lines. File ≤ 300 lines. Violating either = decompose first.</td>
+    </tr>
+  </tbody>
+</table>
+<p lang-ko><strong>레이어 순서 (호출은 아래 방향으로만)</strong>:</p>
+<p lang-en><strong>Layer order (call downward only)</strong>:</p>
+<pre>orchestrator → agent → service → client → storage</pre>
+</section>
+
+<section>
+<h2>
+  <span lang-ko>2. 에이전트 구조</span>
+  <span lang-en>2. Agent Structure</span>
+</h2>
+<p lang-ko>모든 에이전트는 다음 세 메서드를 가져야 합니다.</p>
+<p lang-en>Every agent must have:</p>
+<pre>init()              — resource acquisition, idempotent
+run() / execute()   — single entry point, returns structured result
+shutdown()          — graceful cleanup, always callable</pre>
+<h3 lang-ko>상태 규칙</h3>
+<h3 lang-en>State Rules</h3>
+<ul>
+  <li lang-ko>에이전트는 자신의 상태만 소유. 에이전트 간 가변 공유 상태 금지.</li>
+  <li lang-en>Agent owns its state; no shared mutable state between agents.</li>
+  <li lang-ko>통신은 반환값 또는 메시지 큐로. 전역 변수 사용 금지.</li>
+  <li lang-en>Communicate via return values or message queues, not globals.</li>
+  <li lang-ko>외부 상태(DB·API)는 전용 service 레이어를 통해서만 접근.</li>
+  <li lang-en>External state (DB, API) accessed only through a dedicated service layer.</li>
+</ul>
+</section>
+
+<section>
+<h2>
+  <span lang-ko>3. 동시성</span>
+  <span lang-en>3. Concurrency</span>
+</h2>
+<table>
+  <thead><tr>
+    <th lang-ko>패턴</th><th lang-en>Pattern</th>
+    <th lang-ko>사용 시점</th><th lang-en>When</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td><code>async/await</code></td><td><code>async/await</code></td>
+      <td lang-ko>I/O-bound (API·DB·파일). 기본 선택지.</td>
+      <td lang-en>I/O-bound (API calls, DB, file) — default choice.</td>
+    </tr>
+    <tr>
+      <td><code>ThreadPoolExecutor(max_workers=N)</code></td>
+      <td><code>ThreadPoolExecutor(max_workers=N)</code></td>
+      <td lang-ko>async로 만들 수 없는 blocking I/O. <code>N</code>은 명시적으로 제한.</td>
+      <td lang-en>Blocking I/O that can't be made async; bound <code>N</code> explicitly.</td>
+    </tr>
+    <tr>
+      <td><code>ProcessPoolExecutor</code></td><td><code>ProcessPoolExecutor</code></td>
+      <td lang-ko>CPU-bound 작업 전용.</td>
+      <td lang-en>CPU-bound only.</td>
+    </tr>
+    <tr>
+      <td><code>asyncio.gather()</code></td><td><code>asyncio.gather()</code></td>
+      <td lang-ko>같은 이벤트 루프에서 병렬 fan-out.</td>
+      <td lang-en>Fan-out parallel tasks with shared event loop.</td>
+    </tr>
+  </tbody>
+</table>
+<h3 lang-ko>강행 규칙</h3>
+<h3 lang-en>Hard Rules</h3>
+<ul>
+  <li lang-ko>락 없이 가변 객체를 스레드 간 공유하지 않는다.</li>
+  <li lang-en>Never share mutable objects across threads without a lock.</li>
+  <li lang-ko>모든 외부 호출에 명시적 timeout을 둔다.</li>
+  <li lang-en>Always set explicit timeout on every external call.</li>
+  <li lang-ko>모든 thread/process 풀에 상한을 둔다. 무한 풀 = 자원 누수.</li>
+  <li lang-en>Bound all thread/process pools — unbounded = resource leak.</li>
+  <li lang-ko><strong>polling/wait 루프에는 상한을 명시</strong>. 외부 출력 파싱으로 끝나는 종료 조건은 형식이 바뀌면 무한 루프가 된다. 다음 중 하나를 사용:</li>
+  <li lang-en><strong>Polling/wait loops require an explicit upper bound.</strong> Termination conditions that parse external output silently turn into infinite loops if the format changes. Use one of:</li>
+</ul>
+<pre># 1) Counter
+for i in $(seq N); do COND && break; sleep K; done
+
+# 2) timeout wrapper
+timeout N bash -c 'until COND; do sleep K; done'
+
+# 3) Deadline
+end=$(($(date +%s) + N))
+while [ $(date +%s) -lt $end ]; do ...; done</pre>
+</section>
+
+<section>
+<h2>
+  <span lang-ko>4. 회복탄력성 (Resilience)</span>
+  <span lang-en>4. Resilience</span>
+</h2>
+<pre>Circuit Breaker  — track fail count; trip after threshold; auto-reset after cooldown
+Retry            — exponential backoff, max 3 attempts, idempotent ops only
+Timeout          — every network/IO call has explicit deadline
+Fallback         — define degraded behavior before writing the happy path</pre>
+<p lang-ko>모든 에이전트는 다음 헬스 인터페이스를 노출합니다.</p>
+<p lang-en>Every agent exposes:</p>
+<pre>health() → {"status": "ok" | "degraded" | "tripped", "fails": int}</pre>
+</section>
+
+<section>
+<h2>
+  <span lang-ko>5. 에러 처리</span>
+  <span lang-en>5. Error Handling</span>
+</h2>
+<ul>
+  <li lang-ko><strong>Fail fast</strong>: 입력 검증은 깊은 곳이 아니라 경계(에이전트 진입점)에서 한다.</li>
+  <li lang-en><strong>Fail fast</strong>: validate inputs at the boundary (agent entry point), not deep inside.</li>
+  <li lang-ko><strong>Guard clauses 우선</strong>: 잘못된 상태는 즉시 early return — 깊은 nesting 금지.</li>
+  <li lang-en><strong>Guard clauses first</strong>: early return on invalid state — no deep nesting.</li>
+  <li lang-ko><strong>예외 삼키기 금지</strong>: <code>except Exception: pass</code>는 금지. 로그+재발생 또는 에러 타입 반환.</li>
+  <li lang-en><strong>Never swallow</strong>: <code>except Exception: pass</code> is banned; log + re-raise or return error type.</li>
+  <li lang-ko><strong>Typed errors</strong>: 호출자가 판단해야 하는 경우 raise 대신 구조화된 에러 반환 — <code>{"ok": False, "error": "reason"}</code></li>
+  <li lang-en><strong>Typed errors</strong>: return structured error <code>{"ok": False, "error": "reason"}</code> over raising where caller must decide.</li>
+</ul>
+</section>
+
+<section>
+<h2>
+  <span lang-ko>6. 네이밍과 상수</span>
+  <span lang-en>6. Naming &amp; Constants</span>
+</h2>
+<ul>
+  <li lang-ko>이름은 목적을 명시: <code>fetch_balance_with_ttl()</code> — <code>get_data()</code> 금지.</li>
+  <li lang-en>Names state purpose: <code>fetch_balance_with_ttl()</code>, not <code>get_data()</code>.</li>
+  <li lang-ko>매직 넘버 금지: <code>MAX_RETRIES = 3</code>, <code>TTL_SECONDS = 60</code>.</li>
+  <li lang-en>No magic numbers: <code>MAX_RETRIES = 3</code>, <code>TTL_SECONDS = 60</code>.</li>
+  <li lang-ko>비동기 함수는 동작 동사로 시작: <code>fetch_</code>, <code>send_</code>, <code>load_</code>. 동기 헬퍼는 <code>_parse_</code>, <code>_validate_</code>.</li>
+  <li lang-en>Async functions prefixed with action verb: <code>fetch_</code>, <code>send_</code>, <code>load_</code>; sync helpers: <code>_parse_</code>, <code>_validate_</code>.</li>
+</ul>
+</section>
+
+<section>
+<h2>
+  <span lang-ko>7. 유지보수성 (독립 수정 가능성)</span>
+  <span lang-en>7. Maintainability — Independent Modification</span>
+</h2>
+<p lang-ko><strong>목표: 한 모듈을 다른 모듈을 건드리지 않고 변경 가능.</strong></p>
+<p lang-en><strong>Goal: change one module without touching any other.</strong></p>
+<table>
+  <thead><tr>
+    <th lang-ko>규칙</th><th lang-en>Rule</th>
+    <th lang-ko>강제 방법</th><th lang-en>How to enforce</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td lang-ko><strong>추상에 의존</strong></td>
+      <td lang-en><strong>Depend on abstractions</strong></td>
+      <td lang-ko>호출자는 인터페이스/프로토콜에 의존, 구체 클래스에 의존하지 않음. 호출자 변경 없이 구현 교체 가능.</td>
+      <td lang-en>Caller depends on an interface/protocol, not a concrete class. Swap implementation without changing caller.</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>내부 은닉</strong></td>
+      <td lang-en><strong>Hide internals</strong></td>
+      <td lang-ko>공개 계약에 없는 것은 <code>_private</code> 접두. 다른 모듈의 내부 상태에 손대지 않음.</td>
+      <td lang-en><code>_private</code> prefix for anything not in the public contract. Never reach into another module's internal state.</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>모듈 간 부수효과 금지</strong></td>
+      <td lang-en><strong>No cross-module side effects</strong></td>
+      <td lang-ko>다른 모듈 소유 상태를 바꾸지 말 것. 값을 반환하고, 소유자가 결정하게.</td>
+      <td lang-en>A module must not mutate state owned by another module. Return a value; let the owner decide.</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>설정은 경계에</strong></td>
+      <td lang-en><strong>Configuration at the boundary</strong></td>
+      <td lang-ko>상수·임계치·엔드포인트는 config/env에. 코드를 건드리지 않고 동작 변경 가능하게.</td>
+      <td lang-en>Constants, thresholds, endpoints live in config/env — not buried in logic.</td>
+    </tr>
+    <tr>
+      <td lang-ko><strong>인터페이스는 안정, 내부는 변동</strong></td>
+      <td lang-en><strong>Stable interfaces, volatile internals</strong></td>
+      <td lang-ko>인터페이스 시그니처 = 계약, 거의 안 바뀜. 구현 = 언제든 리팩토링 가능.</td>
+      <td lang-en>Interface signature = contract, rarely changes. Implementation = free to refactor anytime.</td>
+    </tr>
+  </tbody>
+</table>
+<div class="callout info">
+  <span class="icon">🧪</span>
+  <p lang-ko><strong>수정 테스트 (머지 전)</strong>: "이 모듈을 같은 인터페이스로 처음부터 다시 작성한다면, 다른 파일을 건드려야 하는가?" → Yes면 경계가 잘못된 것.</p>
+  <p lang-en><strong>Modification test (before merging)</strong>: "If I rewrote this module from scratch with the same interface, would any other file need to change?" → If yes, the boundary is wrong.</p>
+</div>
+</section>
+
+<section>
+<h2>
+  <span lang-ko>8. 모듈 격리와 시뮬레이션</span>
+  <span lang-en>8. Module Isolation &amp; Simulation</span>
+</h2>
+<h3 lang-ko>동작 모듈과 깨진 모듈을 구분하는 법</h3>
+<h3 lang-en>Distinguishing Working vs Broken Modules</h3>
+<p lang-ko>모든 모듈은 다음을 구현합니다.</p>
+<p lang-en>Every module must implement:</p>
+<pre>smoke_test() → {"ok": bool, "module": str, "checks": [{"name", "ok", "detail"}]}</pre>
+<ul>
+  <li lang-ko>자기 자신의 의존성만 검사 (DB 도달 가능? API 키 유효? config 로드?)</li>
+  <li lang-en>Tests own dependencies only (DB reachable? API key valid? config loaded?)</li>
+  <li lang-ko>2초 미만, 부수효과 없음.</li>
+  <li lang-en>Runs in &lt; 2s, no side effects.</li>
+  <li lang-ko><code>health()</code> = 런타임 회로 상태. <code>smoke_test()</code> = 이 모듈이 동작 가능한가?</li>
+  <li lang-en><code>health()</code> = runtime circuit state; <code>smoke_test()</code> = can this module operate at all?</li>
+</ul>
+<p lang-ko><strong>병렬 에이전트 디버깅 패턴</strong>:</p>
+<p lang-en><strong>Scan pattern for debugging parallel agents</strong>:</p>
+<pre>results = await asyncio.gather(*[m.smoke_test() for m in all_modules])
+broken  = [r for r in results if not r["ok"]]  # isolate failing modules immediately</pre>
+
+<h3 lang-ko>시뮬레이션 / Dry-Run</h3>
+<h3 lang-en>Simulation / Dry-Run</h3>
+<p lang-ko>외부 시스템에 접촉하는 모든 모듈은 <code>dry_run: bool = False</code>를 받습니다.</p>
+<p lang-en>Every module that touches external systems accepts <code>dry_run: bool = False</code>:</p>
+<table>
+  <thead><tr>
+    <th><code>dry_run=False</code> (production)</th>
+    <th><code>dry_run=True</code> (simulation)</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td lang-ko>실제 API 호출</td>
+      <td lang-ko>의도를 로그로 남기고 mock 응답 반환</td>
+    </tr>
+    <tr>
+      <td lang-en>Real API call</td>
+      <td lang-en>Log intent, return mock response</td>
+    </tr>
+    <tr>
+      <td lang-ko>DB write</td>
+      <td lang-ko>SQL/payload만 로그, write 생략</td>
+    </tr>
+    <tr>
+      <td lang-en>DB write</td>
+      <td lang-en>Log SQL/payload, skip write</td>
+    </tr>
+    <tr>
+      <td lang-ko>메시지 발송</td>
+      <td lang-ko>stdout 출력, 발송 생략</td>
+    </tr>
+    <tr>
+      <td lang-en>Message send</td>
+      <td lang-en>Print to stdout, skip send</td>
+    </tr>
+  </tbody>
+</table>
+<ul>
+  <li lang-ko>모든 로직은 dry_run에서도 실행 — 마지막 외부 호출만 생략한다.</li>
+  <li lang-en>All logic executes in dry_run — only the final external call is skipped.</li>
+  <li lang-ko>dry_run 출력 구조는 실제와 동일해야 한다 (같은 키, 현실적인 값).</li>
+  <li lang-en>dry_run output must be identical in structure to real output (same keys, realistic values).</li>
+  <li lang-ko>리팩토링 없이 dry_run을 추가할 수 없다면 외부 호출이 너무 깊다 — 추출하라.</li>
+  <li lang-en>If you can't add dry_run without refactoring, the external call is too deep — extract it.</li>
+</ul>
+
+<h3 lang-ko>Mock 주입 지점</h3>
+<h3 lang-en>Mock Injection Point</h3>
+<p lang-ko>의존성 주입(§1)이 mock 경계입니다. 클라이언트를 hard-import하면 mock 불가능 — 경계를 먼저 고치세요.</p>
+<p lang-en>Dependency injection (§1) is the mock boundary. If a module hard-imports a client, it cannot be mocked — fix the boundary first.</p>
+<pre># Bad:  from external_api import client; client.call(...)
+# Good: def __init__(self, client): self._client = client  # inject mock in tests/dry_run</pre>
+</section>
+
+<section>
+<h2>
+  <span lang-ko>9. 관측성 (디버깅 용이성)</span>
+  <span lang-en>9. Observability — Debuggability</span>
+</h2>
+<p lang-ko><strong>구조화 로그 포맷 — 자유 텍스트 로그는 금지:</strong></p>
+<p lang-en><strong>Structured log format — free-text logs are banned:</strong></p>
+<pre>{agent, operation, status, duration_ms, error, inputs_summary}</pre>
+<table>
+  <thead><tr>
+    <th lang-ko>로깅 시점</th><th lang-en>When to log</th>
+    <th lang-ko>내용</th><th lang-en>What</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td lang-ko>외부 호출 직전</td>
+      <td lang-en>Every external call (before)</td>
+      <td><code>agent, operation, key inputs</code></td>
+      <td><code>agent, operation, key inputs</code></td>
+    </tr>
+    <tr>
+      <td lang-ko>외부 호출 직후</td>
+      <td lang-en>Every external call (after)</td>
+      <td><code>+ status (ok/fail), duration_ms</code></td>
+      <td><code>+ status (ok/fail), duration_ms</code></td>
+    </tr>
+    <tr>
+      <td lang-ko>에이전트 상태 전이</td>
+      <td lang-en>Agent state transition</td>
+      <td><code>prev_state → new_state, reason</code></td>
+      <td><code>prev_state → new_state, reason</code></td>
+    </tr>
+    <tr>
+      <td lang-ko>에러</td>
+      <td lang-en>Error</td>
+      <td><code>error type, message, inputs that caused it</code></td>
+      <td><code>error type, message, inputs that caused it</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 lang-ko>컨텍스트 전파</h3>
+<h3 lang-en>Context Propagation</h3>
+<ul>
+  <li lang-ko>모든 <code>run()</code>은 선택적 <code>request_id</code> / <code>trace_id</code>를 받는다.</li>
+  <li lang-en>Every <code>run()</code> accepts optional <code>request_id</code> / <code>trace_id</code>.</li>
+  <li lang-ko>아래 호출 전부에 그대로 내려보낸다 — 중간에 새로 생성하지 않는다.</li>
+  <li lang-en>Pass it down to every child call — never generate a new one mid-flow.</li>
+  <li lang-ko>병렬 태스크는 같은 부모 <code>trace_id</code>와 고유한 <code>task_id</code>를 가진다.</li>
+  <li lang-en>Parallel tasks: each gets the same parent <code>trace_id</code> + unique <code>task_id</code>.</li>
+</ul>
+
+<p lang-ko><strong>에러 메시지가 답해야 할 것</strong>: 입력은 무엇이었는가, 무엇이 실패했는가, 어디에서.</p>
+<p lang-en><strong>Error messages must answer</strong>: what was the input, what failed, where.</p>
+<pre># Bad:  raise ValueError("balance fetch failed")
+# Good: raise ValueError(f"balance fetch failed: account={acct}, status={resp.status}")</pre>
+<div class="callout warn">
+  <span class="icon">⚠️</span>
+  <p lang-ko><strong>디버깅 가능성 테스트</strong>: "로그만으로 코드 실행 없이 실패를 재현할 수 있는가?" → No면 컨텍스트를 더 추가하라.</p>
+  <p lang-en><strong>Debuggability test</strong>: "Given only the logs, can I reproduce the failure without running the code?" → If no, add more context to the error/log.</p>
+</div>
+</section>
+
+<section>
+<h2>
+  <span lang-ko>10. Pre-Code 체크리스트</span>
+  <span lang-en>10. Pre-Code Checklist</span>
+</h2>
+<p lang-ko>함수 한 줄을 쓰기 전에 7항목을 통과해야 합니다.</p>
+<p lang-en>Before writing any function, pass these seven checks:</p>
+<ol>
+  <li lang-ko><strong>Layer</strong> — 이 함수는 어느 레이어에 속하는가?</li>
+  <li lang-en><strong>Layer</strong> — which layer does this belong to?</li>
+  <li lang-ko><strong>Contract</strong> — 시그니처와 반환 타입을 먼저 정의했는가?</li>
+  <li lang-en><strong>Contract</strong> — define signature + return type first.</li>
+  <li lang-ko><strong>Concurrency</strong> — async or sync? 공유 상태 위험은?</li>
+  <li lang-en><strong>Concurrency</strong> — async or sync? shared state risk?</li>
+  <li lang-ko><strong>Failure modes</strong> — 무엇이 깨지는가? timeout? null? 부분 결과?</li>
+  <li lang-en><strong>Failure modes</strong> — what breaks? timeout? null? partial result?</li>
+  <li lang-ko><strong>Independence</strong> — 호출자를 바꾸지 않고 이 모듈을 다시 쓸 수 있는가?</li>
+  <li lang-en><strong>Independence</strong> — can this module be rewritten without changing its callers?</li>
+  <li lang-ko><strong>Observability</strong> — 운영에서 디버그할 때 어떤 로그·trace_id가 필요한가?</li>
+  <li lang-en><strong>Observability</strong> — what logs/trace_id will I need to debug this in production?</li>
+  <li lang-ko><strong>Self-check</strong> — 단일 책임? 가변 공유 상태 없음? timeout 설정?</li>
+  <li lang-en><strong>Self-check</strong> — single responsibility? no shared mutable state? timeout set?</li>
+</ol>
+<div class="callout ok">
+  <span class="icon">✅</span>
+  <p lang-ko>이 7항목을 모두 통과한 코드만이 "구조화된 코드"입니다. 하나라도 미통과면 머지 전에 되돌아가세요.</p>
+  <p lang-en>Only code that passes all seven items qualifies as "structured". Miss any one, and circle back before merging.</p>
+</div>
+</section>
+
+<footer class="doc-footer">
+  <span><a href="/">Home</a> · <a href="articles.html">Articles</a> · <a href="claude_web_memory.html">Claude Web Memory</a> · <a href="profile.html">Dev Profile</a></span>
+  <span>Tech Guides & Projects · 2026</span>
+</footer>
+
+</main>
+
+<script>
+function setLang(lang) {
+  document.body.className = 'lang-' + lang;
+  document.getElementById('btn-ko').classList.toggle('active', lang === 'ko');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  try { localStorage.setItem('guide-lang', lang); } catch {}
+}
+(function() {
+  try { var s = localStorage.getItem('guide-lang'); if (s) setLang(s); } catch {}
+})();
+</script>
+</body>
+</html>
