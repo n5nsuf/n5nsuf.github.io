@@ -1,47 +1,47 @@
 {
   "version": "5.9",
-  "run_at_kst": "2026. 4. 29. AM 9:12:58",
+  "run_at_kst": "2026. 4. 29. AM 11:07:57",
   "llm_used": "Gemini",
   "dry_run": false,
   "topics": [
     {
-      "query": "배준호",
+      "query": "준결승전",
       "category": "일반"
     },
     {
-      "query": "쓸쓸하고 찬란하神 - 도깨비",
+      "query": "김문수",
       "category": "일반"
     },
     {
-      "query": "현아",
+      "query": "미연",
       "category": "금융"
     },
     {
-      "query": "수익률",
+      "query": "국립중앙박물관",
       "category": "금융"
     },
     {
-      "query": "주한 미군",
+      "query": "글로벌 매크로 시황",
       "category": "금융"
     }
   ],
   "article_titles": [
-    "[일반] MZ세대 아이콘, 배준호: 젊은 축구 스타의 빛과 그림자",
-    "[일반] 도깨비의 귀환: 10년 만에 돌아온 판타지 로맨스의 저력",
-    "[금융] 현아, '머니 플렉스'를 넘어선 '가치 투자'의 아이콘으로",
-    "[금융] 불확실성 시대, '수익률'의 재정의와 새로운 투자 전략",
-    "[금융] 주한미군, 한반도 넘어 인도·태평양 안보의 핵심 축으로 부상"
+    "[일반] 결승 문턱, '준결승전'의 치열함이 시장에 던지는 메시지",
+    "[일반] 김문수, '정체성'과 '신뢰' 사이의 줄타기: 기업 브랜드의 현재와 미래",
+    "[금융] 미연의 '솔로 컴백'과 '글로벌 확장', K-컬처의 새로운 성장 동력",
+    "[금융] 국립중앙박물관, '기술 융합'으로 재탄생하는 문화유산의 미래",
+    "[금융] 중동 지정학적 리스크 완화 기대감에 급반등, 향방은 대통령 연설에"
   ],
   "article_lengths": [
-    912,
-    1053,
-    1007,
-    1030,
-    1088
+    1399,
+    1497,
+    1464,
+    1412,
+    959
   ],
   "brief_file": "/home/runner/work/GemsWriter/GemsWriter/output/brief-2026-04-29.html",
-  "brief_url": "https://n5nsuf.github.io/briefs/2026-04-29.html",
+  "brief_url": "https://n5nsuf.github.io/briefs/view.html?date=2026-04-29",
   "brief_date": "2026-04-29",
   "api_calls_llm": 1,
-  "duration_sec": "30.8"
+  "duration_sec": "56.7"
 }
