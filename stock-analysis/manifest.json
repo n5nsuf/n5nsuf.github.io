@@ -1,5 +1,29 @@
 [
   {
+    "date": "2026-04-30",
+    "symbol": "HBAN",
+    "name": "HBAN",
+    "market": "US",
+    "exchange": "NASD",
+    "moat": "fin",
+    "buffett_score": 55.3,
+    "buffett_delta": -4.7,
+    "summary": "NASD:HBAN · moat=fin · buffett=55.3 · 미달 -4.7",
+    "file": "reports/2026-04-30-HBAN.html"
+  },
+  {
+    "date": "2026-04-30",
+    "symbol": "KHC",
+    "name": "KHC",
+    "market": "US",
+    "exchange": "NASD",
+    "moat": "brand",
+    "buffett_score": 72.4,
+    "buffett_delta": 12.4,
+    "summary": "NASD:KHC · moat=brand · buffett=72.4 · 합격 +12.4",
+    "file": "reports/2026-04-30-KHC.html"
+  },
+  {
     "date": "2026-04-29",
     "symbol": "HBAN",
     "name": "HBAN",
