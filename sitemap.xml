@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://hanbe.click/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://hanbe.click/articles.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+
+  <!-- AI development guides -->
+  <url><loc>https://hanbe.click/agentic_ai_intro.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://hanbe.click/light_harness_guide.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://hanbe.click/mcp_ecosystem.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- AutoTrade guide -->
+  <url><loc>https://hanbe.click/autotrade-guide/concept.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://hanbe.click/autotrade-guide/theory.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://hanbe.click/autotrade-guide/quality-gate.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://hanbe.click/autotrade-guide/build-prompt.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <!-- Stock analysis -->
+  <url><loc>https://hanbe.click/stock-analysis/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://hanbe.click/stock-analysis/calendar.html</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+
+  <!-- Project pages -->
+  <url><loc>https://hanbe.click/projects/autotrade-bot.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://hanbe.click/projects/gemswriter.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://hanbe.click/projects/maxtrans.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://hanbe.click/projects/html-writer.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://hanbe.click/projects/mail-classifier.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://hanbe.click/projects/merong.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+
+  <!-- Daily briefs index (individual brief-*.html intentionally excluded) -->
+  <url><loc>https://hanbe.click/briefs/</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
+</urlset>

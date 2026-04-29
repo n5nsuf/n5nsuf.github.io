@@ -3,12 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://*.googlesyndication.com; img-src 'self' data: https://*.googlesyndication.com https://*.doubleclick.net; connect-src 'self' https://*.googlesyndication.com https://*.doubleclick.net; frame-src https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
-<meta name="google-adsense-account" content="ca-pub-2692332478379651">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2692332478379651" crossorigin="anonymous"></script>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; img-src 'self' data: https://*.googlesyndication.com https://*.doubleclick.net https://www.google.com https://www.gstatic.com; connect-src 'self' https://pagead2.googlesyndication.com; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-<title>Tech Guides & Projects</title>
+
+<title>HCB — AI 자동화·트레이딩 시스템 개발자 | hanbe.click</title>
+<meta name="description" content="AI 자동화·트레이딩 시스템 개발자. 가이드와 프로젝트를 공유합니다. — Articles · Daily Briefs · Resume.">
+<meta name="keywords" content="AI 개발자, 자동매매, AutoTrade, Agentic AI, MCP, 트레이딩 시스템, 개인 포트폴리오">
+<meta name="author" content="HCB">
+<meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large">
+<link rel="canonical" href="https://hanbe.click/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="hanbe.click">
+<meta property="og:title" content="HCB — AI 자동화·트레이딩 시스템 개발자">
+<meta property="og:description" content="가이드와 프로젝트를 공유합니다. Articles · Daily Briefs · Resume.">
+<meta property="og:url" content="https://hanbe.click/">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:locale:alternate" content="en_US">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HCB — AI 자동화·트레이딩 시스템 개발자">
+<meta name="twitter:description" content="가이드와 프로젝트를 공유합니다. Articles · Daily Briefs · Resume.">
+
+<!-- AdSense ownership verification -->
+<meta name="google-adsense-account" content="ca-pub-2692332478379651">
+
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
@@ -17,20 +39,12 @@
     --teal:#0F6E56;--teal-l:#E1F5EE;
     --amber:#BA7517;--amber-l:#FAEEDA;
     --blue:#185FA5;--blue-l:#E6F1FB;
-    --coral:#993C1D;--coral-l:#FAECE7;
-    --red:#A32D2D;--red-l:#FCEBEB;
-    --gray:#444441;--gray-l:#F1EFE8;
     --border:#D3D1C7;--text:#2C2C2A;--muted:#5F5E5A;--bg:#FAFAF8;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.8;color:var(--text);background:var(--bg)}
-  .page{max-width:860px;margin:0 auto;padding:48px 56px;background:white}
-  .doc-header{border-bottom:2px solid var(--purple);padding-bottom:24px;margin-bottom:36px}
-  .doc-header h1{font-size:28px;font-weight:700;color:var(--purple);line-height:1.3}
-  .doc-header .subtitle{font-size:15px;color:var(--muted);margin-top:6px}
-  .meta-tag{background:var(--purple-l);color:var(--purple-d);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500}
-  .doc-header .meta{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:12px;flex-wrap:wrap}
-  p{margin-bottom:12px;color:var(--text);font-size:13.5px}
+  .page{max-width:780px;margin:0 auto;padding:48px 56px;background:white;min-height:100vh}
+
   .lang-bar{position:sticky;top:0;z-index:100;background:rgba(250,250,248,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;justify-content:flex-end;align-items:center;gap:6px}
   .lang-btn{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 14px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--muted);cursor:pointer;transition:all .15s}
   .lang-btn.active{background:var(--purple);color:white;border-color:var(--purple)}
@@ -38,169 +52,122 @@
   body.lang-ko [lang-ko]{display:revert}
   body.lang-en [lang-en]{display:revert}
 
-  .card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:28px}
-  .card{border-radius:12px;padding:24px 20px;border:1px solid var(--border);background:white;text-decoration:none;color:var(--text);transition:all .2s;display:flex;flex-direction:column;gap:8px}
+  .hero{border-bottom:2px solid var(--purple);padding-bottom:28px;margin-bottom:36px}
+  .hero h1{font-size:32px;font-weight:700;color:var(--purple);line-height:1.2}
+  .hero .lede{font-size:15px;color:var(--muted);margin-top:10px;max-width:560px}
+  .hero .meta{font-size:11.5px;color:var(--muted);margin-top:14px;font-family:'JetBrains Mono',monospace;letter-spacing:.04em}
+  .hero .meta a{color:var(--purple);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s}
+  .hero .meta a:hover{border-bottom-color:var(--purple)}
+
+  .card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:8px}
+  .card{border-radius:12px;padding:24px 22px;border:1px solid var(--border);background:white;text-decoration:none;color:var(--text);transition:all .2s;display:flex;flex-direction:column;gap:6px;position:relative}
   .card:hover{border-color:var(--purple);box-shadow:0 4px 16px rgba(83,74,183,.1);transform:translateY(-2px)}
-  .card .card-num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:var(--muted)}
+  .card .ic{font-size:22px;margin-bottom:4px}
   .card .card-title{font-size:16px;font-weight:700;color:var(--purple)}
   .card .card-desc{font-size:12.5px;color:var(--muted);line-height:1.6}
+  .card .ext{position:absolute;top:14px;right:16px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
   .card.c-purple{background:var(--purple-l);border-color:rgba(83,74,183,.2)}
-  .card.c-teal{background:var(--teal-l);border-color:rgba(15,110,86,.2)}
-  .card.c-amber{background:var(--amber-l);border-color:rgba(186,117,23,.2)}
-  .card.c-blue{background:var(--blue-l);border-color:rgba(24,95,165,.2)}
+  .card.c-teal{background:var(--teal-l);border-color:rgba(15,110,86,.2)} .card.c-teal .card-title{color:var(--teal)}
+  .card.c-amber{background:var(--amber-l);border-color:rgba(186,117,23,.2)} .card.c-amber .card-title{color:var(--amber)}
+  .card.c-blue{background:var(--blue-l);border-color:rgba(24,95,165,.2)} .card.c-blue .card-title{color:var(--blue)}
 
-  .doc-footer{border-top:1px solid var(--border);margin-top:48px;padding-top:16px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+  /* AdSense slot */
+  .adsense-slot{display:block;margin:36px 0 8px;padding:14px;border:1px dashed var(--border);border-radius:8px;background:#FCFBF7;min-height:90px;position:relative}
+  .adsense-slot::before{content:"Sponsored";position:absolute;top:6px;left:10px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+  .adsense-slot:empty{display:none}
+
+  .doc-footer{border-top:1px solid var(--border);margin-top:48px;padding-top:18px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
   .doc-footer a{color:var(--purple);text-decoration:none}
   .doc-footer a:hover{text-decoration:underline}
 
   @media(max-width:640px){
-    .page{padding:20px 16px 48px}.doc-header h1{font-size:21px}
+    .page{padding:24px 18px 48px}
+    .hero h1{font-size:24px}
     .card-grid{grid-template-columns:1fr}
-    .doc-footer{flex-direction:column;gap:6px}
+    .doc-footer{flex-direction:column;gap:4px}
   }
 </style>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "hanbe.click",
+  "url": "https://hanbe.click/",
+  "inLanguage": ["ko-KR","en-US"],
+  "description": "AI 자동화·트레이딩 시스템 개발자 HCB의 가이드와 프로젝트 모음",
+  "author": {"@type":"Person","name":"HCB","url":"https://hanbe.click/profile.html","sameAs":["https://github.com/n5nsuf"]},
+  "publisher": {"@type":"Person","name":"HCB"},
+  "potentialAction": {
+    "@type":"SearchAction",
+    "target":"https://www.google.com/search?q=site:hanbe.click+{search_term_string}",
+    "query-input":"required name=search_term_string"
+  }
+}
+</script>
 </head>
 <body class="lang-ko">
 
-<div class="lang-bar">
+<nav class="lang-bar" aria-label="Language switch">
   <button class="lang-btn active" onclick="setLang('ko')" id="btn-ko">한국어</button>
   <button class="lang-btn" onclick="setLang('en')" id="btn-en">English</button>
-</div>
+</nav>
 
-<div class="page">
+<main class="page">
 
-<div class="doc-header">
-  <h1>Tech Guides & Projects</h1>
-  <div class="subtitle" lang-ko>AI 자동화와 트레이딩 시스템에 관한 기술 가이드 모음입니다.<br>각 문서에서 개념부터 실전 구현까지 다룹니다.</div>
-  <div class="subtitle" lang-en>A collection of technical guides on AI automation and trading systems.<br>Each document covers concepts through practical implementation.</div>
-  <div class="meta">
-    <span class="meta-tag">2026-04-20</span>
-    <span class="meta-tag" lang-ko>허브 페이지</span>
-    <span class="meta-tag" lang-en>Hub Page</span>
-  </div>
-</div>
+<header class="hero">
+  <h1>HCB</h1>
+  <p class="lede" lang-ko>AI 자동화·트레이딩 시스템 개발자. 가이드와 프로젝트를 공유합니다.</p>
+  <p class="lede" lang-en>AI automation &amp; trading-system developer. Sharing guides and projects.</p>
+  <p class="meta">
+    <a href="https://github.com/n5nsuf" target="_blank" rel="noopener">github.com/n5nsuf</a>
+  </p>
+</header>
 
-<h2 style="font-size:15px;font-weight:700;color:var(--purple);padding:6px 0 6px 12px;border-left:3px solid var(--purple);margin-bottom:16px;margin-top:32px">
-  <span lang-ko>AI 개발 시스템 구축</span>
-  <span lang-en>AI Development System</span>
-</h2>
-
+<section aria-label="Site navigation">
 <div class="card-grid">
-  <a href="agentic_ai_intro.html" class="card c-purple">
-    <span class="card-num">01</span>
-    <span class="card-title">Agentic AI</span>
-    <span class="card-desc" lang-ko>LLM에서 에이전트 팀으로 — AI의 진화, 핵심 원리, 멀티에이전트 패턴</span>
-    <span class="card-desc" lang-en>From LLM to Agent Teams — AI evolution, core principles, multi-agent patterns</span>
+  <a href="/articles.html" class="card c-purple">
+    <span class="ic">📰</span>
+    <span class="card-title" lang-ko>아티클</span>
+    <span class="card-title" lang-en>Articles</span>
+    <span class="card-desc" lang-ko>AI 자동화·자동매매·MCP 등 기술 가이드 모음</span>
+    <span class="card-desc" lang-en>Tech guides on AI automation, auto-trading, MCP, and more</span>
   </a>
-  <a href="light_harness_guide.html" class="card c-amber">
-    <span class="card-num">02</span>
-    <span class="card-title">Light Harness</span>
-    <span class="card-desc" lang-ko>경량 멀티에이전트 프레임워크 — Blueprint, 3-Tier 라우팅, 품질 게이트</span>
-    <span class="card-desc" lang-en>Lightweight multi-agent framework — Blueprint, 3-Tier routing, quality gates</span>
+  <a href="/briefs/" class="card c-blue">
+    <span class="ic">📅</span>
+    <span class="card-title" lang-ko>매일 브리핑</span>
+    <span class="card-title" lang-en>Daily Briefs</span>
+    <span class="card-desc" lang-ko>평일 매일 자동 발행되는 CEO 트렌드 브리핑 아카이브</span>
+    <span class="card-desc" lang-en>Auto-generated weekday CEO trend briefing archive</span>
   </a>
-  <a href="mcp_ecosystem.html" class="card c-blue">
-    <span class="card-num">03</span>
-    <span class="card-title">MCP Ecosystem</span>
-    <span class="card-desc" lang-ko>Model Context Protocol 생태계 — 표준 프로토콜, 도구 연결, 실전 구성</span>
-    <span class="card-desc" lang-en>Model Context Protocol ecosystem — standard protocol, tool connectivity, practical setup</span>
+  <a href="/profile.html" class="card c-teal">
+    <span class="ic">👤</span>
+    <span class="card-title" lang-ko>이력</span>
+    <span class="card-title" lang-en>Resume</span>
+    <span class="card-desc" lang-ko>경력 / 스킬 / 주요 프로젝트</span>
+    <span class="card-desc" lang-en>Career, skills, key projects</span>
   </a>
-  <a href="autotrade-guide/build-prompt.html" class="card c-coral">
-    <span class="card-num">04</span>
-    <span class="card-title" lang-ko>구축 프롬프트</span>
-    <span class="card-title" lang-en>Build Prompt</span>
-    <span class="card-desc" lang-ko>AI에 입력하면 모의투자 봇이 완성되는 8단계 가이드</span>
-    <span class="card-desc" lang-en>8-step guide — paste into AI to build a mock trading bot</span>
-  </a>
-</div>
-
-<h2 style="font-size:15px;font-weight:700;color:var(--teal);padding:6px 0 6px 12px;border-left:3px solid var(--teal);margin-bottom:16px;margin-top:36px">
-  <span lang-ko>AutoTrade — AI 자동매매</span>
-  <span lang-en>AutoTrade — AI Automated Trading</span>
-</h2>
-
-<div class="card-grid">
-  <a href="autotrade-guide/concept.html" class="card c-teal">
-    <span class="card-num">01</span>
-    <span class="card-title" lang-ko>자동매매 개념</span>
-    <span class="card-title" lang-en>Trading Concepts</span>
-    <span class="card-desc" lang-ko>전략 유형, 데이터 흐름, 리스크 관리, 기술 스택</span>
-    <span class="card-desc" lang-en>Strategy types, data flow, risk management, tech stack</span>
-  </a>
-  <a href="autotrade-guide/theory.html" class="card c-teal">
-    <span class="card-num">02</span>
-    <span class="card-title" lang-ko>학습 원리 및 이론</span>
-    <span class="card-title" lang-en>Learning Theory</span>
-    <span class="card-desc" lang-ko>AI의 시장 학습 방법, 하이브리드 모델 원리, 금융 이론 배경</span>
-    <span class="card-desc" lang-en>AI market learning, hybrid model principles, financial theory</span>
-  </a>
-  <a href="autotrade-guide/quality-gate.html" class="card c-teal">
-    <span class="card-num">03</span>
-    <span class="card-title">Quality Gate</span>
-    <span class="card-desc" lang-ko>Autodebug + CI 통합 품질 관리 — 감사·자동패치·테스트·배포 검증 프로세스</span>
-    <span class="card-desc" lang-en>Autodebug + CI quality management — audit, auto-patch, test, deploy verification</span>
-  </a>
-  <a href="projects/autotrade-bot.html" class="card c-teal">
-    <span class="card-num">04</span>
-    <span class="card-title">AutoTrade Bot</span>
-    <span class="card-desc" lang-ko>LightGBM + LSTM + KIS API로 구동되는 실전 한국 주식 자동매매 봇</span>
-    <span class="card-desc" lang-en>Live Korean equities auto-trading bot powered by LightGBM + LSTM + KIS API</span>
+  <a href="https://devprofile-admin.vercel.app" class="card c-amber" target="_blank" rel="noopener">
+    <span class="ext">↗</span>
+    <span class="ic">🛠️</span>
+    <span class="card-title" lang-ko>관리자</span>
+    <span class="card-title" lang-en>Admin</span>
+    <span class="card-desc" lang-ko>인증이 필요한 관리 패널</span>
+    <span class="card-desc" lang-en>Authenticated admin panel</span>
   </a>
 </div>
+</section>
 
-<h2 style="font-size:15px;font-weight:700;color:var(--amber);padding:6px 0 6px 12px;border-left:3px solid var(--amber);margin-bottom:16px;margin-top:36px">
-  <span lang-ko>증권 분석</span>
-  <span lang-en>Stock Analysis</span>
-</h2>
+<aside class="adsense-slot" data-ad-page="landing" aria-label="Sponsored"></aside>
 
-<div class="card-grid">
-  <a href="stock-analysis/" class="card c-amber" style="grid-column:span 2">
-    <span class="card-num">01</span>
-    <span class="card-title" lang-ko>코스탈라니 + 버핏 분석 리포트</span>
-    <span class="card-title" lang-en>Kostolany + Buffett Analysis Reports</span>
-    <span class="card-desc" lang-ko>코스탈라니 달걀 모형 타이밍 × 워렌 버핏 기본기 — AI 기반 일별 장기 투자 후보 분석</span>
-    <span class="card-desc" lang-en>Kostolany egg-model timing × Warren Buffett fundamentals — AI-powered daily long-term candidate analysis</span>
-  </a>
-</div>
+<footer class="doc-footer">
+  <span><a href="https://github.com/n5nsuf" target="_blank" rel="noopener">Github</a> &middot; <a href="/articles.html">Articles</a> &middot; <a href="/profile.html">Resume</a></span>
+  <span>hanbe.click &middot; 2026</span>
+</footer>
 
-<h2 style="font-size:15px;font-weight:700;color:var(--purple);padding:6px 0 6px 12px;border-left:3px solid var(--purple);margin-bottom:16px;margin-top:36px">
-  <span lang-ko>프로젝트</span>
-  <span lang-en>Projects</span>
-</h2>
+</main>
 
-<div class="card-grid">
-  <a href="projects/gemswriter.html" class="card c-purple">
-    <span class="card-num">01</span>
-    <span class="card-title">GemsWriter</span>
-    <span class="card-desc" lang-ko>Gemini Gems + Claude Haiku 기반 평일 자동 연재 AI 글쓰기 봇 &middot; <span style="color:var(--teal)">CEO 브리핑 결과물 포함</span></span>
-    <span class="card-desc" lang-en>Automated weekday AI writing bot powered by Gemini Gems + Claude Haiku &middot; <span style="color:var(--teal)">CEO briefing archive included</span></span>
-  </a>
-  <a href="projects/maxtrans.html" class="card c-blue">
-    <span class="card-num">02</span>
-    <span class="card-title">MaxTrans</span>
-    <span class="card-desc" lang-ko>LLM 기반 대용량 번역 가속기 — 정교한 문맥 유지와 고속 배치 처리</span>
-    <span class="card-desc" lang-en>LLM-based bulk translation accelerator — precise context preservation</span>
-  </a>
-  <a href="projects/html-writer.html" class="card c-blue">
-    <span class="card-num">03</span>
-    <span class="card-title">HTML Writer</span>
-    <span class="card-desc" lang-ko>컴포넌트 기반 웹 콘텐츠 저작 도구 — Admin UI·Gemini/Claude 이중화·히스토리 컨텍스트</span>
-    <span class="card-desc" lang-en>Component-based web content authoring tool — Admin UI · dual Gemini/Claude · history context</span>
-  </a>
-  <a href="projects/mail-classifier.html" class="card c-amber">
-    <span class="card-num">04</span>
-    <span class="card-title">Mail Classifier</span>
-    <span class="card-desc" lang-ko>Gmail LLM 자동 분류·라벨링 — 룰 기반 필터와 AI 판단의 하이브리드 메일 관리</span>
-    <span class="card-desc" lang-en>Gmail LLM auto-classification &amp; labeling — hybrid rule-based filter + AI judgment</span>
-  </a>
-</div>
-
-<div class="doc-footer">
-  <span><a href="https://github.com/n5nsuf" target="_blank">Github info</a> &middot; <a href="profile.html">Dev Profile</a> &middot; <a href="https://devprofile-admin.vercel.app" target="_blank"><span lang-ko>관리자</span><span lang-en>Admin</span></a></span>
-  <span>Tech Guides & Projects &middot; 2026</span>
-</div>
-
-</div>
-
+<script src="/assets/adsense.js" defer></script>
 <script>
 function setLang(lang) {
   document.body.className = 'lang-' + lang;

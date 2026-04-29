@@ -1,0 +1,15 @@
+{
+  "publisher_id": "ca-pub-2692332478379651",
+  "customer_id": "4710482024",
+  "enabled": true,
+  "slots": {
+    "landing": "",
+    "articles": ""
+  },
+  "_doc": {
+    "purpose": "Edit this file to toggle/configure AdSense without touching HTML.",
+    "enabled": "Set false to disable all ads site-wide.",
+    "slots": "Per-page slot ID. Leave empty until AdSense issues unit IDs (auto ad units only require publisher_id).",
+    "no_redeploy_note": "Changes still require git push to GH Pages (~30s rebuild) but no HTML edits."
+  }
+}
