@@ -1,23 +1,23 @@
 {
   "version": "6.0",
-  "run_at_kst": "2026. 4. 29. PM 12:14:51",
+  "run_at_kst": "2026. 4. 29. PM 12:44:48",
   "llm_used": "Gemini",
   "dry_run": false,
   "topics": [
     {
-      "query": "로봇산업",
+      "query": "화물연대",
       "category": "일반"
     },
     {
-      "query": "잡플래닛",
+      "query": "경기도지사",
       "category": "일반"
     },
     {
-      "query": "nc",
+      "query": "사업",
       "category": "금융"
     },
     {
-      "query": "에코프로비엠",
+      "query": "로봇산업",
       "category": "금융"
     },
     {
@@ -26,22 +26,22 @@
     }
   ],
   "article_titles": [
-    "[일반] AI와 로봇, 제조업 혁신의 새로운 엔진으로 부상하다",
-    "[일반] 잡플래닛, '커리어 선택 기준 플랫폼'으로 진화하며 HR 시장 판도 바꾼다",
-    "[금융] NC AI, 노벨상 기관도 주목하는 미래 산업 AI 기술의 선두 주자",
-    "[금융] 에코프로비엠, '캐즘' 극복하고 V자 반등…ESS 양극재가 실적 견인",
-    "[금융] AI 파티는 끝났나? 반도체 쇼크에 얼어붙은 투심, 유가 100달러 시대의 경고"
+    "[일반] 화물연대와 BGF로지스, '권익 보호' 잠정 합의…물류 안정화 기대",
+    "[일반] 경기도지사 후보군, '인물론'과 '정책'으로 치열한 경쟁 예고",
+    "[금융] 사업 포트폴리오 재편 가속화: LG화학, 삼성전자의 '선택과 집중' 전략",
+    "[금융] 한-카타르, 로봇·AI 협력 강화…미래 신산업 선점 위한 전략적 행보",
+    "[금융] AI 성장통과 유가 불안, 글로벌 증시 숨 고르기"
   ],
   "article_lengths": [
-    944,
-    870,
-    910,
-    910,
-    1303
+    1163,
+    1368,
+    1336,
+    1326,
+    1299
   ],
   "brief_file": "/home/runner/work/GemsWriter/GemsWriter/output/brief-2026-04-29.html",
   "brief_url": "https://n5nsuf.github.io/briefs/view.html?date=2026-04-29",
   "brief_date": "2026-04-29",
   "api_calls_llm": 1,
-  "duration_sec": "48.2"
+  "duration_sec": "36.2"
 }
