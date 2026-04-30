@@ -12,6 +12,12 @@
   <url><loc>https://hanbe.click/structured_programming.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://hanbe.click/claude_web_memory.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
 
+  <!-- AutoTrade build guide -->
+  <url><loc>https://hanbe.click/autotrade-guide/concept.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://hanbe.click/autotrade-guide/theory.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://hanbe.click/autotrade-guide/quality-gate.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://hanbe.click/autotrade-guide/build-prompt.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
   <!-- Project pages -->
   <url><loc>https://hanbe.click/projects/autotrade-bot.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://hanbe.click/projects/gemswriter.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
