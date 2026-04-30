@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /briefs/brief-*.html
 
 Sitemap: https://hanbe.click/sitemap.xml

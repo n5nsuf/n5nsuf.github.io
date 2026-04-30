@@ -25,7 +25,4 @@
   <url><loc>https://hanbe.click/projects/html-writer.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://hanbe.click/projects/mail-classifier.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://hanbe.click/projects/merong.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-
-  <!-- Daily briefs index (individual brief-*.html intentionally excluded) -->
-  <url><loc>https://hanbe.click/briefs/</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
 </urlset>
