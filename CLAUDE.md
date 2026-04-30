@@ -76,3 +76,10 @@ Harness templates: project `.claude/harness_templates/` or `~/.claude/harness_te
 Mac Desktop only. Not supported in Web Claude Code or Codespaces.
 
 To configure: `~/.claude/scripts/setup-mcp.sh --list`
+
+---
+
+## Project-specific rules
+
+@CLAUDE-sub.md
+@ADSENSE_POLICY.md
