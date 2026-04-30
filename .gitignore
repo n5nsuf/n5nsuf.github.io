@@ -1,0 +1,13 @@
+# Meta/policy/style guides — claude-private/projects/hanbe/ 에 보관.
+# AdSense 컴플라이언스 + LLM 도구 노출 회피 목적으로 publicly accessible 차단.
+/CLAUDE.md
+/CLAUDE-sub.md
+/ADSENSE_POLICY.md
+/STYLE_GUIDE.md
+/README.md
+/autotrade-guide/build-prompt.md
+
+# OS / editor noise
+.DS_Store
+*.swp
+*~

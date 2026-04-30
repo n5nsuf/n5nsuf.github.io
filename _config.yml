@@ -1,0 +1,32 @@
+# GitHub Pages (Jekyll) build config
+#
+# Purpose: prevent meta/policy/script files from being publicly served at hanbe.click.
+# Files listed below stay in the git repo (some are functionally required by GitHub
+# Actions workflows under .github/) but are excluded from the published site.
+#
+# AdSense compliance + "AI generated site" 신호 회피.
+
+exclude:
+  # AI/LLM 자동화 스크립트 — devprofile-admin GH Actions가 사용. site에는 노출 X.
+  - scripts/
+
+  # 정책/스타일/작업 가이드 — claude-private/projects/hanbe/ 에 마스터 보관.
+  # .gitignore + git rm으로 이중 차단되지만 만약 다시 추가되더라도 site에는 안 나옴.
+  - "*.md"
+  - autotrade-guide/build-prompt.md
+  - autotrade-guide/*.md
+  - "**/*.md"
+
+  # 백업/임시 파일
+  - "*.bak"
+  - "*.tmp"
+  - "*~"
+  - .DS_Store
+
+  # CI/CD
+  - .github/
+  - .gitignore
+
+# Jekyll 자체는 사용 안 함 (정적 HTML 사이트). exclude만 활용.
+# theme: null
+plugins: []
