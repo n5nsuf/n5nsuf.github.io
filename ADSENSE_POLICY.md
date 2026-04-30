@@ -88,7 +88,15 @@
 
 **해결**: `/briefs/` 통째 삭제 (커밋 `6a5e07d`), GemsWriter는 Notion DB(본인 비공개 워크스페이스) + Telegram 메시지만 출력으로 환원 (커밋 `8930c85`). 백업: `vault/projects/hanbe/backup-briefs-2026-04-30/`.
 
-**교훈**: AI 출력은 본인만 보는 채널(Notion private, Slack, Telegram DM) 또는 사람 편집·검증·인용 후에만 공개.
+### 2026-04-23 ~ 2026-04-30: autotrade-bot OVS Buffett 종목 리포트 공개 호스팅
+
+**위반**: autotrade-bot의 `autotrade_ovs.publisher.publish_sector_tops()`가 평일(Tue-Sat 06:00 KST) 자동으로 미국 주식 (HBAN, KHC 등) Buffett scorecard HTML 리포트를 `/stock-analysis/reports/{date}-{symbol}.html`로 GitHub API push. 일자별·종목별 자동 생성된 금융 분석 콘텐츠.
+
+**해당 정책**: 스케일된 콘텐츠 남용(자동 생성 일자별) + (금융 토픽) 신뢰 불가 주장 + 가치 낮은 콘텐츠.
+
+**해결**: `/stock-analysis/` 통째 삭제 + autotrade_ovs/publisher.py를 Notion DB 저장으로 환원. Category="OVS-Buffett"로 GemWriter Articles DB 공유. 백업: `vault/projects/hanbe/backup-stock-analysis-2026-04-30/`.
+
+**교훈**: AI 출력은 본인만 보는 채널(Notion private, Slack, Telegram DM) 또는 사람 편집·검증·인용 후에만 공개. 특히 **금융/종목 분석은 AdSense 가장 민감 카테고리** — 자동 생성은 절대 공개 호스팅 금지.
 
 ---
 
