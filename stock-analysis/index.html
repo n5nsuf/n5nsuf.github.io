@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Stock Analysis — Buffett Scorecard Tool · hanbe.click</title>
+<meta name="description" content="자체 개발한 미국 주식 Buffett 정량 스코어카드 도구 소개. 일일 리포트는 운영자 비공개 워크스페이스 전용 — 투자 자문이 아닌 개인 학습·검증 용도.">
+<meta name="author" content="HCB">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://hanbe.click/stock-analysis/">
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2692332478379651" crossorigin="anonymous"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root {
+    --teal:#0F6E56;--teal-l:#E1F5EE;
+    --amber:#BA7517;--amber-l:#FAEEDA;
+    --slate:#64748B;--slate-l:#F1F5F9;
+    --border:#D3D1C7;--text:#2C2C2A;--muted:#5F5E5A;--bg:#FAFAF8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.8;color:var(--text);background:var(--bg)}
+  code,.mono{font-family:'JetBrains Mono',monospace;font-size:13px}
+  .nav-bar{position:sticky;top:0;z-index:100;background:rgba(250,250,248,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;justify-content:space-between;align-items:center}
+  .nav-home{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;padding:4px 14px;border-radius:20px;border:1px solid var(--border);transition:all .15s}
+  .nav-home:hover{background:var(--teal-l);border-color:var(--teal);color:var(--teal)}
+  .nav-lang{display:flex;align-items:center;gap:6px}
+  .lang-btn{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 14px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--muted);cursor:pointer;transition:all .15s}
+  .lang-btn.active{background:var(--teal);color:white;border-color:var(--teal)}
+  [lang-ko],[lang-en]{display:none}
+  body.lang-ko [lang-ko]{display:revert}
+  body.lang-en [lang-en]{display:revert}
+  .page{max-width:780px;margin:0 auto;padding:48px 56px;background:white;min-height:100vh}
+  .doc-header{border-bottom:2px solid var(--teal);padding-bottom:24px;margin-bottom:36px}
+  .doc-header h1{font-size:28px;font-weight:700;color:var(--teal);line-height:1.3}
+  .doc-header .subtitle{font-size:13px;color:var(--muted);margin-top:8px;font-family:'JetBrains Mono',monospace}
+  .meta{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
+  .meta-tag{background:var(--teal-l);color:var(--teal);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500}
+  .meta-tag.amber{background:var(--amber-l);color:var(--amber)}
+  h2{font-size:17px;font-weight:700;color:var(--teal);padding:6px 0 6px 12px;border-left:3px solid var(--teal);margin:28px 0 16px}
+  h3{font-size:14px;font-weight:700;color:#444;margin:18px 0 8px}
+  p{margin:8px 0 14px}
+  ul,ol{padding-left:22px;margin-bottom:14px}
+  li{margin:4px 0}
+  .callout{background:var(--amber-l);border-left:4px solid var(--amber);padding:14px 18px;margin:18px 0;border-radius:6px;font-size:13.5px}
+  .callout strong{color:var(--amber)}
+  .card{background:white;border:1px solid var(--border);border-radius:6px;padding:20px;margin-bottom:16px}
+  table.spec{width:100%;border-collapse:collapse;font-size:13px}
+  table.spec td{padding:8px 12px 8px 0;border-bottom:1px solid var(--border);vertical-align:top}
+  table.spec td:first-child{color:var(--muted);width:180px;white-space:nowrap;font-family:'JetBrains Mono',monospace;font-size:12px}
+  table.spec tr:last-child td{border-bottom:none}
+  .doc-footer{border-top:1px solid var(--border);margin-top:48px;padding-top:18px;font-size:12px;color:var(--muted);text-align:center}
+  @media(max-width:640px){.page{padding:24px 18px 48px}.doc-header h1{font-size:22px}}
+</style>
+</head>
+<body class="lang-ko">
+
+<div class="nav-bar">
+  <a href="/articles.html" class="nav-home">← Article Main</a>
+  <div class="nav-lang">
+    <a href="/" class="nav-logo" aria-label="HCB Home" style="display:inline-flex;align-items:center;margin-right:10px;text-decoration:none;vertical-align:middle"><img src="/assets/hanbe.png" alt="HCB" style="height:24px;width:auto;display:block"></a>
+    <button class="lang-btn active" onclick="setLang('ko')" id="btn-ko">한국어</button>
+    <button class="lang-btn" onclick="setLang('en')" id="btn-en">English</button>
+  </div>
+</div>
+
+<main class="page">
+
+<header class="doc-header">
+  <h1 lang-ko>Stock Analysis — Buffett Scorecard 도구</h1>
+  <h1 lang-en>Stock Analysis — Buffett Scorecard Tool</h1>
+  <div class="subtitle" lang-ko>autotrade-bot OVS 모듈 · 정량 가치 평가 자체 구현</div>
+  <div class="subtitle" lang-en>autotrade-bot OVS module · in-house quantitative value scorecard</div>
+  <div class="meta">
+    <span class="meta-tag">2026-04-30</span>
+    <span class="meta-tag" lang-ko>도구 소개</span>
+    <span class="meta-tag" lang-en>Tool Overview</span>
+    <span class="meta-tag amber" lang-ko>운영자 전용</span>
+    <span class="meta-tag amber" lang-en>Operator-only</span>
+  </div>
+</header>
+
+<div class="callout">
+  <p lang-ko><strong>중요</strong> · 일일 종목별 스코어카드 결과물은 <strong>운영자(HCB) 본인 비공개 Notion 워크스페이스</strong>에서만 열람합니다. 자동 생성된 정량 분석은 사실 검증을 거치지 않은 개인 학습·검증 자료이므로 외부 공개하지 않습니다. <strong>이 페이지는 도구 자체의 설계와 동작 원리를 설명하는 메타 페이지입니다.</strong> 본 사이트의 어떤 콘텐츠도 투자 자문이 아닙니다.</p>
+  <p lang-en><strong>Important</strong> · Daily per-symbol scorecard outputs are accessed <strong>only inside the operator's private Notion workspace</strong>. Auto-generated quantitative output is unverified study material and is not published externally. <strong>This page describes the tool's design and behavior as a meta document.</strong> Nothing on this site constitutes investment advice.</p>
+</div>
+
+<h2 lang-ko>1. 무엇을 만든 도구인가</h2>
+<h2 lang-en>1. What this tool is</h2>
+<p lang-ko>autotrade-bot 레포의 <code>autotrade_ovs/</code> 모듈에 직접 구현한 미국 주식 정량 스크리닝 도구입니다. KIS Open API와 외부 재무 데이터 소스를 결합해 종목별 PE / PB / ROE / Market Cap을 가져오고, 섹터(브랜드 / 금융 / 산업재 / ETF)별로 별도 임계치를 적용한 Buffett 정량 체크리스트 점수(0~100)를 계산합니다. 합격선은 60점입니다.</p>
+<p lang-en>An in-house quantitative US-equity screener implemented in the <code>autotrade_ovs/</code> module of the autotrade-bot repo. It pulls per-symbol PE / PB / ROE / Market Cap via the KIS Open API and external financial sources, then computes a 0–100 Buffett-style scorecard with sector-specific thresholds (brand / financial / industrial / ETF). The pass mark is 60.</p>
+
+<h2 lang-ko>2. 왜 만들었는가</h2>
+<h2 lang-en>2. Why I built this</h2>
+<p lang-ko>워런 버핏 스타일의 정량 기준(저PER / 저PBR / 고ROE / 적정 시가총액)은 직접 종목 리서치 시 빠른 1차 필터로 유용합니다. 매일 수십 종목을 손으로 점검하는 대신 자동 스코어로 후보를 좁히고, 점수가 임계치 위인 소수만 추가 정성 분석을 합니다. 자동 생성된 점수는 <strong>참고 자료</strong>이며 단독 매매 신호로 사용하지 않습니다.</p>
+<p lang-en>A Buffett-style quantitative gate (low PER / low PBR / high ROE / reasonable market cap) is a useful first-pass filter when researching equities. Instead of checking dozens of names manually each day, an automatic score narrows the candidate set so only the few above the threshold receive a manual qualitative review. The auto-generated score is a <strong>reference signal</strong>, never a standalone trading signal.</p>
+
+<h2 lang-ko>3. 동작 흐름</h2>
+<h2 lang-en>3. How it works</h2>
+<div class="card">
+  <table class="spec">
+    <tr><td>watchlist refresh</td><td lang-ko>일요일 10:00 KST · screening 모듈이 미국 주식 후보군 갱신</td><td lang-en>Sun 10:00 KST · screening module refreshes the US watchlist</td></tr>
+    <tr><td>publish daily</td><td lang-ko>화-토 06:00 KST · 섹터별 top1 종목의 스코어카드를 운영자 Notion DB에 저장</td><td lang-en>Tue–Sat 06:00 KST · per-sector top-1 scorecards are saved to the operator Notion DB</td></tr>
+    <tr><td>data source</td><td lang-ko>KIS Open API + DART/yfinance 폴백 (재무 지표 조회)</td><td lang-en>KIS Open API + DART/yfinance fallback (financial metrics)</td></tr>
+    <tr><td>scoring</td><td lang-ko>섹터별 PE / PB / ROE 임계치 + 가중 평균 → 0~100점</td><td lang-en>Sector-specific PE / PB / ROE thresholds + weighted average → 0–100</td></tr>
+    <tr><td>output</td><td lang-ko>Notion 페이지(운영자 워크스페이스 전용) · Title / Category / Body</td><td lang-en>Notion page (operator workspace only) · Title / Category / Body</td></tr>
+    <tr><td>publicly hosted</td><td lang-ko>없음 — 일일 결과 외부 공개 X</td><td lang-en>None — daily outputs are not exposed publicly</td></tr>
+  </table>
+</div>
+
+<h2 lang-ko>4. 섹터별 임계 (요약)</h2>
+<h2 lang-en>4. Sector thresholds (summary)</h2>
+<ul lang-ko>
+  <li><strong>Brand</strong> (asset-light consumer): PE ≤ 25, PB ≤ 6, ROE ≥ 15%</li>
+  <li><strong>Financial</strong> (은행 / 보험): PE ≤ 15, PB ≤ 1.5, ROE ≥ 10%</li>
+  <li><strong>Industrial</strong> (capex 산업재): PE ≤ 18, PB ≤ 3, ROE ≥ 12%</li>
+  <li><strong>ETF</strong> (지수형): quality bypass — 운용보수 / 추적오차 별도 평가</li>
+</ul>
+<ul lang-en>
+  <li><strong>Brand</strong> (asset-light consumer): PE ≤ 25, PB ≤ 6, ROE ≥ 15%</li>
+  <li><strong>Financial</strong> (banks / insurers): PE ≤ 15, PB ≤ 1.5, ROE ≥ 10%</li>
+  <li><strong>Industrial</strong> (capex-heavy): PE ≤ 18, PB ≤ 3, ROE ≥ 12%</li>
+  <li><strong>ETF</strong> (index funds): quality bypass — fee / tracking error separately</li>
+</ul>
+
+<h2 lang-ko>5. 기술 스택</h2>
+<h2 lang-en>5. Tech stack</h2>
+<ul lang-ko>
+  <li>Python 3.13 · APScheduler (cron) · requests</li>
+  <li>KIS Open API (시세 / 재무 일부)</li>
+  <li>FinanceDataReader / yfinance 폴백 (외부 재무지표)</li>
+  <li>Notion API (자동 페이지 생성, 운영자 워크스페이스 한정)</li>
+  <li>Railway (호스팅) · 자체 작성 · 자체 운영</li>
+</ul>
+<ul lang-en>
+  <li>Python 3.13 · APScheduler (cron) · requests</li>
+  <li>KIS Open API (quotes and partial financials)</li>
+  <li>FinanceDataReader / yfinance fallback (external financial metrics)</li>
+  <li>Notion API (auto page creation, operator workspace only)</li>
+  <li>Railway (hosting) · in-house code · in-house operation</li>
+</ul>
+
+<h2 lang-ko>6. 한계와 주의</h2>
+<h2 lang-en>6. Limitations and caveats</h2>
+<ul lang-ko>
+  <li>정량 점수는 <strong>1차 스크리닝</strong> 용도일 뿐, 단독 매수/매도 신호 아님</li>
+  <li>외부 재무 데이터의 지연·결측이 있을 수 있어 점수에 노이즈 포함</li>
+  <li>섹터 분류와 임계치는 운영자 개인 기준 — 일반 추천 기준 아님</li>
+  <li>자동 생성 자체로는 사실 검증을 거치지 않으므로 공개하지 않음</li>
+  <li>본 페이지는 <strong>도구 메타 설명</strong>이며 일체의 투자 자문이 아님</li>
+</ul>
+<ul lang-en>
+  <li>The quantitative score is a <strong>first-pass filter</strong>, never a standalone signal</li>
+  <li>External financial data may have lag or gaps — score carries noise</li>
+  <li>Sector mapping and thresholds reflect the operator's personal heuristics, not a general recommendation</li>
+  <li>Auto-generated content is unverified, so it is not published externally</li>
+  <li>This page is a <strong>tool meta-description</strong> — nothing here constitutes investment advice</li>
+</ul>
+
+<div class="doc-footer">
+  <span lang-ko>autotrade-bot · OVS 모듈 · 2026-04-30 갱신</span>
+  <span lang-en>autotrade-bot · OVS module · updated 2026-04-30</span>
+</div>
+
+</main>
+
+<script>
+function setLang(lang) {
+  document.body.className = 'lang-' + lang;
+  document.getElementById('btn-ko').classList.toggle('active', lang === 'ko');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  try { localStorage.setItem('guide-lang', lang); } catch {}
+}
+(function() { try { var s = localStorage.getItem('guide-lang'); if (s) setLang(s); } catch {} })();
+</script>
+
+<script src="/assets/site-footer.js" defer></script>
+<script src="/assets/cookie-banner.js" defer></script>
+
+</body>
+</html>
