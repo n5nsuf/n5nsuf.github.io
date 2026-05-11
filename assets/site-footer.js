@@ -21,8 +21,8 @@
     { href: "https://github.com/n5nsuf", label_ko: "GitHub", label_en: "GitHub", external: true },
   ];
 
-  const AI_NOTE_KO = "AI는 점검·디버그에만 사용했습니다.";
-  const AI_NOTE_EN = "AI used only for review/debugging.";
+  const AI_NOTE_KO = "출처: 본인(HCB) 직접 작성. AI는 점검·디버그에만 사용했습니다.";
+  const AI_NOTE_EN = "Source: original work by HCB. AI used only for review/debugging.";
 
   function detectLang() {
     return document.documentElement.lang || (document.body.classList.contains("lang-en") ? "en" : "ko");
